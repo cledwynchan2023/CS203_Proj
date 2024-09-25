@@ -40,7 +40,7 @@ export default function Register() {
 
     const validateAdminToken = async (token) => {
         try {
-          const response = await axios.post('http://localhost:8080/admin/signin/validate-admin-token', { token });
+          const response = await axios.post('http://localhost:8080/login/validate-admin-token', { token });
           console.log(response.data.valid);
           return response.data.valid;
         } catch (error) {
@@ -63,7 +63,7 @@ export default function Register() {
         //     return;
         // }
 
-        if (role === 'admin') {
+        if (role === 'ROLE_ADMIN') {
             const inputToken = window.prompt("Please enter the admin token:");
             const isValid = await validateAdminToken(inputToken);
             console.log(isValid);
@@ -100,7 +100,7 @@ export default function Register() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/admin/signup/user", userData);
+            const response = await axios.post("http://localhost:8080/login/signup", userData);
     
             if (response.status === 201){
                 alert("User registered successfully!");

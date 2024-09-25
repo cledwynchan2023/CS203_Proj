@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../admin/Register.css';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
 export default function TournamentAdminCreate() {
-    let navigate=useNavigate();
 
+    let navigate=useNavigate();
+    const { id } = useParams();
     const [tournament,setTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const{tournament_name, date, status, size, noOfRounds} = tournament;
     
@@ -74,7 +75,7 @@ export default function TournamentAdminCreate() {
             const response = await axios.post("http://localhost:8080/auth/tournament", tournamentData);
             if (response.status === 201){
                 alert("Tournament Created Successfully");
-                navigate("/admin/tournament");
+                navigate(`/admin/${id}/tournament`);
             }
         } catch (error) {
             console.error("There was an error registering the tournament!", error);
@@ -166,7 +167,7 @@ export default function TournamentAdminCreate() {
                 
             <button type="submit" className='btn btn-outline-primary mt-3'>Create Tournament</button>
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/admin/tournament' id="returnrBtn">Cancel</Link>
+            <Link type="cancel" className='btn btn-outline-danger' to={`/admin/${id}/tournament`} id="returnrBtn">Cancel</Link>
           </div>
         </div>
       );

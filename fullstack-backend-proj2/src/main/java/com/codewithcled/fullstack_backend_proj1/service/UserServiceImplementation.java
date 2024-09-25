@@ -1,5 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -24,6 +25,7 @@ import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementatio
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -87,6 +89,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+     @Override
+    public List<UserDTO> findAllUsersDTO() {
+        return userRepository.findAll().stream()
+        .map(user -> new UserDTO(user.getId(),user.getUsername(),user.getEmail(),user.getRole(),user.getElo()))
+        .collect(Collectors.toList());
     }
 
     @Override

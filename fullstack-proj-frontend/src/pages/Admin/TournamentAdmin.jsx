@@ -10,6 +10,7 @@ const TournamentAdmin = () => {
     const[pastTournament, setPastTournament]=useState([]);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
+    const { id } = useParams();
 
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -98,12 +99,16 @@ const TournamentAdmin = () => {
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/auth/tournaments");
-  
-        const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
-        console.log(filteredTournament);
-        setTournament(filteredTournament);
-        
-
+        console.log(result.data);
+        if (!result.data.length == 0){
+            console.log("No Active Tournaments");
+            const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
+            console.log(filteredTournament);
+            setTournament(filteredTournament);
+        }
+        else{
+            setTournament([]);
+        }
         
     };
 
@@ -114,8 +119,8 @@ const TournamentAdmin = () => {
                 .filter(tournament => tournament.status === 'inactive');
             setPastTournament(filteredPastTournament);
     };
-    const handleRowClick = (id) => {
-        navigate(`/admin/tournament/${id}`);
+    const handleRowClick = (tournamentId) => {
+        navigate(`/admin/${id}/tournament/${tournamentId}`);
     };
 
     return (
@@ -125,7 +130,7 @@ const TournamentAdmin = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Tournament</h1>
                         <div style={{ gap: '5px' }}>
-                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to="/admin/tournament/create">Create</Link>
+                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to={`/admin/${id}/tournament/create`}>Create</Link>
                         </div>
                     </div>
                     <div style={{display:"flex"}}>
@@ -157,7 +162,7 @@ const TournamentAdmin = () => {
                                         <td>{tournament.status}</td>
                                         <td>{tournament.currentSize}  / {tournament.size}</td>
                                         <td>
-                                            <Link className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/tournament/edit/${tournament.id}`}onClick={(event) => event.stopPropagation()}>Edit</Link>
+                                            <Link className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/${id}/tournament/edit/${tournament.id}`}onClick={(event) => event.stopPropagation()}>Edit</Link>
                                             <button className="btn btn-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={(event) => {deleteTournament(tournament.id);
                                             event.stopPropagation();
                                             }}>Delete</button>

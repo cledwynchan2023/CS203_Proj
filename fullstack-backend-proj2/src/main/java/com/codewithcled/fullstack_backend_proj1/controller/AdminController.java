@@ -128,12 +128,12 @@ public class AdminController {
     }
 
 
-    //Login and authentication
-    @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signin(@RequestBody User loginRequest) {
-        AuthResponse authResponse = userService.signInUser(loginRequest);
-        return new ResponseEntity<>(authResponse,HttpStatus.OK);
-    }
+    // //Login and authentication
+    // @PostMapping("/signin")
+    // public ResponseEntity<AuthResponse> signin(@RequestBody User loginRequest) {
+    //     AuthResponse authResponse = userService.signInUser(loginRequest);
+    //     return new ResponseEntity<>(authResponse,HttpStatus.OK);
+    // }
 
 
     @GetMapping("/user/id/{id}")

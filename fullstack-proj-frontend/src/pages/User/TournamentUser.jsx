@@ -53,7 +53,7 @@ const TournamentUser = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'user'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_USER'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }

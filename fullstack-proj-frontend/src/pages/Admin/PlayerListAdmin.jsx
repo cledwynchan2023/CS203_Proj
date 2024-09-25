@@ -139,7 +139,7 @@ const PlayerListAdmin = () => {
                                         {/* <td>{tournament.status}</td>
                                         <td>{tournament.size}</td> */}
                                         <td style={{display:"flex", justifyContent:"flex-end"}}>
-                                            <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/user/edit/${user.id}`}>Edit</Link>
+                                            <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/${id}/edit/${user.id}`}>Edit</Link>
                                             <button className="btn btn-outline-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={() => deleteUser(user.id)}>Delete</button>
                                         </td>
                                     </tr>

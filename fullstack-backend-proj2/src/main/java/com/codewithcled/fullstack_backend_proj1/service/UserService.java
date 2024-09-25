@@ -1,5 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
@@ -22,6 +23,7 @@ public interface UserService {
     public User findUserById(String userId) ;
 
     public List<User> findAllUsers();
+    public List<UserDTO> findAllUsersDTO();
 
     public User loadByUsername(String username);
 

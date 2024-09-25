@@ -65,7 +65,7 @@ public class TournamentServiceImplementation implements TournamentService{
         // Check if the user is in the participant list before attempting to remove
         if (currentTournament.getParticipants().contains(userId)) {
             currentTournament.removeParticipant(user);  // Remove the user
-            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+            currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
         } else {
             throw new Exception("User is not participating in the tournament");
         }
