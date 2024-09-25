@@ -19,7 +19,7 @@ public class UserDTO {
         return id;
     }
 
-    public String getUserName(){
+    public String getUsername(){
         return username;
     }
 

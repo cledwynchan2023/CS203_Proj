@@ -3,10 +3,13 @@ package com.codewithcled.fullstack_backend_proj1.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 
@@ -20,7 +23,8 @@ public class User {
     private String email;
     private String role = "ROLE_USER";
     private Integer elo = 0;
-
+    @LastModifiedDate
+    private LocalDateTime lastModified;
 //    public List<Tournament> getTournamentsParticipated() {
 //        return tournamentsParticipated;
 //    }
@@ -121,6 +125,15 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, username);
     }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
 
    
 }

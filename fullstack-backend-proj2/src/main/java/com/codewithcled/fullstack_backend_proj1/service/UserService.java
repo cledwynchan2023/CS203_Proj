@@ -24,7 +24,7 @@ public interface UserService {
 
     public List<User> findAllUsers();
     public List<UserDTO> findAllUsersDTO();
-
+    public List<UserDTO> getUserChanges();
     public User loadByUsername(String username);
 
     public AuthResponse createUser(User user) throws Exception;

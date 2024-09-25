@@ -2,13 +2,13 @@ import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../admin/Register.css';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
 
 export default function PlayerListAdminCreate() {
     let navigate=useNavigate();
-
+    const {id} = useParams();
     const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER", elo:0});
     const{username, password, email, confirmPassword, role, elo} = user;
     
@@ -82,11 +82,11 @@ export default function PlayerListAdminCreate() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/admin/signup/user", userData);
+            const response = await axios.post("http://localhost:8080/login/signup", userData);
     
             if (response.status === 201){
                 alert("User registered successfully!");
-                navigate("/admin/playerlist");
+                navigate(`/admin/${id}/playerlist`);
             }
             console.log("hello");
         } 

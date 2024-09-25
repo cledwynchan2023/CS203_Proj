@@ -18,6 +18,28 @@ const PlayerListAdmin = () => {
         //     localStorage.removeItem(key);
         // });
     };
+    const initSSE = () => {
+        const eventSource = new EventSource('http://localhost:8080/update/sse/users');
+
+        eventSource.onmessage = (event) => {
+            const users = JSON.parse(event.data);
+            console.log(users);
+            const filteredUsers = users
+                .filter(user => user.role === 'ROLE_USER')
+                .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
+            setUser(filteredUsers);
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("SSE failure:", error);
+            setError("Loading...");
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    };
 
     const deleteUser = async (user_id) => {
         try {
@@ -66,12 +88,7 @@ const PlayerListAdmin = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/admin/users', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setData(response.data);
+                initSSE();
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -82,10 +99,7 @@ const PlayerListAdmin = () => {
                 }
             }
         };
-
         fetchData();
-        
-        loadUsers();
 
     }, []);
 
@@ -107,12 +121,12 @@ const PlayerListAdmin = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            {data ? (
+          
                 <div className="">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Player List</h1>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to="/admin/playerlist/create">Create</Link>
+                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to={`/admin/${id}/playerlist/create`}>Create</Link>
                         </div>
                     </div>
                     <div className="container">
@@ -148,9 +162,7 @@ const PlayerListAdmin = () => {
                         </table>
                     </div>
                 </div>
-            ) : (
-                <div>Loading...</div>
-            )}
+            
         </div>
     );
 };

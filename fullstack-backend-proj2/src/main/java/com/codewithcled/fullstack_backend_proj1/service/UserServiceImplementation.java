@@ -21,7 +21,7 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,11 +40,20 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    private LocalDateTime lastChangeTimestamp = LocalDateTime.now();
+
     public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository=userRepository;
     }
 
-
+    @Override
+    public List<UserDTO> getUserChanges() {
+       List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
+        lastChangeTimestamp = LocalDateTime.now(); // Update the timestamp
+        return changes.stream()
+                .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
+                .collect(Collectors.toList());
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);

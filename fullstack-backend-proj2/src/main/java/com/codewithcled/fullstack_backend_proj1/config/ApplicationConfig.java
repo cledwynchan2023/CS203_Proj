@@ -28,7 +28,7 @@ public class ApplicationConfig {
                 .authorizeRequests(
                         authorize -> authorize
                             .requestMatchers("/login/**").permitAll()
-            
+                            .requestMatchers("/update/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/user/**").hasRole("USER") 
                                 // .requestMatchers("/api/**").authenticated()

@@ -70,7 +70,7 @@ function App() {
           <PlayerListAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/playerlist/create" element={
+        <Route exact path ="/admin/:id/playerlist/create" element={
           <>
           <AdminNavbar></AdminNavbar>
           <PlayerListAdminCreate/>
