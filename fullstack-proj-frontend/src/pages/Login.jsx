@@ -24,7 +24,7 @@ function Login() {
 				return; 
 			} 
             
-			const response = await axios.post('http://localhost:8080/auth/signin', { username, password }); 
+			const response = await axios.post('http://localhost:8080/admin/signin', { username, password }); 
 			
 			
 			
@@ -42,9 +42,9 @@ function Login() {
 			const userRole = decodedToken.authorities;
 			console.log(userRole + " HELLO");
 			
-			if (userRole == "admin"){
+			if (userRole == "ROLE_ADMIN"){
 				navigate("/admin/tournament");
-			} else if (userRole=="user"){
+			} else if (userRole=="ROLE_USER"){
 				navigate(`/user/${userId}/tournament`);
 			}
 			

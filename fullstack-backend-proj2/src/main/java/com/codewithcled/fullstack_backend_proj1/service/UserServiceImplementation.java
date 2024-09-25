@@ -100,6 +100,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         String password = user.getPassword();
         String email = user.getEmail();
         String role = user.getRole();
+        Integer elo = user.getElo();
 
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {
@@ -117,6 +118,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(email);
         createdUser.setRole(role);
         createdUser.setPassword(passwordEncoder.encode(password));
+        createdUser.setElo(elo);
 
         User savedUser = userRepository.save(createdUser);
         userRepository.save(savedUser);

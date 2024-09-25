@@ -6,20 +6,14 @@ import Modal from '../layout/Modal';
 
 export default function Register() {
     let navigate=useNavigate();
-    const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"user"});
+    const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER"});
     const{username, password, email, confirmPassword, role} = user;
     
 
     
     const onInputChange=(e)=>{
         setUser({...user, [e.target.name]:e.target.value});
-        if (e.target.name === "username") {
-            checkUsernameAvailability(e.target.value);
-        }
-
-        if (e.target.name === "email") {
-            checkEmailAvailability(e.target.value);
-        }
+       
     }
    
     
@@ -42,27 +36,11 @@ export default function Register() {
         }
     };
 
-    // const checkUsernameAvailability = async (username) => {
-    //     try {
-    //         const response = await axios.get(`http://localhost:8080/auth/check-username?username=${username}`);
-    //         setUsernameTaken(response.data.exists);
-    //     } catch (error) {
-    //         console.error('Error checking username availability', error);
-    //     }
-    // };
-
-    // const checkEmailAvailability = async (email) => {
-    //     try {
-    //         const response = await axios.get(`http://localhost:8080/auth/check-email?email=${email}`);
-    //         setEmailTaken(response.data.exists);
-    //     } catch (error) {
-    //         console.error('Error checking email availability', error);
-    //     }
-    // };
+    
 
     const validateAdminToken = async (token) => {
         try {
-          const response = await axios.post('http://localhost:8080/auth/validate-admin-token', { token });
+          const response = await axios.post('http://localhost:8080/admin/signin/validate-admin-token', { token });
           console.log(response.data.valid);
           return response.data.valid;
         } catch (error) {
@@ -122,7 +100,7 @@ export default function Register() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/user", userData);
+            const response = await axios.post("http://localhost:8080/admin/signup/user", userData);
     
             if (response.status === 201){
                 alert("User registered successfully!");
@@ -203,8 +181,8 @@ export default function Register() {
                             onChange={(e) => onInputChange(e)}
                             name="role"
                         >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
+                            <option value="ROLE_USER">User</option>
+                            <option value="ROLE_ADMIN">Admin</option>
                         </select>
                         <label htmlFor="Role">Role</label>
                 </div>

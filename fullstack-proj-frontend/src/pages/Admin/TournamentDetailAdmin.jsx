@@ -19,7 +19,10 @@ const TournamentDetailAdmin = () => {
         //     localStorage.removeItem(key);
         // });
     };
-
+    const loadTournaments= async()=>{
+        const result = await axios.get(`http://localhost:8080/auth/tournament/${id}`);
+        setTournament(result.data);
+    };
     const deleteTournament = async (id) => {
         try {
             if (user.length > 0) {
@@ -31,6 +34,7 @@ const TournamentDetailAdmin = () => {
             if (response.status === 200){
                 alert("Tournament Deleted Successfully");
                 loadTournaments();
+                Navigate('/admin/tournament');
             }
             
         } catch (error) {
@@ -67,7 +71,7 @@ const TournamentDetailAdmin = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -116,12 +120,9 @@ const TournamentDetailAdmin = () => {
         return <div>{error}</div>;
     }
 
-    const loadTournaments= async()=>{
-        const result = await axios.get(`http://localhost:8080/auth/tournament/${id}`);
-        setTournament(result.data);
-    };
+   
     const loadUsers= async()=>{
-        
+        const token = localStorage.getItem('token');
         try {
             // Fetch the list of user IDs
             const userIds = await axios.get(`http://localhost:8080/auth/tournament/${id}/participant`);
@@ -129,7 +130,11 @@ const TournamentDetailAdmin = () => {
 
             // Fetch details for each user ID
             const userDetailsPromises = userIds.data.map(userId => 
-                axios.get(`http://localhost:8080/auth/user/${userId}`)
+                axios.get(`http://localhost:8080/admin/user/id/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             );
             console.log(userDetailsPromises);
             const userDetailsResponses = await Promise.all(userDetailsPromises);

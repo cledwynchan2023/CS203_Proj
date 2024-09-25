@@ -17,6 +17,7 @@ public class JwtProvider {
 
     public static String generateToken(Authentication auth, Long userId) {
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+        System.out.println("Authorities: " + authorities);
         String roles = populateAuthorities(authorities);
 
         String jwt = Jwts.builder()

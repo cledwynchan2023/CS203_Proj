@@ -8,9 +8,9 @@ const TournamentAdmin = () => {
     const navigate = useNavigate();
     const[tournament,setTournament]=useState([]);
     const[pastTournament, setPastTournament]=useState([]);
-    const [data, setData] = useState(null);
+    const [data, setData] = useState('');
     const [error, setError] = useState(null);
-    const { id } = useParams();
+
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
@@ -21,16 +21,20 @@ const TournamentAdmin = () => {
         // });
     };
 
-    const deleteTournament = async (id) => {
+    const deleteTournament = async (tournament_id) => {
         try {
-            if (tournament.participants.length > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
-            }
-            await axios.delete(`http://localhost:8080/auth/tournament/${id}`);
+            
+            
+            const response = await axios.delete(`http://localhost:8080/auth/tournament/${tournament_id}`);
             // Refresh the tournament list after deletion
-            loadTournaments();
+            if (response.status === 200){
+                alert("Tournament Deleted Successfully");
+                loadTournaments();
+                
+            }
+            
         } catch (error) {
+            console.log(error);
             setError('An error occurred while deleting the tournament.');
         }
     };
@@ -46,7 +50,7 @@ const TournamentAdmin = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -94,15 +98,19 @@ const TournamentAdmin = () => {
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/auth/tournaments");
-        const filteredTournament = result.data
-                .filter(tournament => tournament.status === 'active');
-            setTournament(filteredTournament);
+  
+        const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
+        console.log(filteredTournament);
+        setTournament(filteredTournament);
+        
+
         
     };
 
     const loadPastTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/auth/tournaments");
-        const filteredPastTournament = result.data
+  
+        const filteredPastTournament = result.data.tournaments
                 .filter(tournament => tournament.status === 'inactive');
             setPastTournament(filteredPastTournament);
     };
@@ -112,7 +120,7 @@ const TournamentAdmin = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            {data ? (
+           
                 <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Tournament</h1>
@@ -169,9 +177,7 @@ const TournamentAdmin = () => {
                     </div>
                     </div>
                 
-            ) : (
-                <div>Loading...</div>
-            )}
+           
         </div>
     );
 };

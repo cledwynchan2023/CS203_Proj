@@ -9,8 +9,9 @@ import { jwtDecode } from 'jwt-decode';
 export default function PlayerListAdminCreate() {
     let navigate=useNavigate();
 
-    const [user,setUser] = useState({id:"", username:"", elo:0});
-    const{id, username, elo} = user;
+    const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER", elo:0});
+    const{username, password, email, confirmPassword, role, elo} = user;
+    
     const [usernameTaken, setUsernameTaken] = useState(false);
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -22,7 +23,10 @@ export default function PlayerListAdminCreate() {
         // });
     };
 
-
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
     const onInputChange=(e)=>{
         setUser({...user, [e.target.name]:e.target.value});
         
@@ -45,7 +49,7 @@ export default function PlayerListAdminCreate() {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -54,21 +58,51 @@ export default function PlayerListAdminCreate() {
 
     const onSubmit= async (e)=>{
         e.preventDefault();
+        console.log(role);
         
+        if (!isValidEmail(email)) {
+            alert("Invalid email address");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        } else if (password.length <= 6){
+            alert("Password needs to be more than 6 characters");
+            return;
+        }
 
         const userData = {
             username,
+            password,
+            email,
+            role,
             elo
         };
 
         try {
-            await axios.post("http://localhost:8080/auth/user", userData);
-            navigate("/admin/playerlist");
-        } catch (error) {
-            console.error("There was an error registering the User!", error);
+            const response = await axios.post("http://localhost:8080/admin/signup/user", userData);
+    
+            if (response.status === 201){
+                alert("User registered successfully!");
+                navigate("/admin/playerlist");
+            }
+            console.log("hello");
+        } 
+        catch (error) {
+            if (error.response.status === 409) {
+                alert("Username or Email already taken.");
+                console.error( "Conflict: Username or Email already exists!");
+            } else {
+                console.error("There was an error registering the user!", error);
+            }
+            
         }
+
         
     }
+
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
@@ -98,32 +132,67 @@ export default function PlayerListAdminCreate() {
                 className="form-control form-control-lg"
                 id="floatingInput"
                 placeholder="name@example.com"
-                value={username}
+                value={email}
                 onChange={(e) =>onInputChange(e)}
-                name="username"
+                name="email"
               ></input>
-              <label htmlFor="username">Username</label>
+              <label htmlFor="Email">Email address</label>
             </div>
             
             <div className="form-floating mb-3">
               <input
-                type="number"
+                type="text"
                 className="form-control"
                 id="floatingUsername"
+                placeholder="Username"
+                value={username}
+                onChange={(e) =>onInputChange(e)}
+                name="username"
+              />
+              <label htmlFor="Username">Username</label>
+
+            </div>
+            <div className="form-floating">
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Password"
+                value={password}
+                onChange={(e) =>onInputChange(e)}
+                name="password"
+              />
+              <label htmlFor="Password">Password</label>
+            </div>
+            <div className="form-floating mt-3">
+              <input
+                type="password"
+                className="form-control"
+                id="floatingConfirmPassword"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={onInputChange}
+                name="confirmPassword"
+              />
+              <label htmlFor="PasswordConfirm">Confirm Your Password</label>
+            </div>
+                <div className="form-floating mb-3 mt-3">
+                <input
+                type="number"
+                className="form-control"
                 placeholder="elo"
                 value={elo}
                 onChange={(e) =>onInputChange(e)}
                 name="elo"
               />
-              <label htmlFor="elo">elo</label>
-
-            </div>
+               <label htmlFor="PasswordConfirm">Elo</label>
+                </div>
+            <button type="submit" className='btn btn-outline-primary mt-3'>Register</button>
             
-                
-            <button type="submit" className='btn btn-outline-primary mt-3'>Create User</button>
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/admin/tournament' id="returnrBtn">Cancel</Link>
+            <Link type="cancel" className='btn btn-outline-danger' to='/' id="returnrBtn">Cancel</Link>
+           
           </div>
+         
         </div>
       );
 }

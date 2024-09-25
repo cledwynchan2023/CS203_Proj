@@ -8,6 +8,7 @@ const RankingAdmin = () => {
     const[user,setUser]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
+    
     const { id } = useParams();
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -22,7 +23,11 @@ const RankingAdmin = () => {
     const deleteUser = async (id) => {
         try {
             
-            await axios.delete(`http://localhost:8080/auth/user/${id}`);
+            await axios.delete(`http://localhost:8080/auth/user/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             // Refresh the tournament list after deletion
             loadUsers();
         } catch (error) {
@@ -39,9 +44,7 @@ const RankingAdmin = () => {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -50,21 +53,28 @@ const RankingAdmin = () => {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
-            if (!token || isTokenExpired()|| !isAdminToken(token)) {
+
+            console.log(localStorage.getItem('token') +" hello");
+            console.log(!token);
+            console.log(isAdminToken(token));
+            console.log(isTokenExpired());
+            if (!token || isTokenExpired() || !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/auth/users', {
+                const result = await axios.get("http://localhost:8080/admin/users", {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
-                setData(response.data);
+                const filteredUsers = result.data
+                    .filter(user => user.role === 'ROLE_USER')
+                    .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
+               
+                setData(filteredUsers);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -75,10 +85,9 @@ const RankingAdmin = () => {
                 }
             }
         };
-
+        loadUsers()
         fetchData();
         
-        loadUsers();
 
     }, []);
 
@@ -87,10 +96,15 @@ const RankingAdmin = () => {
     }
 
     const loadUsers= async()=>{
+        const token = localStorage.getItem('token');
         try {
-            const result = await axios.get("http://localhost:8080/auth/users");
+            const result = await axios.get("http://localhost:8080/admin/users", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const filteredUsers = result.data
-                .filter(user => user.role === 'user')
+                .filter(user => user.role === 'ROLE_USER')
                 .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
             setUser(filteredUsers);
         } catch (error) {

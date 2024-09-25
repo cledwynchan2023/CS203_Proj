@@ -109,6 +109,7 @@ public class TournamentController {
             tournamentRepository.deleteById(id);
             return ResponseEntity.ok("Tournament with ID " + id + " has been deleted.");  // Return 200 OK with success message
         }  catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the tournament.");  // Return 500 Internal Server Error for other issues
         }
     }

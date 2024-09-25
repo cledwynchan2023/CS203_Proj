@@ -18,8 +18,8 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String email;
-    private String role = "user";
-    private Integer elo;
+    private String role = "ROLE_USER";
+    private Integer elo = 0;
 
 //    public List<Tournament> getTournamentsParticipated() {
 //        return tournamentsParticipated;

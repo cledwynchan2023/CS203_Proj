@@ -25,7 +25,7 @@ public class Tournament {
     private String status;
 
     private Integer size ;
-    private Integer currentSize = 0;
+    private Integer currentSize = participants.size();
 
     private Integer noOfRounds = 0;
 

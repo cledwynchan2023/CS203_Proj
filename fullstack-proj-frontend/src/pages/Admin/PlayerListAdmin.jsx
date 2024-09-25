@@ -19,10 +19,14 @@ const PlayerListAdmin = () => {
         // });
     };
 
-    const deleteUser = async (id) => {
+    const deleteUser = async (user_id) => {
         try {
-            
-            const response = await axios.delete(`http://localhost:8080/auth/user/${id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8080/admin/user/${user_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (response.status === 204){
                 alert("User Deleted Successfully");
                 loadUsers();
@@ -42,9 +46,9 @@ const PlayerListAdmin = () => {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            console.log("decoded token" + decodedToken);
+            console.log(decodedToken.authorities);
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -62,9 +66,9 @@ const PlayerListAdmin = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/auth/users', {
+                const response = await axios.get('http://localhost:8080/admin/users', {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 setData(response.data);
@@ -90,7 +94,12 @@ const PlayerListAdmin = () => {
     }
 
     const loadUsers= async()=>{
-        const result = await axios.get("http://localhost:8080/auth/users");
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:8080/admin/users', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
       
         
         setUser(result.data);

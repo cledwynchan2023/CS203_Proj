@@ -36,8 +36,8 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/auth")
-public class UserController {
+@RequestMapping("/admin")
+public class AdminController {
     @Autowired
     private TournamentRepository tournamentRepository;
     @Autowired
@@ -48,14 +48,14 @@ public class UserController {
     @Value("${admin.token}")
     private String adminToken;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
     @Autowired
     private UserServiceImplementation customUserDetails;
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/validate-admin-token")
+    @PostMapping("/signin/validate-admin-token")
     public ResponseEntity<?> validateAdminToken(@RequestBody TokenRequest tokenRequest) {
         if (adminToken.equals(tokenRequest.getToken())) {
             return ResponseEntity.ok(new TokenResponse(true));
@@ -92,7 +92,7 @@ public class UserController {
     }
 
     // Create User to Database
-    @PostMapping("/user")
+    @PostMapping("/signup/user")
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
 
         try {
@@ -124,7 +124,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if user not found
         }
         userRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
     }
 
 

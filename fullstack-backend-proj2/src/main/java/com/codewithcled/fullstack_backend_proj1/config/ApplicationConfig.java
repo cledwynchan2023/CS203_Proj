@@ -20,32 +20,18 @@ import java.util.Collections;
 
 @Configuration
 public class ApplicationConfig {
-//    @Bean
-//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeRequests(
-//                        authorize -> authorize
-//                                .requestMatchers("/api/**").authenticated()
-//                                .requestMatchers("/admin/**").authenticated()
-//
-//                                .requestMatchers("/user/**").authenticated()
-//                                .anyRequest().permitAll())
-//                .addFilterBefore(new JwtTokenValidator(), UsernamePasswordAuthenticationFilter.class)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Custom entry point
-//                );
-//        //.httpBasic(Customizer.withDefaults())
-//        //.formLogin(Customizer.withDefaults());
-//        return http.build();
-//    @SuppressWarnings("deprecation")
+
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(
-                        authorize -> authorize.requestMatchers("/admin/**").authenticated()  // Restrict access to ADMIN role
-                                .requestMatchers("/api/**").authenticated()
+                        authorize -> authorize.requestMatchers("/admin/signin/**").permitAll()
+                       .requestMatchers("/admin/signup/**").permitAll()
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers("/user/**").hasRole("USER") 
+                                // .requestMatchers("/api/**").authenticated()
+                                
                                 .anyRequest().permitAll())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
