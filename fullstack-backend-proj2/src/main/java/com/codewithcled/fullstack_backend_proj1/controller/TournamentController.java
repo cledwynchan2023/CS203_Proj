@@ -84,9 +84,21 @@ public class TournamentController {
     public ResponseEntity<Tournament> updateTournamentParticipant(@RequestParam("user_id") Long userId, @PathVariable("id") Long id) throws Exception {
         try {
             Tournament updatedTournament = tournamentService.updateUserParticipating(userId, id);
-            return ResponseEntity.ok(updatedTournament);  // Return 200 OK with the updated tournament
+            return new ResponseEntity<>(updatedTournament, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
+        }
+    }
+
+    @GetMapping("/tournaments/{id}")
+    public ResponseEntity<List<Tournament>> getTournamentWithNoCurrentUser (@PathVariable("id") Long id) throws Exception {
+        try {
+            List<Tournament> newList = tournamentService.getTournamentsWithNoCurrentUser(id);
+            System.out.println(newList);
+            return new ResponseEntity<>(newList, HttpStatus.OK);  // Return 200 OK with the updated tournament
+        } catch (Exception e) {
+            System.out.println("error " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
         }
     }
 
@@ -96,10 +108,10 @@ public class TournamentController {
             @PathVariable("id") Long id) {
         try {
             Tournament updatedTournament = tournamentService.removeUserParticipating(userId, id);
-            return ResponseEntity.ok(updatedTournament);  // Return 200 OK with the updated tournament
+            return new ResponseEntity<>(updatedTournament, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
             // Log the exception message for debugging
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST) ;  // Return 400 Bad Request for errors
         }
     }
 

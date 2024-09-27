@@ -6,9 +6,13 @@ import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TournamentServiceImplementation implements TournamentService{
@@ -61,7 +65,7 @@ public class TournamentServiceImplementation implements TournamentService{
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
-
+        System.out.println("deleting user");
         // Check if the user is in the participant list before attempting to remove
         if (currentTournament.getParticipants().contains(userId)) {
             currentTournament.removeParticipant(user);  // Remove the user
@@ -85,6 +89,31 @@ public class TournamentServiceImplementation implements TournamentService{
                     return tournamentRepository.save(tournament);  // Save and return the updated tournament
                 })
                 .orElseThrow(() -> new Exception("Tournament not found"));  // Throw exception if tournament does not exist
+    }
+    @Override
+    public List<Tournament> getTournamentsWithNoCurrentUser(Long userId) throws Exception {
+      
+            List<Tournament> list = getAllTournament();
+        //     System.out.println("list" + list);
+        //     
+            for (int i = 0; i < list.size(); i++) {
+                Tournament tournament = list.get(i);
+                 if (tournament.getParticipants().contains(userId)) {
+                   list.remove(tournament);
+                 }
+           }
+           
+           
+           
+           return Optional.ofNullable(list).orElseGet(ArrayList::new);
+    
+    }
+
+    @Override
+    public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
+        return tournamentRepository.findAll().stream()
+        .map(tournament -> new TournamentDTO(tournament.getId(),tournament.getTournament_name(),tournament.getParticipants(), tournament.getScoreboard(),tournament.getDate(),  tournament.getStatus(),tournament.getSize(), tournament.getCurrentSize(), tournament.getNoOfRounds(), tournament.getRounds()))
+        .collect(Collectors.toList());
     }
 
 

@@ -17,6 +17,7 @@ import TournamentDetailAdmin from './pages/Admin/TournamentDetailAdmin.jsx';
 import AddParticpant from './pages/Admin/AddParticpant.jsx';
 import RankingAdmin from './pages/Admin/RankingAdmin.jsx';
 import TournamentStartAdmin from './pages/Admin/TournamentStartAdmin.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 function App() {
 
@@ -107,6 +108,8 @@ function App() {
           <TournamentUser/>
           </>
         }></Route>
+
+        <Route path="*" element={<NotFound />} />
         </Routes>
        
       </Router>

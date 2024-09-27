@@ -56,6 +56,28 @@ const TournamentAdmin = () => {
             return false;
         }
     };
+    const initSSE = () => {
+        const eventSource = new EventSource('http://localhost:8080/update/sse/tournament');
+
+        eventSource.onmessage = (event) => {
+            const tournament = JSON.parse(event.data);
+            console.log(users);
+            
+            setUser(tournament);
+            setData(filteredUsers);
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("SSE failure:", error);
+            setError("Loading...");
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,7 +102,9 @@ const TournamentAdmin = () => {
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     alert('Your session has expired. Please login again.');
-                    window.location.href = '/'; // Redirect to login if token is invalid
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
                 } else {
                     setError('An error occurred while fetching data.');
                 }

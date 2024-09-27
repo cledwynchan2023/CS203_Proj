@@ -28,6 +28,7 @@ const PlayerListAdmin = () => {
                 .filter(user => user.role === 'ROLE_USER')
                 .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
             setUser(filteredUsers);
+            setData(filteredUsers);
         };
 
         eventSource.onerror = (error) => {
@@ -121,7 +122,7 @@ const PlayerListAdmin = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-          
+            {data ? (
                 <div className="">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Player List</h1>
@@ -162,7 +163,9 @@ const PlayerListAdmin = () => {
                         </table>
                     </div>
                 </div>
-            
+            ) : (
+                <div style={{display:"flex", justifyContent:"center", alignItems:"center", fontSize:"2rem", height:"80vh"}}>Loading...</div>
+            )}
         </div>
     );
 };

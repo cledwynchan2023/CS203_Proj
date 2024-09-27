@@ -22,10 +22,16 @@ const TournamentUser = () => {
         // });
     };
 
-    const joinTournament = (tournamentId) => {
+    const joinTournament = async (tournamentId) => {
         try {
-            const response = axios.put(`http://localhost:8080/auth/tournament/${tournamentId}/participant/add?user_id=${id}`);
-            const response1 = axios.put(`http://localhost:8080/auth/user/${id}/participating_tournament/add?tournament_id=${tournamentId}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:8080/auth/tournament/${tournamentId}/participant/add?user_id=${id}`);
+            const response1 = await axios.put(`http://localhost:8080/user/${id}/participating_tournament/add?tournament_id=${tournamentId}`,{}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log(response.status);
             if (response.status === 200 && response1.status === 200) {
                 alert("Joined Tournament Successfully");
                 loadCurrentTournaments();
@@ -35,11 +41,31 @@ const TournamentUser = () => {
             if (error.response && error.response.status === 401) {
                 alert("Error Joining Tournament");
                 error('An error occurred while joining the tournament.');
-            }
-            
-        }
-            
+            }  
+        } 
     }
+    const leaveTournament = async (tournament_id) => {
+        try {
+            const token = localStorage.getItem('token');
+            console.log(tournament_id);
+            const response = await axios.put(`http://localhost:8080/auth/tournament/${tournament_id}/participant/delete?user_id=${id}`);
+            const response1 = await axios.put(`http://localhost:8080/user/${id}/participating_tournament/remove?tournament_id=${tournament_id}`,{}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.status === 200 && response1.status === 200) {
+                alert("Leave Tournament Successfully");
+                loadCurrentTournaments();
+                loadTournament();
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                alert("Error Joining Tournament");
+                error('An error occurred while joining the tournament.');
+            }  
+        } 
+    };
 
 
     const isTokenExpired = () => {
@@ -76,7 +102,8 @@ const TournamentUser = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setData(response.data);
+            
+                //setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -100,7 +127,12 @@ const TournamentUser = () => {
     }
 
     const loadCurrentTournaments= async()=>{
-        const result = await axios.get(`http://localhost:8080/auth/user/${id}/participating_tournament/current`);
+        const token = localStorage.getItem('token');
+        const result = await axios.get(`http://localhost:8080/user/${id}/participating_tournament/current`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         const filteredTournament = result.data
                 .filter(tournament => tournament.status === 'active');
             setCurrentTournament(filteredTournament);
@@ -108,8 +140,9 @@ const TournamentUser = () => {
     };
 
     const loadTournament = async () => {
-      const result = await axios.get(`http://localhost:8080/auth/tournaments`);
+      const result = await axios.get(`http://localhost:8080/auth/tournaments/${id}`);
       const filteredTournament = result.data.filter(tournament => !tournament.participants.includes(id));
+      console.log(result);
       setTournament(filteredTournament);
     };
 
@@ -124,17 +157,15 @@ const TournamentUser = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            {data ? (
-                <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+            {/* {data ? ( */}
+                <div >
+                    <div style={{ width:"100vh", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Tournament</h1>
-                        <div style={{ gap: '5px' }}>
-                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to="/admin/tournament/create">Create</Link>
-                        </div>
                     </div>
-                    <div style={{display:"flex"}}>
-                    <div className="border rounded" style={{margin:"4%", width:"100%", minWidth:"400px", height:"80vh", overflowY:"auto"}}>
+                    <div style={{}}>
+                    <div style={{paddingTop:"5px",width:"95%"}}>
+                    <div className="border rounded" style={{margin:"4%", width:"100%", minWidth:"400px", height:"40vh", overflowY:"auto"}}>
                         <h1 style={{margin:"5%", textAlign:"center"}}>Joined Tournaments</h1>
                     <div className="table-responsive" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding:"3%"}}>
     
@@ -142,11 +173,10 @@ const TournamentUser = () => {
                             
                             <thead className="thead-dark">
                                 <tr>
-                                    <th scope="col">#</th>
+                                
                                     <th scope="col">ID</th>
                                     <th scope="col">Tournament Name</th>
                                     <th scope="col">Date</th>
-                                    <th scope="col">Status</th>
                                     <th scope="col">size</th>
                                 </tr>
                             </thead>
@@ -155,17 +185,16 @@ const TournamentUser = () => {
                                 {   currentTournament.map((currentTournament, index) =>
                                 
                                     <tr key={currentTournament.id} onClick={() => handleRowClick(currentTournament.id)}>
-                                        <th scope="row"> {index + 1}</th>
+                                       
                                         <td>{currentTournament.id}</td>
                                         <td>{currentTournament.tournament_name}</td>
                                         <td>{currentTournament.date}</td>
-                                        <td>{currentTournament.status}</td>
                                         <td>{currentTournament.currentSize}  / {currentTournament.size}</td>
                                         <td>
-                                            <Link className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/tournament/edit/${tournament.id}`}onClick={(event) => event.stopPropagation()}>Edit</Link>
-                                            <button className="btn btn-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={(event) => {deleteTournament(tournament.id);
+
+                                            <button className="btn btn-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={(event) => {leaveTournament(currentTournament.id);
                                             event.stopPropagation();
-                                            }}>Delete</button>
+                                            }}>Leave</button>
                                         </td>
                                     </tr>
                                     
@@ -178,7 +207,7 @@ const TournamentUser = () => {
                     </div>
                     </div>
                     
-                    <div style={{display:"flex"}}>
+                    <div style={{width:"95%"}}>
                     <div className="border rounded" style={{margin:"4%", width:"100%", minWidth:"400px", height:"80vh", overflowY:"auto"}}>
                         <h1 style={{margin:"5%", textAlign:"center"}}>Available Tournaments</h1>
                     <div className="table-responsive" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding:"3%"}}>
@@ -207,10 +236,8 @@ const TournamentUser = () => {
                                         <td>{tournament.status}</td>
                                         <td>{tournament.currentSize}  / {tournament.size}</td>
                                         <td>
-                                            <button className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} onClick={joinTournament(tournament.id)}>Join</button>
-                                            <button className="btn btn-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={(event) => {
-                                           
-                                            }}>View</button>
+                                            <button className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} onClick={(event) => {joinTournament(tournament.id); event.stopPropagation();}}>Join</button>
+                                            
                                         </td>
                                     </tr>
                                     
@@ -223,13 +250,14 @@ const TournamentUser = () => {
                     </div>
                     </div>
                     </div>
+                    </div>
                     
 
                     
                 
-            ) : (
+            {/* ) : (
                 <div>Loading...</div>
-            )}
+            )} */}
         </div>
     );
 };
