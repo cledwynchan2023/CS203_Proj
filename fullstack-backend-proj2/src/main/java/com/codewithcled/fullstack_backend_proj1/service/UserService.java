@@ -35,7 +35,7 @@ public interface UserService {
 
     public Optional<User> updateUser(Long id, User newUser);
 
-    public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception;
+    // public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception;
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception;
 
     // public List<Tournament> getUserCurrentParticipatingTournament(Long id);

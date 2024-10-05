@@ -8,13 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
-import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
-import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class TournamentServiceImplementation implements TournamentService{
@@ -73,27 +71,37 @@ public class TournamentServiceImplementation implements TournamentService{
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
-        System.out.println("deleting user");
-        // Check if the user is in the participant list before attempting to remove
-        if (currentTournament.getParticipants().contains(userId)) {
-            currentTournament.removeParticipant(user);  // Remove the user
-            currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
+                
+        if (user.getCurrentTournaments().contains(currentTournament)) {
+            
+            user.removeCurrentTournament(currentTournament);
+            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+            userRepository.save(user);
         } else {
+
             throw new Exception("User is not participating in the tournament");
         }
-
         return tournamentRepository.save(currentTournament);  // Save and return the updated tournament
     }
     @Override
-    public Tournament updateTournament(Long id, Tournament newTournament) throws Exception {
+    public Tournament updateTournament(Long id, CreateTournamentRequest newTournament) throws Exception {
         return tournamentRepository.findById(id)
                 .map(tournament -> {
-                    tournament.setTournament_name(newTournament.getTournament_name());
-                    tournament.setDate(newTournament.getDate());
-                    tournament.setSize(newTournament.getSize());
-                    tournament.setActive(newTournament.getStatus());
-                    tournament.setNoOfRounds(newTournament.getNoOfRounds());
-                    tournament.setParticipants(newTournament.getParticipants());
+                    if (newTournament.getTournament_name() != null) {
+                        tournament.setTournament_name(newTournament.getTournament_name());
+                    }
+                    if (newTournament.getDate() != null) {
+                        tournament.setDate(newTournament.getDate());
+                    }
+                    if (newTournament.getSize() != null) {
+                        tournament.setSize(newTournament.getSize());
+                    }
+                    if (newTournament.getStatus() != null) {
+                        tournament.setActive(newTournament.getStatus());
+                    }
+                    if (newTournament.getNoOfRounds() != null) {
+                        tournament.setNoOfRounds(newTournament.getNoOfRounds());
+                    }
                     return tournamentRepository.save(tournament);  // Save and return the updated tournament
                 })
                 .orElseThrow(() -> new Exception("Tournament not found"));  // Throw exception if tournament does not exist
@@ -102,16 +110,15 @@ public class TournamentServiceImplementation implements TournamentService{
     public List<Tournament> getTournamentsWithNoCurrentUser(Long userId) throws Exception {
       
             List<Tournament> list = getAllTournament();
-        //     System.out.println("list" + list);
-        //     
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("User not found"));
+
             for (int i = 0; i < list.size(); i++) {
                 Tournament tournament = list.get(i);
-                 if (tournament.getParticipants().contains(userId)) {
+                 if (tournament.getParticipants().contains(user)) {
                    list.remove(tournament);
                  }
            }
-           
-           
            
            return Optional.ofNullable(list).orElseGet(ArrayList::new);
     

@@ -42,8 +42,6 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    private LocalDateTime lastChangeTimestamp = LocalDateTime.now();
-
     public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository=userRepository;
     }
@@ -182,17 +180,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 });
     }
 
-    @Override
-    public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception {
-        Tournament currentTournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new Exception("Tournament not found"));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
-
-        user.removeCurrentTournament(currentTournament);  // Remove the tournament from the user
-        return userRepository.save(user);  // Save and return the updated user
-    }
+   
     @Override
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
@@ -226,21 +214,6 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     }
 
-
-    // @Override
-    // public List<Tournament> getUserCurrentParticipatingTournament(Long id) {
-    //     List<Long> tournamentIds = userRepository.findById(id)
-    //             .map(User::getTournamentsParticipating)
-    //             .orElse(new ArrayList<>());
-    //     List<Tournament> tournaments = new ArrayList<>();
-    //     for (Long tournamentId : tournamentIds) {
-    //         Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
-    //         if (tournament != null) {
-    //             tournaments.add(tournament);
-    //         }
-    //     }
-    //     return tournaments;
-    // }
 }
 
 

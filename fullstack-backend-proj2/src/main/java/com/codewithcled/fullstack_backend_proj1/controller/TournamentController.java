@@ -1,46 +1,38 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
-
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
-import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
-import com.codewithcled.fullstack_backend_proj1.service.TournamentServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+
+/*
+ * Tournament Controller
+ * Authorisation includes:
+ * - Get all Tournaments
+ * - Get Tournament by ID
+ * - Get tounrament participants
+ */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/t")
 public class TournamentController {
-    @Autowired
-    private UserRepository userRepository;
+
     @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
     private TournamentService tournamentService;
-
-    @PostMapping("/tournament")
-    public ResponseEntity<Tournament> createTournament(@RequestBody CreateTournamentRequest tournament) {
-        
-        Tournament createdTournament;
-        try {
-            createdTournament = tournamentService.createTournament(tournament);
-        } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
-        }
-        return new ResponseEntity<>(createdTournament, HttpStatus.CREATED);  // Return 201 Created with the new tournament
-    }
 
     @GetMapping("/tournaments")
     public ResponseEntity<List<TournamentDTO>> getAllTournaments() {
@@ -52,7 +44,7 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
 
-    @GetMapping("/tournament/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<TournamentDTO> getTournamentById(@PathVariable("id") Long id) {
         return tournamentRepository.findById(id)
                 .map(tournament -> ResponseEntity.ok(TournamentMapper.toDTO(tournament)))
@@ -78,12 +70,12 @@ public class TournamentController {
     }
 
 
-    @GetMapping("/tournament/{id}/participant")
-    public ResponseEntity<List<User>> getTournamentParticipants(@PathVariable("id") Long id) {
+    @GetMapping("/{id}/participant")
+    public ResponseEntity<List<UserDTO>> getTournamentParticipants(@PathVariable("id") Long id) {
         try {
             List<User> participants = tournamentService.getTournamentParticipants(id);
-
-            return ResponseEntity.ok(participants);  // Return 200 OK with the list of participants
+            List<UserDTO> participantDTOs = UserMapper.toDTOList(participants);
+            return ResponseEntity.ok(participantDTOs);  // Return 200 OK with the list of UserDTOs
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if tournament not found
         } catch (Exception e) {
@@ -91,22 +83,23 @@ public class TournamentController {
         }
     }
 
-    @PutMapping("/tournament/{id}/participant/add")
-    public ResponseEntity<Tournament> updateTournamentParticipant(@RequestParam("user_id") Long userId, @PathVariable("id") Long id) throws Exception {
+    @PutMapping("/{id}/participant/add")
+    public ResponseEntity<TournamentDTO> updateTournamentParticipant(@RequestParam("user_id") Long userId, @PathVariable("id") Long id) throws Exception {
         try {
             Tournament updatedTournament = tournamentService.updateUserParticipating(userId, id);
-            return new ResponseEntity<>(updatedTournament, HttpStatus.OK);  // Return 200 OK with the updated tournament
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            return new ResponseEntity<>(tournamentDTO, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
         }
     }
 
     @GetMapping("/tournaments/{id}")
-    public ResponseEntity<List<Tournament>> getTournamentWithNoCurrentUser (@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<List<TournamentDTO>> getTournamentWithNoCurrentUser(@PathVariable("id") Long id) throws Exception {
         try {
-            List<Tournament> newList = tournamentService.getTournamentsWithNoCurrentUser(id);
-            System.out.println(newList);
-            return new ResponseEntity<>(newList, HttpStatus.OK);  // Return 200 OK with the updated tournament
+            List<Tournament> tournaments = tournamentService.getTournamentsWithNoCurrentUser(id);
+            List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+            return new ResponseEntity<>(tournamentDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
             System.out.println("error " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
@@ -114,12 +107,14 @@ public class TournamentController {
     }
 
     @PutMapping("/tournament/{id}/participant/delete")
-    public ResponseEntity<Tournament> removeParticipant(
+    public ResponseEntity<TournamentDTO> removeParticipant(
             @RequestParam("user_id") Long userId,
             @PathVariable("id") Long id) {
         try {
+            System.out.println("removing");
             Tournament updatedTournament = tournamentService.removeUserParticipating(userId, id);
-            return new ResponseEntity<>(updatedTournament, HttpStatus.OK);  // Return 200 OK with the updated tournament
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            return new ResponseEntity<>(tournamentDTO, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
             // Log the exception message for debugging
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST) ;  // Return 400 Bad Request for errors
@@ -138,10 +133,11 @@ public class TournamentController {
     }
 
     @PutMapping("/tournament/{id}")
-    public ResponseEntity<Tournament> updateTournament(@RequestBody Tournament newTournament, @PathVariable("id") Long id) {
+    public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament, @PathVariable("id") Long id) {
         try {
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
-            return ResponseEntity.ok(updatedTournament);  // Return 200 OK with the updated tournament
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors

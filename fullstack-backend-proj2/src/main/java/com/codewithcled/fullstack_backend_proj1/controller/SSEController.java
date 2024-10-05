@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
-
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
 import reactor.core.publisher.Flux;
 import java.util.List;
 import java.time.Duration;
-import java.util.Collections;
+
 
 @RestController
 @RequestMapping("/update")

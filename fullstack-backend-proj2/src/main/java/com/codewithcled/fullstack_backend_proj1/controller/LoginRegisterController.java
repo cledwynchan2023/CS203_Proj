@@ -1,59 +1,23 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
-
-import com.nimbusds.oauth2.sdk.Response;
-import com.nimbusds.oauth2.sdk.TokenResponse;
 import org.springframework.beans.factory.annotation.Value;
-import com.codewithcled.fullstack_backend_proj1.model.Tournament;
-import com.codewithcled.fullstack_backend_proj1.model.User;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
-import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
-import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
-import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
-
-import java.util.Optional;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.codewithcled.fullstack_backend_proj1.DTO.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/auth")
 public class LoginRegisterController {
-    
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
 
     @Value("${admin.token}")
     private String adminToken;
-
-    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
-    @Autowired
-    private UserServiceImplementation customUserDetails;
 
     @Autowired
     private UserService userService;
@@ -120,30 +84,5 @@ public class LoginRegisterController {
     }
    
 
-
-    private Authentication authenticate(String username, String password) {
-
-        System.out.println(username+"---++----"+password);
-
-        UserDetails userDetails = customUserDetails.loadUserByUsername(username);
-
-        System.out.println("Sign in in user details"+ userDetails);
-
-
-        if(userDetails == null) {
-            System.out.println("Sign in details - null" + userDetails);
-
-            throw new BadCredentialsException("Invalid username and password");
-        }
-        if(!passwordEncoder.matches(password,userDetails.getPassword())) {
-            System.out.println("Sign in userDetails - password mismatch"+userDetails);
-
-            throw new BadCredentialsException("Invalid password");
-
-        }
-        System.out.println("HI " + userDetails.getAuthorities());
-        return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-
-    }
 }
 

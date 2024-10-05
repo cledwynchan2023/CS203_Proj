@@ -24,7 +24,7 @@ function Login() {
 				return; 
 			} 
             
-			const response = await axios.post('http://localhost:8080/login/signin', { username, password }); 
+			const response = await axios.post('http://localhost:8080/auth/signin', { username, password }); 
 	
 			const token = response.data.jwt; 
 			localStorage.setItem('token', token);
