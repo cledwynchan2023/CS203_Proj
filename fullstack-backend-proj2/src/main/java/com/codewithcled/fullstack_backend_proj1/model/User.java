@@ -23,24 +23,6 @@ public class User {
     private String email;
     private String role = "ROLE_USER";
     private Integer elo = 0;
-    @LastModifiedDate
-    private LocalDateTime lastModified;
-//    public List<Tournament> getTournamentsParticipated() {
-//        return tournamentsParticipated;
-//    }
-//
-//
-//    public void setTournamentsParticipated(List<Tournament> tournamentsParticipated) {
-//        this.tournamentsParticipated = tournamentsParticipated;
-//    }
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "user_tournament", // Join table name
-//            joinColumns = @JoinColumn(name = "user_id"), // Column for user
-//            inverseJoinColumns = @JoinColumn(name = "tournament_id") // Column for tournament
-//    )
-//    private List<Tournament> tournamentsParticipated = new ArrayList<>();
 
     @ElementCollection
     private List<Long> tournamentsParticipating = new ArrayList();
@@ -126,13 +108,6 @@ public class User {
         return Objects.hash(id, username);
     }
 
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(LocalDateTime lastModified) {
-        this.lastModified = lastModified;
-    }
 
 
    
