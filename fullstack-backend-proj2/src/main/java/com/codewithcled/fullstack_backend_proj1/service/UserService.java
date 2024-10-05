@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
@@ -24,19 +26,19 @@ public interface UserService {
 
     public List<User> findAllUsers();
     public List<UserDTO> findAllUsersDTO();
-    public List<UserDTO> getUserChanges();
+    // public List<UserDTO> getUserChanges();
     public User loadByUsername(String username);
 
-    public AuthResponse createUser(User user) throws Exception;
+    public AuthResponse createUser(SignUpRequest user) throws Exception;
 
-    public AuthResponse signInUser(User loginRequest);
+    public AuthResponse signInUser(SignInRequest loginRequest);
 
     public Optional<User> updateUser(Long id, User newUser);
 
     public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception;
-    public List<Long> getUserParticipatingTournaments(Long userId) throws Exception;
+    public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception;
 
-    public List<Tournament> getUserCurrentParticipatingTournament(Long id);
+    // public List<Tournament> getUserCurrentParticipatingTournament(Long id);
 
 
 }

@@ -1,6 +1,9 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
 
+import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
@@ -27,25 +30,33 @@ public class TournamentController {
     private TournamentService tournamentService;
 
     @PostMapping("/tournament")
-    public ResponseEntity<Tournament> createTournament(@RequestBody Tournament tournament) {
-        Tournament createdTournament =  tournamentRepository.save(tournament);
+    public ResponseEntity<Tournament> createTournament(@RequestBody CreateTournamentRequest tournament) {
+        
+        Tournament createdTournament;
+        try {
+            createdTournament = tournamentService.createTournament(tournament);
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
+        }
         return new ResponseEntity<>(createdTournament, HttpStatus.CREATED);  // Return 201 Created with the new tournament
     }
 
     @GetMapping("/tournaments")
-    public ResponseEntity<List<Tournament>> getAllTournaments() {
+    public ResponseEntity<List<TournamentDTO>> getAllTournaments() {
         List<Tournament> tournaments = tournamentRepository.findAll();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
-        return ResponseEntity.ok(tournaments);  // Return 200 OK with the list of users
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
 
     @GetMapping("/tournament/{id}")
-    public ResponseEntity<Tournament> getTournamentById(@PathVariable("id") Long id) {
+    public ResponseEntity<TournamentDTO> getTournamentById(@PathVariable("id") Long id) {
         return tournamentRepository.findById(id)
-                .map(tournament -> ResponseEntity.ok(tournament))  // Return 200 OK with the user
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+                .map(tournament -> ResponseEntity.ok(TournamentMapper.toDTO(tournament)))
+                .orElse(ResponseEntity.notFound().build());  // Return 404 Not Found if the tournament is not found
     }
 
     @PostMapping("/tournament/{id}/round")
@@ -68,9 +79,9 @@ public class TournamentController {
 
 
     @GetMapping("/tournament/{id}/participant")
-    public ResponseEntity<List<Long>> getTournamentParticipants(@PathVariable("id") Long id) {
+    public ResponseEntity<List<User>> getTournamentParticipants(@PathVariable("id") Long id) {
         try {
-            List<Long> participants = tournamentService.getTournamentParticipants(id);
+            List<User> participants = tournamentService.getTournamentParticipants(id);
 
             return ResponseEntity.ok(participants);  // Return 200 OK with the list of participants
         } catch (RuntimeException e) {

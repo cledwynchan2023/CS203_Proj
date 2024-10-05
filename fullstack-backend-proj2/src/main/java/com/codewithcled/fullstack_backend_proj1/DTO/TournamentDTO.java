@@ -3,76 +3,80 @@ package com.codewithcled.fullstack_backend_proj1.DTO;
 
 import java.util.*;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
-
+import java.util.List;
 
 public class TournamentDTO {
-
-
     private Long id;
-    private String tournament_name;
-    private List<Long> participants;
-    private Map<Long, Integer> scoreboard;
+    private String tournamentName;
     private String date;
     private String status;
-    private Integer size ;
+    private Integer size;
     private Integer currentSize;
     private Integer noOfRounds;
-    private List<Round> rounds;
+    private List<UserDTO> participants;
 
-    public TournamentDTO(Long id, String tournament_name, List<Long> participants, Map<Long, Integer> scoreboard, String date, String status, Integer size, Integer currentSize, Integer noOfRounds, List<Round> rounds) {
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
-        this.tournament_name = tournament_name;
-        this.participants = participants;
-        this.scoreboard = scoreboard;
-        this.date = date;
-        this.status = status;
-        this.size = size;
-        this.currentSize = currentSize;
-        this.noOfRounds = noOfRounds;
-        this.rounds = rounds;
     }
 
-    public List<Round> getRounds() {
-        return rounds;
+    public String getTournamentName() {
+        return tournamentName;
     }
 
-    public Integer getNoOfRounds() {
-        return noOfRounds;
-    }
-
-    public Integer getCurrentSize(){
-        return currentSize;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public String getStatus() {
-        return status;
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
     }
 
     public String getDate() {
         return date;
     }
 
-    public Long getId() {
-        return id;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-
-    public String getTournament_name() {
-        return tournament_name;
+    public String getStatus() {
+        return status;
     }
 
-    public List<Long> getParticipants() {
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public Integer getCurrentSize() {
+        return currentSize;
+    }
+
+    public void setCurrentSize(Integer currentSize) {
+        this.currentSize = currentSize;
+    }
+
+    public Integer getNoOfRounds() {
+        return noOfRounds;
+    }
+
+    public void setNoOfRounds(Integer noOfRounds) {
+        this.noOfRounds = noOfRounds;
+    }
+
+    public List<UserDTO> getParticipants() {
         return participants;
     }
 
-
-    public Map<Long, Integer> getScoreboard() {
-        return scoreboard;
+    public void setParticipants(List<UserDTO> participants) {
+        this.participants = participants;
     }
-
 }
-

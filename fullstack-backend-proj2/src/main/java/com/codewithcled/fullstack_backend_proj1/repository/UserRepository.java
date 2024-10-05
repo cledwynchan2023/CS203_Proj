@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
 
-    @Query("SELECT u FROM User u WHERE u.lastModified > :timestamp")
-    List<User> findChangesSince(@Param("timestamp") LocalDateTime timestamp);
+    // @Query("SELECT u FROM User u WHERE u.lastModified > :timestamp")
+    // List<User> findChangesSince(@Param("timestamp") LocalDateTime timestamp);
 
 }

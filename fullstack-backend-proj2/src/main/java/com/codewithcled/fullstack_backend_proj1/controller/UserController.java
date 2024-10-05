@@ -10,6 +10,9 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 
 import java.util.Optional;
@@ -85,22 +88,22 @@ public class UserController {
         }
     }
 
-    // Create User to Database
-    @PostMapping("/signup/user")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+//     // Create User to Database
+//     @PostMapping("/signup/user")
+//     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
 
-        try {
-            AuthResponse authResponse = userService.createUser(user);
-            return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
-        } catch (Exception ex) {
-            System.out.println("EROR!");
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
-        }
-//        catch (Exception ex) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 for other errors
-//        }
+//         try {
+//             AuthResponse authResponse = userService.createUser(user);
+//             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
+//         } catch (Exception ex) {
+//             System.out.println("EROR!");
+//             return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
+//         }
+// //        catch (Exception ex) {
+// //            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 for other errors
+// //        }
 
-    }
+//     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -131,22 +134,10 @@ public class UserController {
 
 
     @GetMapping("/user/id/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-       try {
-            logger.info("Fetching user with id: {}", id);
-            Optional<User> userOptional = userRepository.findById(id);
-            if (userOptional.isPresent()) {
-                logger.info("User found: {}", userOptional.get());
-                return ResponseEntity.ok(userOptional.get());
-            } else {
-                logger.warn("User not found with id: {}", id);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (Exception e) {
-            System.out.println("Error fetching user with id: {}"+ id);
-            logger.error("Error fetching user with id: {}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(UserMapper.toDTO(user)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/email/{username}")
@@ -178,7 +169,7 @@ public class UserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        user.addParticipatingTournament(tournament_id);
+        user.addCurrentTournament(currentTournament);
         User updatedUser =  userRepository.save(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);  // Return 200 OK with the updated user
 }
@@ -195,9 +186,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/participating_tournament")
-    public ResponseEntity<List<Long>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
+    public ResponseEntity<List<Tournament>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
         try {
-            List<Long> tournamentIds = userService.getUserParticipatingTournaments(id);
+            List<Tournament> tournamentIds = userService.getUserParticipatingTournaments(id);
             return ResponseEntity.ok(tournamentIds);  // Return 200 OK with the list of tournament IDs
         } catch (Exception e) {
             // Log the exception message for debugging
@@ -205,10 +196,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}/participating_tournament/current")
+    @GetMapping("/{id}/currentTournament/current")
     public ResponseEntity<List<Tournament>> getUserCurrentParticipatingTournament(@PathVariable("id") Long id){
         try {
-            List<Tournament> tournaments = userService.getUserCurrentParticipatingTournament(id);
+            List<Tournament> tournaments = userService.getUserParticipatingTournaments(id);
             return ResponseEntity.ok(tournaments);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

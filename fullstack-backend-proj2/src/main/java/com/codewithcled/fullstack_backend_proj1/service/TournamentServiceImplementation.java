@@ -6,6 +6,8 @@ import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 
@@ -38,7 +40,7 @@ public class TournamentServiceImplementation implements TournamentService{
     }
 
     @Override
-    public List<Long> getTournamentParticipants(Long id) throws Exception {
+    public List<User> getTournamentParticipants(Long id) throws Exception {
         Tournament currentTournament =  tournamentRepository.findById(id)
                 .orElseThrow(() -> new Exception("Error Occured"));
 
@@ -53,7 +55,13 @@ public class TournamentServiceImplementation implements TournamentService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        currentTournament.addParticipant(userId);
+        if (!user.getCurrentTournaments().contains(currentTournament)) {
+                    user.addCurrentTournament(currentTournament);
+        }
+        if (!currentTournament.getParticipants().contains(user)) {
+            currentTournament.addParticipant(user);
+        }
+        userRepository.save(user);
         currentTournament.setCurrentSize(currentTournament.getParticipants().size());
         return tournamentRepository.save(currentTournament);
     }
@@ -108,13 +116,41 @@ public class TournamentServiceImplementation implements TournamentService{
            return Optional.ofNullable(list).orElseGet(ArrayList::new);
     
     }
-
     @Override
-    public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
-        return tournamentRepository.findAll().stream()
-        .map(tournament -> new TournamentDTO(tournament.getId(),tournament.getTournament_name(),tournament.getParticipants(), tournament.getScoreboard(),tournament.getDate(),  tournament.getStatus(),tournament.getSize(), tournament.getCurrentSize(), tournament.getNoOfRounds(), tournament.getRounds()))
-        .collect(Collectors.toList());
+    public Tournament createTournament(CreateTournamentRequest tournament) throws Exception {
+        String tournament_name= tournament.getTournament_name();
+        String date = tournament.getDate();
+        String status = tournament.getStatus();
+        Integer size = tournament.getSize();
+        Integer noOfRounds = tournament.getNoOfRounds();
+
+
+        // Tournament isEmailExist = tournamentRepository.findBy(email);
+        // if (isEmailExist != null) {
+        //     System.out.println("Email Taken!");
+        //     throw new Exception("Email Is Already Used With Another Account");
+        // }
+
+        // if (userRepository.existsByUsername(username)){
+        //     System.out.println("Username Taken!");
+        //     throw new Exception("Username is already being used with another account");
+        // }
+        Tournament createdTournament = new Tournament();
+        createdTournament.setTournament_name(tournament_name);
+        createdTournament.setDate(date);
+        createdTournament.setActive(status);
+        createdTournament.setSize(size);
+        createdTournament.setNoOfRounds(noOfRounds);
+        
+        return tournamentRepository.save(createdTournament);
     }
+
+    // @Override
+    // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
+    //     return tournamentRepository.findAll().stream()
+    //     .map(tournament -> new TournamentDTO(tournament.getId(),tournament.getTournament_name(),tournament.getParticipants(), tournament.getScoreboard(),tournament.getDate(),  tournament.getStatus(),tournament.getSize(), tournament.getCurrentSize(), tournament.getNoOfRounds(), tournament.getRounds()))
+    //     .collect(Collectors.toList());
+    // }
 
 
 

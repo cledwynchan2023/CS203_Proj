@@ -10,6 +10,9 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 
 import java.util.Optional;
@@ -93,7 +96,7 @@ public class AdminController {
 
     // Create User to Database
     @PostMapping("/signup/user")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception {
 
         try {
             AuthResponse authResponse = userService.createUser(user);
@@ -109,12 +112,13 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
-        return ResponseEntity.ok(users);  // Return 200 OK with the list of users
+        List<UserDTO> userDTOs = UserMapper.toDTOList(users);
+        return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
     }
 
     //delete user
@@ -184,7 +188,7 @@ public class AdminController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        user.addParticipatingTournament(tournament_id);
+        user.addCurrentTournament(currentTournament);
         User updatedUser =  userRepository.save(user);
         return ResponseEntity.ok(updatedUser);
 }
@@ -200,26 +204,26 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/user/{id}/participating_tournament")
-    public ResponseEntity<List<Long>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
-        try {
-            List<Long> tournamentIds = userService.getUserParticipatingTournaments(id);
-            return ResponseEntity.ok(tournamentIds);  // Return 200 OK with the list of tournament IDs
-        } catch (Exception e) {
-            // Log the exception message for debugging
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
-        }
-    }
+    // @GetMapping("/user/{id}/participating_tournament")
+    // public ResponseEntity<List<Long>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
+    //     try {
+    //         List<Long> tournamentIds = userService.getUserParticipatingTournaments(id);
+    //         return ResponseEntity.ok(tournamentIds);  // Return 200 OK with the list of tournament IDs
+    //     } catch (Exception e) {
+    //         // Log the exception message for debugging
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+    //     }
+    // }
 
-    @GetMapping("/user/{id}/participating_tournament/current")
-    public ResponseEntity<List<Tournament>> getUserCurrentParticipatingTournament(@PathVariable("id") Long id){
-        try {
-            List<Tournament> tournaments = userService.getUserCurrentParticipatingTournament(id);
-            return ResponseEntity.ok(tournaments);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+    // @GetMapping("/user/{id}/participating_tournament/current")
+    // public ResponseEntity<List<Tournament>> getUserCurrentParticipatingTournament(@PathVariable("id") Long id){
+    //     try {
+    //         List<Tournament> tournaments = userService.getUserCurrentParticipatingTournament(id);
+    //         return ResponseEntity.ok(tournaments);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    //     }
+    // }
 
 
 

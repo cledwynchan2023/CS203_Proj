@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -13,8 +15,9 @@ public class Tournament {
     @GeneratedValue
     private Long id;
     private String tournament_name;
-   @ElementCollection
-    private List<Long> participants = new ArrayList<>();
+    @ManyToMany(mappedBy = "currentTournament")
+    @JsonManagedReference 
+    private List<User> participants = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
@@ -79,14 +82,14 @@ public class Tournament {
         this.date = date;
     }
 
-    public void addParticipant(Long user_id){
-        participants.add(user_id);
+    public void addParticipant(User user){
+        participants.add(user);
     }
 
     public void removeParticipant(User user){
-        for (Long current: participants){
+        for (User current: participants){
 
-            if (Objects.equals(current, user.getId())){
+            if (Objects.equals(current, user)){
                 participants.remove(current);
                 System.out.println(user.getId() + " deleted!");
                 break;
@@ -111,11 +114,11 @@ public class Tournament {
         this.tournament_name = tournament_name;
     }
 
-    public List<Long> getParticipants() {
+    public List<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<Long> participants) {
+    public void setParticipants(List<User> participants) {
         this.participants = participants;
     }
 

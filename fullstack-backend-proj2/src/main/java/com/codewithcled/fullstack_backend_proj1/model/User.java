@@ -1,18 +1,15 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
-
 public class User {
     @Id
     @GeneratedValue
@@ -22,37 +19,44 @@ public class User {
     private String password;
     private String email;
     private String role = "ROLE_USER";
-    private Integer elo = 0;
+    private Double elo = 0.0;
 
-    @ElementCollection
-    private List<Long> tournamentsParticipating = new ArrayList();
 
-    public List<Long> getTournamentsParticipating() {
-        return tournamentsParticipating;
+    @ManyToMany
+    @JoinTable(
+            name = "user_tournament",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tournament_id"))
+    @JsonBackReference
+    private List<Tournament> currentTournament = new ArrayList<>();
+
+    
+    public List<Tournament> getCurrentTournaments() {
+        return currentTournament;
     }
 
-    public void addParticipatingTournament(Long tournament_id){
-        tournamentsParticipating.add(tournament_id);
+    public void addCurrentTournament(Tournament newTournament){
+        currentTournament.add(newTournament);
     }
 
-    public void removeParticipatingTournament(Tournament tournament){
-        for (Long current: tournamentsParticipating){
-            if (Objects.equals(current, tournament.getId())){
-                tournamentsParticipating.remove(current);
+    public void removeCurrentTournament(Tournament tournament){
+        for (Tournament current: currentTournament){
+            if (Objects.equals(current, tournament)){
+                currentTournament.remove(current);
                 break;
             }
         }
     }
 
-    public void setTournamentsParticipating(List<Long> tournamentsParticipated) {
-        this.tournamentsParticipating = tournamentsParticipated;
+    public void setCurrentTournaments (List<Tournament> currentTournaments) {
+        this.currentTournament = currentTournaments;
     }
 
-    public Integer getElo() {
+    public Double getElo() {
         return elo;
     }
 
-    public void setElo(Integer elo) {
+    public void setElo(Double elo) {
         this.elo = elo;
     }
 

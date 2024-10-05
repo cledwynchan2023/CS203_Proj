@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
@@ -46,14 +48,14 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         this.userRepository=userRepository;
     }
 
-    @Override
-    public List<UserDTO> getUserChanges() {
-       List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
-        lastChangeTimestamp = LocalDateTime.now(); // Update the timestamp
-        return changes.stream()
-                .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
-                .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<UserDTO> getUserChanges() {
+    //    List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
+    //     lastChangeTimestamp = LocalDateTime.now(); // Update the timestamp
+    //     return changes.stream()
+    //             .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
+    //             .collect(Collectors.toList());
+    // }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -102,7 +104,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
      @Override
     public List<UserDTO> findAllUsersDTO() {
         return userRepository.findAll().stream()
-        .map(user -> new UserDTO(user.getId(),user.getUsername(),user.getEmail(),user.getRole(),user.getElo()))
+        .map(user -> new UserDTO())
         .collect(Collectors.toList());
     }
 
@@ -112,12 +114,11 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     @Override
-    public AuthResponse createUser(User user) throws Exception {
+    public AuthResponse createUser(SignUpRequest user) throws Exception {
         String username= user.getUsername();
         String password = user.getPassword();
         String email = user.getEmail();
         String role = user.getRole();
-        Integer elo = user.getElo();
 
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {
@@ -135,8 +136,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(email);
         createdUser.setRole(role);
         createdUser.setPassword(passwordEncoder.encode(password));
-        createdUser.setElo(elo);
-
+        
         User savedUser = userRepository.save(createdUser);
         userRepository.save(savedUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(email,password);
@@ -152,7 +152,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         }
 
     @Override
-    public AuthResponse signInUser(User loginRequest) {
+    public AuthResponse signInUser(SignInRequest loginRequest) {
 
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
@@ -177,7 +177,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setElo(newUser.getElo());
-                    user.setTournamentsParticipating(newUser.getTournamentsParticipating());
+                    user.setCurrentTournaments(newUser.getCurrentTournaments());
                     return userRepository.save(user);  // Save and return updated user
                 });
     }
@@ -190,15 +190,15 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        user.removeParticipatingTournament(currentTournament);  // Remove the tournament from the user
+        user.removeCurrentTournament(currentTournament);  // Remove the tournament from the user
         return userRepository.save(user);  // Save and return the updated user
     }
     @Override
-    public List<Long> getUserParticipatingTournaments(Long userId) throws Exception {
+    public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        return currentUser.getTournamentsParticipating();  // Return the list of tournaments the user is participating in
+        return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
     private Authentication authenticate(String username, String password) {
@@ -227,20 +227,20 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
 
-    @Override
-    public List<Tournament> getUserCurrentParticipatingTournament(Long id) {
-        List<Long> tournamentIds = userRepository.findById(id)
-                .map(User::getTournamentsParticipating)
-                .orElse(new ArrayList<>());
-        List<Tournament> tournaments = new ArrayList<>();
-        for (Long tournamentId : tournamentIds) {
-            Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
-            if (tournament != null) {
-                tournaments.add(tournament);
-            }
-        }
-        return tournaments;
-    }
+    // @Override
+    // public List<Tournament> getUserCurrentParticipatingTournament(Long id) {
+    //     List<Long> tournamentIds = userRepository.findById(id)
+    //             .map(User::getTournamentsParticipating)
+    //             .orElse(new ArrayList<>());
+    //     List<Tournament> tournaments = new ArrayList<>();
+    //     for (Long tournamentId : tournamentIds) {
+    //         Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+    //         if (tournament != null) {
+    //             tournaments.add(tournament);
+    //         }
+    //     }
+    //     return tournaments;
+    // }
 }
 
 

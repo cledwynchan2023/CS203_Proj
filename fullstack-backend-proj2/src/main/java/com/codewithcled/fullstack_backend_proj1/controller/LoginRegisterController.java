@@ -14,6 +14,10 @@ import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementatio
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 
 import java.util.Optional;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import com.codewithcled.fullstack_backend_proj1.DTO.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +96,7 @@ public class LoginRegisterController {
 
     // Create User to Database
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception {
 
         try {
             AuthResponse authResponse = userService.createUser(user);
@@ -109,8 +113,8 @@ public class LoginRegisterController {
 
 
     //Login and authentication
-    @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signin(@RequestBody User loginRequest) {
+    @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AuthResponse> signin(@RequestBody SignInRequest loginRequest) {
         AuthResponse authResponse = userService.signInUser(loginRequest);
         return new ResponseEntity<>(authResponse,HttpStatus.OK);
     }
