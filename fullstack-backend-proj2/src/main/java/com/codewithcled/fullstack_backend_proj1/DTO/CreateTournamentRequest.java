@@ -7,6 +7,7 @@ public class CreateTournamentRequest {
     private String status;
     private Integer size ;
     private Integer noOfRounds = 0;
+    private Integer currentSize = 0;
 
     public String getTournament_name() {
         return tournament_name;
@@ -38,5 +39,11 @@ public class CreateTournamentRequest {
     public void setNoOfRounds(Integer noOfRounds) {
         this.noOfRounds = noOfRounds;
     }
-    
+    public Integer getCurrentSize() {
+        return currentSize;
+    }
+    public void setCurrentSize(Integer currentSize) {
+        this.currentSize = currentSize;
+    }
+
 }

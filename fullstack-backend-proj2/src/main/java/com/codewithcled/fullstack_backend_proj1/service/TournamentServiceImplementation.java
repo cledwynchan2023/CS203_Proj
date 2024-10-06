@@ -102,6 +102,9 @@ public class TournamentServiceImplementation implements TournamentService{
                     if (newTournament.getNoOfRounds() != null) {
                         tournament.setNoOfRounds(newTournament.getNoOfRounds());
                     }
+                    if (newTournament.getCurrentSize() != null) {
+                        tournament.setCurrentSize(newTournament.getCurrentSize());
+                    }
                     return tournamentRepository.save(tournament);  // Save and return the updated tournament
                 })
                 .orElseThrow(() -> new Exception("Tournament not found"));  // Throw exception if tournament does not exist
@@ -150,6 +153,29 @@ public class TournamentServiceImplementation implements TournamentService{
         createdTournament.setNoOfRounds(noOfRounds);
         
         return tournamentRepository.save(createdTournament);
+    }
+
+    @Override
+    public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception {
+        // TODO Auto-generated method stub
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        List<User> userList = userRepository.findAll();
+        for (int i = 0; i < userList.size(); i++) {
+            User user = userList.get(i);
+            List<Tournament> currentTournaments = user.getCurrentTournaments();
+            if (user.getRole().equals("ROLE_ADMIN")) {
+                userList.remove(user);
+            } else {
+                for (Tournament tour: currentTournaments) {
+                    if (tour.getId() == tournamentId) {
+                        userList.remove(user);
+                    }
+                }
+            }
+
+       }
+       return Optional.ofNullable(userList).orElseGet(ArrayList::new);
     }
 
     // @Override

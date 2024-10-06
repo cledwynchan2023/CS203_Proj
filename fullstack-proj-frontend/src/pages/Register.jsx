@@ -2,22 +2,18 @@ import {useState} from 'react';
 
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
-import Modal from '../layout/Modal';
+import './Register.css';
 
 export default function Register() {
     let navigate=useNavigate();
     const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER"});
     const{username, password, email, confirmPassword, role} = user;
-    
 
-    
     const onInputChange=(e)=>{
         setUser({...user, [e.target.name]:e.target.value});
        
     }
    
-    
-
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -35,8 +31,6 @@ export default function Register() {
             return false;
         }
     };
-
-    
 
     const validateAdminToken = async (token) => {
         try {
@@ -58,10 +52,6 @@ export default function Register() {
             alert("Invalid email address");
             return;
         }
-        // if (usernameTaken) {
-        //     alert("Username is already taken");
-        //     return;
-        // }
 
         if (role === 'ROLE_ADMIN') {
             const inputToken = window.prompt("Please enter the admin token:");
@@ -72,11 +62,6 @@ export default function Register() {
               return;
             }
           }
-
-        // if (emailTaken) {
-        //     alert("Email is already taken");
-        //     return;
-        // }
 
         const domainValid = await isDomainValid(email);
         if (!domainValid) {
@@ -121,61 +106,78 @@ export default function Register() {
     }
 
     return (
-        <div className="register-container">
-          <div className="form-container">
+      <>
+        <div className="register-container" style={{ 
+          backgroundImage: 'url(src/assets/image.webp)', 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+  flexWrap: 'wrap',
+      }}>
+          <div className="form-container fade-in" style={{backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
             <form onSubmit={(e) => onSubmit(e)}>
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                className="form-control form-control-lg"
-                id="floatingInput"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) =>onInputChange(e)}
-                name="email"
-              ></input>
-              <label htmlFor="Email">Email address</label>
-            </div>
+              <div className="field">
+                <label className="label has-text-primary-light">Email</label>
+                <div className="control">
+                  <input
+                    type="email"
+                    className="input"
+                    id="floatingInput"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) =>onInputChange(e)}
+                    name="email"
+                  ></input>
+                </div>
+              </div>
             
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                className="form-control"
-                id="floatingUsername"
-                placeholder="Username"
-                value={username}
-                onChange={(e) =>onInputChange(e)}
-                name="username"
-              />
-              <label htmlFor="Username">Username</label>
-
+            <div className="field">
+              <label className="label has-text-primary-light">Username</label>
+              <div className="control">
+                <input
+                  type="name"
+                  className="input"
+                  id="floatingUsername"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) =>onInputChange(e)}
+                  name="username"
+                />
+              </div>
             </div>
-            <div className="form-floating">
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                value={password}
-                onChange={(e) =>onInputChange(e)}
-                name="password"
-              />
-              <label htmlFor="Password">Password</label>
+            <div className="field">
+              <label className="label has-text-primary-light">Password</label>
+              <div className="control">
+                <input
+                  type="password"
+                  className="input"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) =>onInputChange(e)}
+                  name="password"
+                />
+              </div>
             </div>
-            <div className="form-floating mt-3">
-              <input
-                type="password"
-                className="form-control"
-                id="floatingConfirmPassword"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={onInputChange}
-                name="confirmPassword"
-              />
-              <label htmlFor="PasswordConfirm">Confirm Your Password</label>
+            <div className="field">
+              <label className="label has-text-primary-light">Confirm Password</label>
+              <div className="control">
+                <input
+                  type="password"
+                  className="input"
+                  id="floatingConfirmPassword"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={onInputChange}
+                  name="confirmPassword"
+                />
+              </div>
             </div>
-                <div className="form-floating mb-3 mt-3">
-                        <select
-                            className="form-control"
+            <div className="field">
+                <label className="label has-text-primary-light">Select Role</label>
+                <div className="control is-expanded">
+                    <div classname="select is-fullwidth">
+                    <select
+                            
                             id="floatingRole"
                             //value={role}
                             onChange={(e) => onInputChange(e)}
@@ -183,17 +185,24 @@ export default function Register() {
                         >
                             <option value="ROLE_USER">User</option>
                             <option value="ROLE_ADMIN">Admin</option>
-                        </select>
-                        <label htmlFor="Role">Role</label>
-                </div>
-            <button type="submit" className='btn btn-outline-primary mt-3'>Register</button>
+                    </select>
+                  </div>
+              </div>
+              </div>
+            <button type="submit" className="button is-link is-fullwidth">Register</button>
             
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/' id="returnrBtn">Cancel</Link>
+            <div className="block">
+            <Link type="cancel" className='button is-text is-fullwidth' to='/' id="returnrBtn">Cancel</Link>
+            </div>
+            
            
           </div>
          
         </div>
-        
+        <footer className="footer">
+        <p>&copy; 2024 CS203. All rights reserved.</p>
+        </footer>
+        </>
       );
 }

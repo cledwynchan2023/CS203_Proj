@@ -54,12 +54,26 @@ function Login() {
 
 	return ( 
 		<>
-		<div className="containerL d-flex justify-content-center align-items-center vh-100"> 
+		<div className="" style={{ 
+                backgroundImage: 'url(src/assets/image.webp)', 
+                backgroundSize: 'cover', 
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+				display: 'flex',
+				flexWrap: 'wrap',
+				height: "100vh",
+				justifyContent: 'center',
+				alignContent: 'center',
+            }}>  
 			
-			<div style={{ width: '500px', height: '400px', borderRadius:"30px", backgroundColor:"white", padding:"50px"}}> 
+			<div className="content is-medium" style={{width:"100%", backgroundColor:"rgba(0,0,0,0.5)", width:"80%"}}>
+				<h1 className="text-center " style={{ marginBottom:"0", color: "rgba(255, 255, 255, 0.8)", fontWeight:"bold"}}>Welcome to Chess.io</h1>
+			</div>
+			<div className= "box has-background-light fade-in" style={{ width: '500px', height: '400px', borderRadius:"30px", padding:"50px"}}> 
 				<MDBContainer className="p-3"> 
 					<h2 className="mb-4 text-center">Login to Chess.io</h2> 
 					<MDBInput wrapperClass='mb-4' placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+					
 					<MDBInput wrapperClass='mb-4' placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> 
 					{error && <p className="text-danger">{error}</p>} {/* Render error message if exists */} 
 					<button className="btn mb-4 btn-outline-primary" style={{ height:'50px',width: '100%', borderRadius:"30px" }} onClick={handleLogin}>Sign in</button> 
@@ -69,6 +83,7 @@ function Login() {
 				</MDBContainer> 
 			</div> 
 		</div> 
+		
 		<footer className="footer">
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Navbar from './layout/Navbar.jsx';
+//import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import 'bulma/css/bulma.min.css';
-import './index.css';
 import Login from './pages/Login.jsx';
 import {BrowserRouter as Router, Route, Routes, useLocation} from "react-router-dom";
 import NavbarLogin from './layout/NavbarLogin.jsx';
@@ -19,6 +19,8 @@ import AddParticpant from './pages/Admin/AddParticpant.jsx';
 import RankingAdmin from './pages/Admin/RankingAdmin.jsx';
 import TournamentStartAdmin from './pages/Admin/TournamentStartAdmin.jsx';
 import NotFound from './pages/NotFound.jsx';
+import TournamentLandingPageAdmin from './pages/Admin/TournamentLandingPage.jsx';
+import TournamentDetail from './pages/Admin/TournamentDetail.jsx';
 
 function App() {
 
@@ -29,7 +31,6 @@ function App() {
         <Routes>
         <Route exact path="/" element={
           <>
-          <NavbarLogin></NavbarLogin>
           <Login/>
           </>
           
@@ -37,15 +38,21 @@ function App() {
 
         <Route exact path="/register" element={
           <>
-          <NavbarLogin></NavbarLogin>
+
           <Register/>
           </>
           
         }></Route>
-        <Route exact path ="/admin/:id/tournament" element={
+        {/* <Route exact path ="/admin/:id/tournament" element={
           <>
           <AdminNavbar></AdminNavbar>
           <TournamentAdmin/>
+          </>
+        }></Route> */}
+        <Route exact path ="/admin/:id/tournament" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentLandingPageAdmin/>
           </>
         }></Route>
         <Route exact path ="/admin/:id/tournament/create" element={
@@ -60,10 +67,16 @@ function App() {
           <TournamentAdminEdit/>
           </>
         }></Route>
-        <Route exact path ="/admin/:userId/tournament/:id" element={
+        {/* <Route exact path ="/admin/:userId/tournament/:id" element={
           <>
           <AdminNavbar></AdminNavbar>
           <TournamentDetailAdmin/>
+          </>
+        }></Route> */}
+        <Route exact path ="/admin/:userId/tournament/:id" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentDetail/>
           </>
         }></Route>
         <Route exact path ="/admin/:id/playerlist" element={

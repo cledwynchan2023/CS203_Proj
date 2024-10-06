@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
 import { Link, useParams, useLocation } from 'react-router-dom';
 
 const TournamentStartAdmin = () => {
+
     const location = useLocation();
     const { user } = location.state || { user: [] };
     const [group, setGroup] = useState([]); 

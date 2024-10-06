@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../admin/Register.css';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
+import backgroundImage from '/src/assets/image1.webp'; 
+import './style/TournamentPageStyle.css';
 export default function TournamentAdminCreate() {
 
     let navigate=useNavigate();
@@ -72,7 +73,12 @@ export default function TournamentAdminCreate() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/tournament", tournamentData);
+          const token = localStorage.getItem('token');
+          const response = await axios.post("http://localhost:8080/admin/tournament", tournamentData, {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          });
             if (response.status === 201){
                 alert("Tournament Created Successfully");
                 navigate(`/admin/${id}/tournament`);
@@ -100,8 +106,20 @@ export default function TournamentAdminCreate() {
     }, []);
 
     return (
-        <div className="register-container">
-          <div className="form-container">
+        <div className="background-container" style={{ 
+          backgroundImage: `url(${backgroundImage})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          flexWrap: 'wrap',
+          height: "100vh",
+          justifyContent: 'center',
+          alignContent: 'center',
+          
+      }}>
+        <div className="content fade-in" style={{width:"500px"}}>
+        <div className="form-container">
             <form onSubmit={(e) => onSubmit(e)}>
             <div className="form-floating mb-3">
               <input
@@ -164,11 +182,15 @@ export default function TournamentAdminCreate() {
               />
               <label htmlFor="noOfRounds">Number of rounds</label>
             </div>
-                
-            <button type="submit" className='btn btn-outline-primary mt-3'>Create Tournament</button>
+            <div style={{marginTop:"5%"}}>
+            <button type="submit" className='button is-link is-fullwidth'>Create Tournament</button>
+            </div>
+
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to={`/admin/${id}/tournament`} id="returnrBtn">Cancel</Link>
+            <Link className='button is-text is-fullwidth' to={`/admin/${id}/tournament`} id="returnrBtn">Cancel</Link>
           </div>
+        </div>
+          
         </div>
       );
 }

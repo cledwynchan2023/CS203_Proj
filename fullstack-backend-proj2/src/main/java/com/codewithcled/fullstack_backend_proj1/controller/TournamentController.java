@@ -90,6 +90,7 @@ public class TournamentController {
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
             return new ResponseEntity<>(tournamentDTO, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
+            System.out.println("error " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
         }
     }
@@ -106,7 +107,19 @@ public class TournamentController {
         }
     }
 
-    @PutMapping("/tournament/{id}/participant/delete")
+    @GetMapping("/users/{id}")
+    public ResponseEntity<List<UserDTO>> getUsersWithNoCurrentTournament(@PathVariable("id") Long id) throws Exception {
+        try {
+            List<User> users = tournamentService.getNonParticipatingCurrentUser(id);
+            List<UserDTO> userDTOs = UserMapper.toDTOList(users);
+            return new ResponseEntity<>(userDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
+        } catch (Exception e) {
+            System.out.println("error " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
+        }
+    }
+
+    @PutMapping("/{id}/participant/delete")
     public ResponseEntity<TournamentDTO> removeParticipant(
             @RequestParam("user_id") Long userId,
             @PathVariable("id") Long id) {
@@ -132,7 +145,7 @@ public class TournamentController {
         }
     }
 
-    @PutMapping("/tournament/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament, @PathVariable("id") Long id) {
         try {
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
