@@ -2,7 +2,7 @@ import {React,useState} from 'react';
 import {useLocation, useParams } from 'react-router-dom';
 import './navbar.css';
 
-const AdminNavbar = () => {
+const UserNavbar = () => {
     const location = useLocation();
     const { id } = useParams();
     const [isActive, setIsActive] = useState(false);
@@ -24,10 +24,10 @@ const AdminNavbar = () => {
 
             <div id="navbarExampleTransparentExample" className={`navbar-menu ${isActive ? "is-active" : ""}`}>
                 <div class="navbar-end">
+            
+                <a class="navbar-item" href={`/user/${id}/home`}> Home </a>
                 <a class="navbar-item" href={`/admin/${id}/tournament`}> Tournament </a>
-                <a class="navbar-item" href={`/admin/${id}/playerlist`}> PlayerList </a>
                 <a class="navbar-item" href={`/admin/${id}/ranking`}> Ranking </a>
-                <a class="navbar-item" href={`/user/${id}/home`}> UserPage </a>
                
             </div>
             
@@ -37,4 +37,4 @@ const AdminNavbar = () => {
     );
 };
 
-export default AdminNavbar;
+export default UserNavbar;

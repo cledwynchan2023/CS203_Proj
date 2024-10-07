@@ -21,7 +21,9 @@ import TournamentStartAdmin from './pages/Admin/TournamentStartAdmin.jsx';
 import NotFound from './pages/NotFound.jsx';
 import TournamentLandingPageAdmin from './pages/Admin/TournamentLandingPage.jsx';
 import TournamentDetail from './pages/Admin/TournamentDetail.jsx';
-
+import Homepage from './pages/User/Homepage.jsx';
+import UserNavbar from './layout/UserNavbar.jsx';
+import TournamentPage from './pages/User/TournamentPage.jsx';
 function App() {
 
   return (
@@ -116,10 +118,24 @@ function App() {
           </>
         }></Route>
         
-        <Route exact path ="/user/:id/tournament" element={
+        {/* <Route exact path ="/user/:id/tournament" element={
           <>
           <Navbar></Navbar>
           <TournamentUser/>
+          </>
+        }></Route> */}
+
+        <Route exact path ="/user/:id/home" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <Homepage/>
+          </>
+        }></Route>
+
+      <Route exact path ="/user/:id/tournament" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <TournamentPage/>
           </>
         }></Route>
 
