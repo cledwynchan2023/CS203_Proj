@@ -73,9 +73,10 @@ public class TournamentServiceImplementation implements TournamentService{
                 .orElseThrow(() -> new Exception("User not found"));
                 
         if (user.getCurrentTournaments().contains(currentTournament)) {
-            
+            System.out.println(currentTournament.getParticipants());
             user.removeCurrentTournament(currentTournament);
-            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+            System.out.println(currentTournament.getParticipants().size());
+            currentTournament.setCurrentSize(currentTournament.getParticipants().size() - 1);
             userRepository.save(user);
         } else {
 

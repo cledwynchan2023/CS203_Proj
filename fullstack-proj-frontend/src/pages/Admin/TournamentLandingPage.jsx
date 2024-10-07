@@ -139,12 +139,9 @@ export default function TournamentLandingPage() {
                             <td>{tournament.date}</td>
                             <td>{tournament.status}</td>
                             <td>{tournament.currentSize}  / {tournament.size}</td>
-                                        {/* <td>
-                                            <Link className="btn btn-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/${id}/tournament/edit/${tournament.id}`}onClick={(event) => event.stopPropagation()}>Edit</Link>
-                                            <button className="button btn-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={(event) => {deleteTournament(tournament.id);
+                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {removePlayer(user.id);
                                             event.stopPropagation();
-                                            }}>Delete</button>
-                                        </td> */}
+                            }}>Remove</button>
                         </tr>   
                     )}
                 </tbody>

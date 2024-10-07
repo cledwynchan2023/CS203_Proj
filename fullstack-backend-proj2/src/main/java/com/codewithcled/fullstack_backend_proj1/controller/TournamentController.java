@@ -148,6 +148,7 @@ public class TournamentController {
     @PutMapping("/{id}")
     public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament, @PathVariable("id") Long id) {
         try {
+            System.out.println(newTournament.getTournament_name());
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO

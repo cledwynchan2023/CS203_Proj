@@ -155,7 +155,7 @@ public class AdminController {
 
     //editing players from the playerlist page
     @PutMapping("/user/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User newUser, @PathVariable("id") Long id) {
+    public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
         return userService.updateUser(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);

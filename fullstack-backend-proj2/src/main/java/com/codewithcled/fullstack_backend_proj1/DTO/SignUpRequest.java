@@ -5,6 +5,7 @@ public class SignUpRequest {
     private String password;
     private String email;
     private String role;
+    private Double elo = 0.0;
 
     // Getters and setters
     public String getUsername() {
@@ -35,6 +36,12 @@ public class SignUpRequest {
     }
     public void setRole(String role) {
         this.role = role;
+    }
+    public Double getElo() {
+        return elo;
+    }
+    public void setElo(Double elo) {
+        this.elo = elo;
     }
 
 }

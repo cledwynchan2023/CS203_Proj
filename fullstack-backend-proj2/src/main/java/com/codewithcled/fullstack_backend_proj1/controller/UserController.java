@@ -6,6 +6,7 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -136,7 +137,7 @@ public class UserController {
 
     //editing profile
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User newUser, @PathVariable("id") Long id) {
+    public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
         return userService.updateUser(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);

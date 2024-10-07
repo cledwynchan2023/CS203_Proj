@@ -24,7 +24,7 @@ const AdminNavbar = () => {
 
             <div id="navbarExampleTransparentExample" className={`navbar-menu ${isActive ? "is-active" : ""}`}>
                 <div class="navbar-end">
-                <a class="navbar-item" href={`/admin/${id}/tournamenttest`}> Tournament </a>
+                <a class="navbar-item" href={`/admin/${id}/tournament`}> Tournament </a>
                 <a class="navbar-item" href={`/admin/${id}/playerlist`}> PlayerList </a>
                 <a class="navbar-item" href={`/admin/${id}/ranking`}> Ranking </a>
                

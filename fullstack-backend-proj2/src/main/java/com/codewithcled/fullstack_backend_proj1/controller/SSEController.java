@@ -33,6 +33,11 @@ public class SSEController {
         return Flux.interval(Duration.ofSeconds(timer)).map(tick -> userService.findAllUsersDTO());
     }
 
+    @GetMapping(value = "/sse/user", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public List<UserDTO> getUserDTOS(){
+        return userService.findAllUsersDTO();
+    }
+
     // @GetMapping(value = "/sse/tournament", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     // public Flux<List<TournamentDTO>> getTournament() {
     //     return Flux.interval(Duration.ofSeconds(timer))

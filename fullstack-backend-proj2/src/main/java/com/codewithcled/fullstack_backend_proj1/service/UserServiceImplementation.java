@@ -3,6 +3,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -101,9 +102,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
      @Override
     public List<UserDTO> findAllUsersDTO() {
-        return userRepository.findAll().stream()
-        .map(user -> new UserDTO())
-        .collect(Collectors.toList());
+        List<User> users = userRepository.findAll();
+        return UserMapper.toDTOList(users);
     }
 
     @Override
@@ -170,12 +170,15 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     @Override
-    public Optional<User> updateUser(Long id, User newUser) {
+    public Optional<User> updateUser(Long id, SignUpRequest newUser) {
+        
         return userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setElo(newUser.getElo());
-                    user.setCurrentTournaments(newUser.getCurrentTournaments());
+                    user.setEmail(newUser.getEmail());
+                    user.setRole(newUser.getRole());
+                    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
                     return userRepository.save(user);  // Save and return updated user
                 });
     }

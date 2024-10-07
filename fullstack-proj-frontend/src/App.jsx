@@ -10,7 +10,7 @@ import TournamentAdmin from './pages/Admin/TournamentAdmin.jsx';
 import TournamentAdminCreate from './pages/Admin/TournamentAdminCreate.jsx';
 import TournamentUser from './pages/User/TournamentUser.jsx';
 import AdminNavbar from './layout/AdminNavbar.jsx';
-import PlayerListAdmin from './pages/Admin/PlayerListAdmin.jsx';
+import PlayerListAdmin from './pages/Admin/Playerlist.jsx';
 import PlayerListAdminCreate from './pages/Admin/PlayerListAdminCreate.jsx';
 import TournamentAdminEdit from './pages/Admin/TournamentAdminEdit.jsx';
 import PlayerListAdminEdit from './pages/Admin/PlayerListAdminEdit.jsx';
