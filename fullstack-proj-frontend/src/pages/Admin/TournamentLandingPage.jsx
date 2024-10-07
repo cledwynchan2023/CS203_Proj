@@ -75,15 +75,37 @@ export default function TournamentLandingPage() {
             }
         };
 
+        initSSE();
         fetchData();
         //loadPastTournaments();
-        loadTournaments();
+        //loadTournaments();
 
     }, []);
 
     if (error) {
         return <div>{error}</div>;
     }
+
+    const initSSE = () => {
+        const eventSource = new EventSource('http://localhost:8080/update/sse/tournament');
+
+        eventSource.onmessage = (event) => {
+            const tournament = JSON.parse(event.data);
+            console.log(tournament);
+            
+            setTournament(tournament);
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("SSE failure:", error);
+            setError("Loading...");
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    };
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments");

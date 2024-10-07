@@ -1,6 +1,5 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
-
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class Round {
 
     @ElementCollection
     private Map<Long, Integer> scoreboard;
-
 
     @OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Match> matchList;
@@ -47,5 +45,13 @@ public class Round {
 
     public Long getId() {
         return id;
+    }
+
+    public Integer getRoundNum() {
+        return roundNum;
+    }
+
+    public void setRoundNum(int roundNum) {
+        this.roundNum = roundNum;
     }
 }

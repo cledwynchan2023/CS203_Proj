@@ -1,8 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ApiResponse {

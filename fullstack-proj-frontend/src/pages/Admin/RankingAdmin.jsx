@@ -85,7 +85,8 @@ const RankingAdmin = () => {
                 }
             }
         };
-        loadUsers()
+        //loadUsers()
+        initSSE();
         fetchData();
         
 
@@ -93,6 +94,25 @@ const RankingAdmin = () => {
 
     if (error) {
         return <div>{error}</div>;
+    }
+
+    const initSSE = () => {
+        const eventSource = new EventSource('http://localhost:8080/update/sse/users');
+
+        eventSource.onmessage = (event) => {
+            const users = JSON.parse(event.data);
+            setUser(users);
+        }
+
+        eventSource.onerror = (error) => {
+            console.error("SSE failure:", error);
+            setError("SSE error");
+            eventSource.close();
+        }
+
+        return () => {
+            eventSource.close();
+        };
     }
 
     const loadUsers= async()=>{

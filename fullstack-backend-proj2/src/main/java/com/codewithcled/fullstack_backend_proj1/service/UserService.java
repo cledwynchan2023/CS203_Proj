@@ -6,7 +6,6 @@ import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
-import org.springframework.stereotype.Service;
 
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.ArrayList;

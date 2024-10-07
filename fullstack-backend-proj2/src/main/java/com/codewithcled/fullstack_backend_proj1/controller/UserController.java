@@ -1,21 +1,15 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
 import com.codewithcled.fullstack_backend_proj1.model.User;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
-import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
-import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
@@ -40,8 +34,9 @@ public class UserController {
   
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private TournamentService tournamentService;
+
+    //@Autowired
+    //private TournamentService tournamentService;
 
 
     @Autowired

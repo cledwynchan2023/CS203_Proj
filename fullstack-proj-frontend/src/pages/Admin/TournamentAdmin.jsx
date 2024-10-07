@@ -113,7 +113,8 @@ const TournamentAdmin = () => {
 
         fetchData();
         //loadPastTournaments();
-        loadTournaments();
+        //loadTournaments();
+        initSSE();
 
     }, []);
 

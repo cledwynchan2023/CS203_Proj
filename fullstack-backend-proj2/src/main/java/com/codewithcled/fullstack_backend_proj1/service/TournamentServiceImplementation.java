@@ -6,8 +6,11 @@ import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,12 +182,12 @@ public class TournamentServiceImplementation implements TournamentService{
        return Optional.ofNullable(userList).orElseGet(ArrayList::new);
     }
 
-    // @Override
-    // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
-    //     return tournamentRepository.findAll().stream()
-    //     .map(tournament -> new TournamentDTO(tournament.getId(),tournament.getTournament_name(),tournament.getParticipants(), tournament.getScoreboard(),tournament.getDate(),  tournament.getStatus(),tournament.getSize(), tournament.getCurrentSize(), tournament.getNoOfRounds(), tournament.getRounds()))
-    //     .collect(Collectors.toList());
-    // }
+    @Override
+    @Transactional(readOnly=true)
+    public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
+        List<Tournament> tournaments = tournamentRepository.findAll();
+        return TournamentMapper.toDTOList(tournaments);
+    }
 
 
 
