@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
+import backgroundImage from '/src/assets/image1.webp'; 
 import { Link, useParams } from 'react-router-dom';
 
 const RankingAdmin = () => {
@@ -65,7 +65,7 @@ const RankingAdmin = () => {
             }
 
             try {
-                const result = await axios.get("http://localhost:8080/admin/users", {
+                const result = await axios.get("http://localhost:8080/u/users", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -98,7 +98,7 @@ const RankingAdmin = () => {
     const loadUsers= async()=>{
         const token = localStorage.getItem('token');
         try {
-            const result = await axios.get("http://localhost:8080/admin/users", {
+            const result = await axios.get("http://localhost:8080/u/users", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -114,15 +114,26 @@ const RankingAdmin = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <>
+        <div className="background-container" style={{ 
+        backgroundImage: `url(${backgroundImage})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+		flexWrap: 'wrap',
+        marginTop:"80px",
+        height:"100%"
+    }}> 
+        <div className="content" style={{width:"100%"}}>
+        <div style={{ padding: '20px', width:"100%" }}>
             {data ? (
                 <div className="">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Ranking</h1>
                         
                     </div>
-                    <div className="container">
-                        <table className="table table-striped">
+                    <div className="">
+                        <table className="table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -155,6 +166,11 @@ const RankingAdmin = () => {
                 <div>Loading...</div>
             )}
         </div>
+        </div>
+        
+        </div>
+        </>
+        
     );
 };
 

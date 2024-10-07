@@ -27,6 +27,7 @@ const AdminNavbar = () => {
                 <a class="navbar-item" href={`/admin/${id}/tournament`}> Tournament </a>
                 <a class="navbar-item" href={`/admin/${id}/playerlist`}> PlayerList </a>
                 <a class="navbar-item" href={`/admin/${id}/ranking`}> Ranking </a>
+                <a class="navbar-item" href={`/user/${id}/home`}> UserPage </a>
                
             </div>
             
