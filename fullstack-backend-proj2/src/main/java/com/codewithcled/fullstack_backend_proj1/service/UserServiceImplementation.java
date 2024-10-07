@@ -100,7 +100,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
-     @Override
+    
+    @Override
     public List<UserDTO> findAllUsersDTO() {
         List<User> users = userRepository.findAll();
         return UserMapper.toDTOList(users);
