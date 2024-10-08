@@ -199,6 +199,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
+    public List<UserDTO> findUsersInTournament(Long tId){
+        List<User> users=userRepository.findUsersByTournamentId(tId);
+        return UserMapper.toDTOList(users);
+        
+    }
+
     private Authentication authenticate(String username, String password) {
 
         System.out.println(username+"---++----"+password);

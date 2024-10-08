@@ -117,6 +117,10 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/t/{id}")
+    public ResponseEntity<List<UserDTO>> getUserByTId(@PathVariable("id") Long id){
+        return ResponseEntity.ok(userService.findUsersInTournament(id));
+    }
 
     //delete user
     @DeleteMapping("/{id}")

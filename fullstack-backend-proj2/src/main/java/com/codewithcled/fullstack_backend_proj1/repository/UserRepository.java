@@ -3,8 +3,14 @@ package com.codewithcled.fullstack_backend_proj1.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import  com.codewithcled.fullstack_backend_proj1.model.User;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
@@ -19,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // @Query("SELECT u FROM User u WHERE u.lastModified > :timestamp")
     // List<User> findChangesSince(@Param("timestamp") LocalDateTime timestamp);
 
+    @Query("SELECT u FROM User u JOIN u.currentTournament t WHERE t.id = :tournamentId")
+    List<User> findUsersByTournamentId(@Param("tournamentId") Long tournamentId);
 }

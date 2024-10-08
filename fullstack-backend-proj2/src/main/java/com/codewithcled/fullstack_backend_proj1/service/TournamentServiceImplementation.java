@@ -87,6 +87,7 @@ public class TournamentServiceImplementation implements TournamentService{
         }
         return tournamentRepository.save(currentTournament);  // Save and return the updated tournament
     }
+
     @Override
     public Tournament updateTournament(Long id, CreateTournamentRequest newTournament) throws Exception {
         return tournamentRepository.findById(id)
@@ -113,6 +114,12 @@ public class TournamentServiceImplementation implements TournamentService{
                 })
                 .orElseThrow(() -> new Exception("Tournament not found"));  // Throw exception if tournament does not exist
     }
+
+    @Override
+    public List<Tournament> getTournamnetByUserId(Long id){
+        return tournamentRepository.findTournamentsByUserId(id);
+    }
+
     @Override
     public List<Tournament> getTournamentsWithNoCurrentUser(Long userId) throws Exception {
       
