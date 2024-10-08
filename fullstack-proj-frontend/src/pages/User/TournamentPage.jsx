@@ -10,6 +10,7 @@ import { TiTick } from "react-icons/ti";
 import compPic from "/src/assets/comp.webp";
 import compPic2 from "/src/assets/comp2.webp";
 import compPic3 from "/src/assets/comp3.webp";
+import { ImCross } from "react-icons/im";
 
 export default function TournamentPage() {
     const navigate = useNavigate();
@@ -40,17 +41,12 @@ export default function TournamentPage() {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
-        } catch (error) {
-            return false;
-        }
-    };
-    const isUserToken = (token) => {
-        try {
-            const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'ROLE_USER'; // Adjust this based on your token's structure
+            if (decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER'){
+                return true;
+            } else {
+                return false;
+            }
+          
         } catch (error) {
             return false;
         }
@@ -89,7 +85,7 @@ export default function TournamentPage() {
                 
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
                 {tournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${tournament.id}/tournament`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${id}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -143,7 +139,7 @@ export default function TournamentPage() {
                 
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
                 {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${tournament.id}/tournament`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${id}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -173,8 +169,8 @@ export default function TournamentPage() {
                             </p>
                             </div>
                             <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
-                            <TiTick size={25} style={{marginRight:"10px"}}></TiTick>
-                            <p style={{color:"rgb(60, 179, 113)"}}>
+                            <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
+                            <p style={{color:"rgb(255, 0, 0)"}}>
                                 {tournament.status}
                             </p>
                             </div>
@@ -194,26 +190,7 @@ export default function TournamentPage() {
         }
         };
 
-    const removePlayer = async (user_id) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${user_id}`,
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response1.status === 200){
-                alert("Player Removed Successfully");
-                loadTournament();
-            }
-            
-        } catch (error) {
-            
-            setError('An error occurred while deleting the tournament.');
-        }
-    };
+   
     const join = async (tournament_id) => {
         try {
             console.log(user_id);
@@ -243,7 +220,7 @@ export default function TournamentPage() {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
             console.log(token +" hello");
-            
+            console.log(id);
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
