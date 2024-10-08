@@ -20,15 +20,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -40,8 +41,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TournamentRepository tournamentRepository;
+    //@Autowired
+    //private TournamentRepository tournamentRepository;
 
     public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository=userRepository;
@@ -100,9 +101,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
-     @Override
+    
+    @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> findAllUsersDTO() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findByRole("ROLE_USER");
+        Collections.sort(users,(u1,u2) -> u2.getElo().compareTo(u1.getElo()));
         return UserMapper.toDTOList(users);
     }
 
@@ -117,6 +121,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         String password = user.getPassword();
         String email = user.getEmail();
         String role = user.getRole();
+        double elo = user.getElo();
 
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {
@@ -134,6 +139,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(email);
         createdUser.setRole(role);
         createdUser.setPassword(passwordEncoder.encode(password));
+        createdUser.setElo(elo);
         
         User savedUser = userRepository.save(createdUser);
         userRepository.save(savedUser);
