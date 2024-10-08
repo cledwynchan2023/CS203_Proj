@@ -89,10 +89,7 @@ export default function TournamentLandingPage() {
         const result = await axios.get("http://localhost:8080/t/tournaments");
         console.log(result.data);
         if (!result.data.length == 0){
-            console.log("No Active Tournaments");
-            const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
-            console.log(filteredTournament);
-            setTournament(filteredTournament);
+            setTournament(result.data);
         }
         else{
             setTournament([]);

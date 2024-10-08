@@ -120,7 +120,7 @@ export default function Homepage() {
             </section>
             <section className="hero" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"5%"}}>
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", justifyContent:"space-evenly", flexWrap:"wrap"}}>
-                <a href={`/user/${id}/tournament`} class="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
+                <a href={`/user/${id}/tournament`} className="card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
                     <div class="card-image">
                         {/* <figure class="image is-4by3">
                         <img

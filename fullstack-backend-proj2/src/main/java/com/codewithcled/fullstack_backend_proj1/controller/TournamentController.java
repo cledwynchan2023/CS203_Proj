@@ -43,6 +43,27 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
+    //get active tournaments
+    @GetMapping("/tournaments/active")
+    public ResponseEntity<List<TournamentDTO>> getActiveTournaments() {
+        List<Tournament> tournaments = tournamentService.getActiveTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
+    //get inactive tournaments
+    @GetMapping("/tournaments/inactive")
+    public ResponseEntity<List<TournamentDTO>> getInactiveTournaments() {
+        List<Tournament> tournaments = tournamentService.getInactiveTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TournamentDTO> getTournamentById(@PathVariable("id") Long id) {

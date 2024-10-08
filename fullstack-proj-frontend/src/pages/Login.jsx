@@ -65,8 +65,8 @@ function Login() {
 				justifyContent: 'center',
 				alignContent: 'center',
             }}>  
-			
-			<div className="content is-medium" style={{width:"100%", backgroundColor:"rgba(0,0,0,0.5)", width:"80%"}}>
+			<div style={{width:"70%",backgroundColor:"rgba(0,0,0,0.5)", height:"70%", minHeight:"450px", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", borderRadius:"30px"}}>
+			<div className="content is-medium" style={{ width:"100%", paddingTop:"20px"}}>
 				<h1 className="text-center " style={{ marginBottom:"0", color: "rgba(255, 255, 255, 0.8)", fontWeight:"bold"}}>Welcome to Chess.io</h1>
 			</div>
 			<div className= "box has-background-light fade-in" style={{ width: '500px', height: '400px', borderRadius:"30px", padding:"50px"}}> 
@@ -82,6 +82,8 @@ function Login() {
 					</div> 
 				</MDBContainer> 
 			</div> 
+			</div>
+			
 		</div> 
 		
 		<footer className="footer">

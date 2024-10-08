@@ -9,8 +9,8 @@ import java.util.List;
 public interface TournamentService {
 
     public List<Tournament> getAllTournament()  ;
-
-
+    public List<Tournament> getActiveTournament()  ;
+    public List<Tournament> getInactiveTournament()  ;
     public Tournament findTournamentByName(String name) ;
 
     public List<User> getTournamentParticipants (Long id) throws Exception;

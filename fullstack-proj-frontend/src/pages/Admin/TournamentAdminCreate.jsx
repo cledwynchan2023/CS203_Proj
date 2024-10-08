@@ -63,7 +63,7 @@ export default function TournamentAdminCreate() {
             alert("Invalid date! Please enter in the format MM/DD/YYYY");
             return;
         }
-
+        console.log(status);
         const tournamentData = {
             tournament_name,
             date,

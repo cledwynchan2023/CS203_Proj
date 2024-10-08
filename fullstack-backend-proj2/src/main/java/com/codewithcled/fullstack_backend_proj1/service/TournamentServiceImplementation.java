@@ -178,6 +178,29 @@ public class TournamentServiceImplementation implements TournamentService{
        }
        return Optional.ofNullable(userList).orElseGet(ArrayList::new);
     }
+    @Override
+    public List<Tournament> getActiveTournament() {
+        List<Tournament> list = getAllTournament();
+        List<Tournament> activeTournaments = new ArrayList<>();
+        for (Tournament tournament: list){
+            System.out.println(tournament +" and " + tournament.getStatus());
+            if (tournament.getStatus().equals("active")){
+               activeTournaments.add(tournament);
+            }
+        }
+       return activeTournaments;
+    }
+    @Override
+    public List<Tournament> getInactiveTournament() {
+        List<Tournament> list = getAllTournament();
+        List<Tournament> inactiveTournaments = new ArrayList<>();  
+        for (Tournament tournament: list){
+            if (tournament.getStatus().equals("inactive")){
+                inactiveTournaments.add(tournament);
+            }
+        }
+       return inactiveTournaments;
+    }
 
     // @Override
     // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
