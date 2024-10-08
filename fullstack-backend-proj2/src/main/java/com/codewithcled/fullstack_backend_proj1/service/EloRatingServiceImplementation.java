@@ -1,10 +1,20 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EloRatingServiceImplementation implements EloRatingService {
+
+     @Value("${k.value1}")
+    private int k1;
+
+    @Value("${k.value2}")
+    private int k2;
+
+    @Value("${switch.k.value}")
+    private int s1;
 
     @Override
     public double WinProbabilityOnElo(int eloA, int eloB) {
@@ -52,10 +62,10 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
     @Override
     public int getKValue(int eloScore) {
-        if (eloScore > 2400) {
-            return 10;
+        if (eloScore > s1) {
+            return k2;
         } else {
-            return 20;
+            return k1;
         }
     }
 }
