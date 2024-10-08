@@ -26,8 +26,8 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +41,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //@Autowired
-    //private TournamentRepository tournamentRepository;
+    @Autowired
+    private TournamentRepository tournamentRepository;
 
     public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository=userRepository;
