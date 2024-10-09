@@ -52,7 +52,9 @@ public class TournamentServiceImplementation implements TournamentService{
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
-
+        if (currentTournament.getCurrentSize() >= currentTournament.getSize()) {
+            throw new Exception("Tournament is full");
+        }
         if (!user.getCurrentTournaments().contains(currentTournament)) {
                     user.addCurrentTournament(currentTournament);
         }
@@ -162,21 +164,25 @@ public class TournamentServiceImplementation implements TournamentService{
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new Exception("Tournament not found"));
         List<User> userList = userRepository.findAll();
+        List<User> nonParticipatingUsers = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             List<Tournament> currentTournaments = user.getCurrentTournaments();
-            if (user.getRole().equals("ROLE_ADMIN")) {
-                userList.remove(user);
-            } else {
+            if (user.getRole() != null && !user.getRole().equals("ROLE_ADMIN")) {
+                boolean isValid = true;
                 for (Tournament tour: currentTournaments) {
                     if (tour.getId() == tournamentId) {
-                        userList.remove(user);
+                        isValid=false;
+                        break;
                     }
+                }
+                if (isValid){
+                    nonParticipatingUsers.add(user);
                 }
             }
 
        }
-       return Optional.ofNullable(userList).orElseGet(ArrayList::new);
+       return Optional.ofNullable(nonParticipatingUsers).orElseGet(ArrayList::new);
     }
     @Override
     public List<Tournament> getActiveTournament() {

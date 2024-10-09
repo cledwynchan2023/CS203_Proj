@@ -185,7 +185,7 @@ export default function TournamentDetail() {
                 </section>
                 <footer class="modal-card-foot">
                   <div class="buttons">
-                    <button class="button is-success">Save changes</button>
+                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
                     <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
@@ -233,6 +233,7 @@ export default function TournamentDetail() {
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
+        console.log("id is" +id);
         const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -241,6 +242,7 @@ export default function TournamentDetail() {
         console.log(response.data);
         setNonParticipatingUser(response.data);
     };
+
     const deleteTournament = async (id) => {
         try {
             if (tournament.currentSize > 0) {
@@ -292,14 +294,14 @@ export default function TournamentDetail() {
             });
 
             if (response1.status === 200){
-                setIsModalOpen(false);
+                //setIsModalOpen(false);
                 alert("Player added Successfully");
                 loadTournament();
             }
             
         } catch (error) {
+            alert("Tournament Full");
             
-            setError('An error occurred while deleting the tournament.');
         }
     };
 

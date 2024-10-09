@@ -310,14 +310,18 @@ export default function TournamentDetail() {
         try {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
+            console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
-            if (decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER'){
+            if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
+
                 return true;
             } else {
+                
                 return false;
             }
           
         } catch (error) {
+            
             return false;
         }
     };
@@ -330,6 +334,7 @@ export default function TournamentDetail() {
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
+                console.log(isAdminToken(token));
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
@@ -343,6 +348,7 @@ export default function TournamentDetail() {
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
+                    console.log("Invalid TOken")
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid

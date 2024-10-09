@@ -10,7 +10,7 @@ export default function TournamentLandingPage() {
     const[pastTournament, setPastTournament]=useState([]);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
-    const { id } = useParams();
+    const { userId } = useParams();
 
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -40,7 +40,7 @@ export default function TournamentLandingPage() {
     };
 
     const handleRowClick = (tournamentId) => {
-        navigate(`/admin/${id}/tournament/${tournamentId}`);
+        navigate(`/admin/${userId}/tournament/${tournamentId}`);
     };
 
     useEffect(() => {
@@ -116,7 +116,7 @@ export default function TournamentLandingPage() {
         <section className="section is-large" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
             <div className="hero-body" style={{marginBottom:"5%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Tournament</p>
-                <Link className="button is-link is-rounded" to={`/admin/${id}/tournament/create`}>Create Tournament</Link>
+                <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
             </div>
             <table className="table is-hoverable custom-table" >
                 <thead>

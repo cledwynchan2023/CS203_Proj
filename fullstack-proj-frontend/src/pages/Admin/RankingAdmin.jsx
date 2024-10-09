@@ -9,7 +9,7 @@ const RankingAdmin = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     
-    const { id } = useParams();
+    const { userId } = useParams();
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time

@@ -105,7 +105,8 @@ public class TournamentController {
     }
 
     @PutMapping("/{id}/participant/add")
-    public ResponseEntity<TournamentDTO> updateTournamentParticipant(@RequestParam("user_id") Long userId, @PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<TournamentDTO> updateTournamentParticipant(@RequestParam("user_id") 
+    Long userId, @PathVariable("id") Long id) throws Exception {
         try {
             Tournament updatedTournament = tournamentService.updateUserParticipating(userId, id);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);

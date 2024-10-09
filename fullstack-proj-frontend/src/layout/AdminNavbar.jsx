@@ -4,7 +4,7 @@ import './navbar.css';
 
 const AdminNavbar = () => {
     const location = useLocation();
-    const { id } = useParams();
+    const { userId } = useParams();
     const [isActive, setIsActive] = useState(false);
     const toggleBurgerMenu = () => {
         setIsActive(!isActive);
@@ -12,7 +12,7 @@ const AdminNavbar = () => {
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation" style={{paddingLeft:"20px", paddingRight:"20px"}}>
             <div className="navbar-brand">
-                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={`/admin/${id}/tournament`}>Chess.io</a>
+                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={`/admin/${userId}/tournament`}>Chess.io</a>
 
                 <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onClick={toggleBurgerMenu}>
                 <span aria-hidden="true"></span>
@@ -24,10 +24,10 @@ const AdminNavbar = () => {
 
             <div id="navbarExampleTransparentExample" className={`navbar-menu ${isActive ? "is-active" : ""}`}>
                 <div class="navbar-end">
-                <a class="navbar-item" href={`/admin/${id}/tournament`}> Tournament </a>
-                <a class="navbar-item" href={`/admin/${id}/playerlist`}> PlayerList </a>
-                <a class="navbar-item" href={`/admin/${id}/ranking`}> Ranking </a>
-                <a class="navbar-item" href={`/user/${id}/home`}> UserPage </a>
+                <a class="navbar-item" href={`/admin/${userId}/tournament`}> Tournament </a>
+                <a class="navbar-item" href={`/admin/${userId}/playerlist`}> PlayerList </a>
+                <a class="navbar-item" href={`/admin/${userId}/ranking`}> Ranking </a>
+                <a class="navbar-item" href={`/user/${userId}/home`}> UserPage </a>
                
             </div>
             

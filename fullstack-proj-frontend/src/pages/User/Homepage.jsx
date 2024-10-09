@@ -10,7 +10,7 @@ export default function Homepage() {
     const[pastTournament, setPastTournament]=useState([]);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
-    const { id } = useParams();
+    const { userId } = useParams();
 
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -32,8 +32,9 @@ export default function Homepage() {
         try {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
+            console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
-            if (decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER'){
+            if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
                 return false;
@@ -93,7 +94,7 @@ export default function Homepage() {
                     localStorage.removeItem('token'); // Remove token from localStorage
                     alert('Your session has expired. Please login again.');
                     // setTimeout(() => {
-                    //     window.location.href = '/';
+                        window.location.href = '/';
                     // }, 1000);
                 } else {
                     setError('An error occurred while fetching data.');
@@ -125,7 +126,7 @@ export default function Homepage() {
             </section>
             <section className="hero" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"5%"}}>
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", justifyContent:"space-evenly", flexWrap:"wrap"}}>
-                <a href={`/user/${id}/tournament`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
+                <a href={`/user/${userId}/tournament`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
                     <div class="card-image">
                         {/* <figure class="image is-4by3">
                         <img

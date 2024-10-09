@@ -18,7 +18,7 @@ export default function TournamentPage() {
     const[pastTournament, setPastTournament]=useState([]);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
-    const { id } = useParams();
+    const { userId } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -40,8 +40,9 @@ export default function TournamentPage() {
         try {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
+            console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
-            if (decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER'){
+            if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
                 return false;
@@ -85,7 +86,7 @@ export default function TournamentPage() {
                 
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
                 {tournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${id}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -139,7 +140,7 @@ export default function TournamentPage() {
                 
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
                 {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${id}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -222,8 +223,8 @@ export default function TournamentPage() {
             console.log(token +" hello");
             console.log(id);
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
-                clearTokens();
-                window.location.href = '/'; // Redirect to login if token is missing or expired
+                //clearTokens();
+                //window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
 
@@ -236,7 +237,7 @@ export default function TournamentPage() {
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    clearTokens();
+                    //clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     alert('Your session has expired. Please login again.');
                     setTimeout(() => {
