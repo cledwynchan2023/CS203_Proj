@@ -28,6 +28,6 @@ public interface TournamentService {
     public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception;
 
 
-    // public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
+    public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 
 }

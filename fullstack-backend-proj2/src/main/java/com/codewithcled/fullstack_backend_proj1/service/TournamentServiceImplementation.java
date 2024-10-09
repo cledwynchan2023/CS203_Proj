@@ -4,10 +4,15 @@ import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,6 +212,14 @@ public class TournamentServiceImplementation implements TournamentService{
         }
        return inactiveTournaments;
     }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
+        List<Tournament> tournaments = tournamentRepository.findAll();
+        return TournamentMapper.toDTOList(tournaments);
+    }
+
 
     // @Override
     // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
