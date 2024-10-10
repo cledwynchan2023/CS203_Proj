@@ -62,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getAllUser() {
+    void getAllUser_Success_returnUserList() {
         String username = "test";
         Long id = (long) 10;
         User testUser = new User();
@@ -98,7 +98,7 @@ public class UserServiceTest {
      */
 
     @Test
-    void findUserByEmail() {
+    void findUserByEmail_Success_ReturnUser() {
         String username = "test";
         Long id = (long) 10;
         User testUser = new User();
@@ -132,7 +132,7 @@ public class UserServiceTest {
      */
 
     @Test
-    void findAllUsers() {
+    void findAllUsers_Success_ReturnUserList() {
         String username = "test";
         Long id = (long) 10;
         User testUser = new User();
@@ -150,7 +150,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void findAllUsersDTO() {
+    void findAllUsersDTO_Success_ReturnUserList() {
         String username = "test";
         String role = "ROLE_USER";
         Long id = (long) 10;
@@ -173,7 +173,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loadByUsername() {
+    void loadByUsername_Success_ReturnUser() {
         String userName = "testUser";
         Long uId = (long) 10;
         User testUser = new User();
@@ -234,7 +234,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void signInUser() {
+    void signInUser_Success_ReturnAuthResponse() {
         SignInRequest loginRequest = new SignInRequest();
         String username = "testUser";
         String password = "password";
@@ -254,6 +254,7 @@ public class UserServiceTest {
         when(passwordEncoder.matches(password, password)).thenReturn(true);
 
         AuthResponse result = userService.signInUser(loginRequest);
+
         assertEquals("Login success", result.getMessage());
         verify(userRepository,times(2)).findByEmail(username);
     }
