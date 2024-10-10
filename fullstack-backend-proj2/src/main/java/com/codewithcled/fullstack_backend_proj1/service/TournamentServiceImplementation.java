@@ -16,10 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
-public class TournamentServiceImplementation implements TournamentService{
-
+public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -27,9 +25,6 @@ public class TournamentServiceImplementation implements TournamentService{
     @Autowired
     private UserRepository userRepository;
 
-    public TournamentServiceImplementation(TournamentRepository tournamentRepository) {
-        this.tournamentRepository=tournamentRepository;
-    }
     @Override
     public List<Tournament> getAllTournament() {
         return tournamentRepository.findAll();
@@ -42,7 +37,7 @@ public class TournamentServiceImplementation implements TournamentService{
 
     @Override
     public List<User> getTournamentParticipants(Long id) throws Exception {
-        Tournament currentTournament =  tournamentRepository.findById(id)
+        Tournament currentTournament = tournamentRepository.findById(id)
                 .orElseThrow(() -> new Exception("Error Occured"));
 
         return currentTournament.getParticipants();
@@ -57,7 +52,7 @@ public class TournamentServiceImplementation implements TournamentService{
                 .orElseThrow(() -> new Exception("User not found"));
 
         if (!user.getCurrentTournaments().contains(currentTournament)) {
-                    user.addCurrentTournament(currentTournament);
+            user.addCurrentTournament(currentTournament);
         }
         if (!currentTournament.getParticipants().contains(user)) {
             currentTournament.addParticipant(user);
@@ -74,7 +69,7 @@ public class TournamentServiceImplementation implements TournamentService{
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
-                
+
         if (user.getCurrentTournaments().contains(currentTournament)) {
             System.out.println(currentTournament.getParticipants());
             user.removeCurrentTournament(currentTournament);
@@ -85,7 +80,7 @@ public class TournamentServiceImplementation implements TournamentService{
 
             throw new Exception("User is not participating in the tournament");
         }
-        return tournamentRepository.save(currentTournament);  // Save and return the updated tournament
+        return tournamentRepository.save(currentTournament); // Save and return the updated tournament
     }
 
     @Override
@@ -110,51 +105,47 @@ public class TournamentServiceImplementation implements TournamentService{
                     if (newTournament.getCurrentSize() != null) {
                         tournament.setCurrentSize(newTournament.getCurrentSize());
                     }
-                    return tournamentRepository.save(tournament);  // Save and return the updated tournament
+                    return tournamentRepository.save(tournament); // Save and return the updated tournament
                 })
-                .orElseThrow(() -> new Exception("Tournament not found"));  // Throw exception if tournament does not exist
-    }
-
-    @Override
-    public List<Tournament> getTournamnetByUserId(Long id){
-        return tournamentRepository.findTournamentsByUserId(id);
+                .orElseThrow(() -> new Exception("Tournament not found")); // Throw exception if tournament does not
+                                                                           // exist
     }
 
     @Override
     public List<Tournament> getTournamentsWithNoCurrentUser(Long userId) throws Exception {
-      
-            List<Tournament> list = getAllTournament();
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new Exception("User not found"));
 
-            for (int i = 0; i < list.size(); i++) {
-                Tournament tournament = list.get(i);
-                 if (tournament.getParticipants().contains(user)) {
-                   list.remove(tournament);
-                 }
-           }
-           
-           return Optional.ofNullable(list).orElseGet(ArrayList::new);
-    
+        List<Tournament> list = getAllTournament();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+
+        for (int i = 0; i < list.size(); i++) {
+            Tournament tournament = list.get(i);
+            if (tournament.getParticipants().contains(user)) {
+                list.remove(tournament);
+            }
+        }
+
+        return Optional.ofNullable(list).orElseGet(ArrayList::new);
+
     }
+
     @Override
     public Tournament createTournament(CreateTournamentRequest tournament) throws Exception {
-        String tournament_name= tournament.getTournament_name();
+        String tournament_name = tournament.getTournament_name();
         String date = tournament.getDate();
         String status = tournament.getStatus();
         Integer size = tournament.getSize();
         Integer noOfRounds = tournament.getNoOfRounds();
 
-
         // Tournament isEmailExist = tournamentRepository.findBy(email);
         // if (isEmailExist != null) {
-        //     System.out.println("Email Taken!");
-        //     throw new Exception("Email Is Already Used With Another Account");
+        // System.out.println("Email Taken!");
+        // throw new Exception("Email Is Already Used With Another Account");
         // }
 
         // if (userRepository.existsByUsername(username)){
-        //     System.out.println("Username Taken!");
-        //     throw new Exception("Username is already being used with another account");
+        // System.out.println("Username Taken!");
+        // throw new Exception("Username is already being used with another account");
         // }
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
@@ -162,7 +153,7 @@ public class TournamentServiceImplementation implements TournamentService{
         createdTournament.setActive(status);
         createdTournament.setSize(size);
         createdTournament.setNoOfRounds(noOfRounds);
-        
+
         return tournamentRepository.save(createdTournament);
     }
 
@@ -178,24 +169,22 @@ public class TournamentServiceImplementation implements TournamentService{
             if (user.getRole().equals("ROLE_ADMIN")) {
                 userList.remove(user);
             } else {
-                for (Tournament tour: currentTournaments) {
+                for (Tournament tour : currentTournaments) {
                     if (tour.getId() == tournamentId) {
                         userList.remove(user);
                     }
                 }
             }
 
-       }
-       return Optional.ofNullable(userList).orElseGet(ArrayList::new);
+        }
+        return Optional.ofNullable(userList).orElseGet(ArrayList::new);
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
         List<Tournament> tournaments = tournamentRepository.findAll();
         return TournamentMapper.toDTOList(tournaments);
     }
-
-
 
 }

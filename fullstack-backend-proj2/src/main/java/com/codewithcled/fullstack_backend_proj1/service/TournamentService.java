@@ -30,5 +30,4 @@ public interface TournamentService {
 
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 
-    public List<Tournament> getTournamnetByUserId(Long id);
 }

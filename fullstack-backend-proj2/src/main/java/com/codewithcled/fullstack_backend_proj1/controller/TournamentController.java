@@ -119,18 +119,6 @@ public class TournamentController {
         }
     }
 
-    @GetMapping("/test/{id}")
-    public ResponseEntity<List<TournamentDTO>> getTournamentsWithUserId(@PathVariable("id") Long id) throws Exception {
-        try {
-            List<Tournament> tournaments = tournamentService.getTournamnetByUserId(id);
-            List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
-            return new ResponseEntity<>(tournamentDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
-        } catch (Exception e) {
-            System.out.println("error " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
-        }
-    }
-
     @PutMapping("/{id}/participant/delete")
     public ResponseEntity<TournamentDTO> removeParticipant(
             @RequestParam("user_id") Long userId,

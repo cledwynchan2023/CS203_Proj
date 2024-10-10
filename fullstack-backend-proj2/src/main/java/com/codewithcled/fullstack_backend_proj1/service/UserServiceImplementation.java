@@ -42,13 +42,6 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    public UserServiceImplementation(UserRepository userRepository) {
-        this.userRepository=userRepository;
-    }
-
     // @Override
     // public List<UserDTO> getUserChanges() {
     //    List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
@@ -57,6 +50,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     //             .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
     //             .collect(Collectors.toList());
     // }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -197,12 +191,6 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 .orElseThrow(() -> new Exception("User not found"));
 
         return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
-    }
-
-    public List<UserDTO> findUsersInTournament(Long tId){
-        List<User> users=userRepository.findUsersByTournamentId(tId);
-        return UserMapper.toDTOList(users);
-        
     }
 
     private Authentication authenticate(String username, String password) {

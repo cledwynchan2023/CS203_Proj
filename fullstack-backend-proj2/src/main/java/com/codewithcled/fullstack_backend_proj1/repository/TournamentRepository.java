@@ -12,7 +12,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
 
-    @Query("SELECT t FROM Tournament t JOIN t.participants u WHERE u.id = :userId")
-    List<Tournament> findTournamentsByUserId(@Param("userId") Long userId);
-
 }

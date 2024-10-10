@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class EloRatingServiceImplementation implements EloRatingService {
 
-     @Value("${k.value1}")
-    private int k1;
+    @Override
+    public boolean isValidElo(int elo){
+        if (elo<=0){
+            return false;
+        }
 
-    @Value("${k.value2}")
-    private int k2;
-
-    @Value("${switch.k.value}")
-    private int s1;
+        return true;
+    }
 
     @Override
     public double WinProbabilityOnElo(int eloA, int eloB) {
@@ -42,10 +42,8 @@ public class EloRatingServiceImplementation implements EloRatingService {
     @Override
     public double EloCalculation(int eloA, int eloB, int outcome) {
 
-        int k=getKValue(eloA);
-
-        if (eloA <= 0 || eloB <= 0) {
-            throw new IllegalArgumentException("Invalid elo or k values"); // Should throw error invalid values
+        if(!isValidElo(eloA) || !isValidElo(eloB)){
+            throw new IllegalArgumentException("Invalid elo values");
         }
 
         double winValue = WinValue(outcome);
@@ -54,18 +52,23 @@ public class EloRatingServiceImplementation implements EloRatingService {
             throw new IllegalArgumentException("Invalid match result only accepts -1 for A wins, 1 for B wins and 0 for draw");
         }
 
+        int k=getKValue(eloA);
+
         // Probability of player A winning over player B
         double p1Win = WinProbabilityOnElo(eloA, eloB);
+        return Math.round(eloA + eloChange(k, winValue, p1Win));
+    }
 
-        return Math.round(eloA + k * (winValue - p1Win));
+    public double eloChange(int k,double winValue, double winProbability){
+        return k * (winValue-winProbability);
     }
 
     @Override
     public int getKValue(int eloScore) {
-        if (eloScore > s1) {
-            return k2;
+        if (eloScore >= 2400) {
+            return 10;
         } else {
-            return k1;
+            return 20;
         }
     }
 }

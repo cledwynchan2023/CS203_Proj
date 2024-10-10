@@ -9,4 +9,8 @@ public interface EloRatingService {
     public double WinValue(int outcome);
 
     public int getKValue(int eloScore);
+
+    public boolean isValidElo(int elo);
+
+    public double eloChange(int k,double winValue, double winProbability);
 }

@@ -2,6 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.controller;
 
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+import com.codewithcled.fullstack_backend_proj1.service.EloRatingServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
@@ -31,6 +32,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/u")
 public class UserController {
+    @Autowired
+    private EloRatingServiceImplementation eloRatingService;
   
     @Autowired
     private UserRepository userRepository;
@@ -83,6 +86,13 @@ public class UserController {
         return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
     }
 
+
+    @GetMapping("/test")
+    public ResponseEntity<Double> getElo() {
+        double elo=eloRatingService.eloChange(20, 1, 0.5);
+        return ResponseEntity.ok(elo);  // Return 200 OK with the list of UserDTOs
+    }
+
     // Get User by Username
     @GetMapping("/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String email) {
@@ -116,12 +126,7 @@ public class UserController {
                 .map(user -> ResponseEntity.ok(UserMapper.toDTO(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
-
-    @GetMapping("/t/{id}")
-    public ResponseEntity<List<UserDTO>> getUserByTId(@PathVariable("id") Long id){
-        return ResponseEntity.ok(userService.findUsersInTournament(id));
-    }
-
+    
     //delete user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser (@PathVariable("id") Long id){
