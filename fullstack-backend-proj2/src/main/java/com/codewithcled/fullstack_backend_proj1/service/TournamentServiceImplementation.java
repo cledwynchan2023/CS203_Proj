@@ -227,6 +227,19 @@ public class TournamentServiceImplementation implements TournamentService{
     //     .collect(Collectors.toList());
     // }
 
+    @Override
+    public Tournament startTournament(Long id) throws Exception {
+        Tournament currentTournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        if (!currentTournament.getStatus().equals("active")) {
+            throw new Exception("Tournament is ongoing or completed");
+        }
 
+        //code here calling round service to create rounds
+
+
+        currentTournament.setStatus("ongoing");
+        
+    }
 
 }

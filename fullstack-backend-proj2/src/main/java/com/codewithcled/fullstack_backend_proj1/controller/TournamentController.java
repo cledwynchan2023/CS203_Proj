@@ -180,4 +180,15 @@ public class TournamentController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TournamentDTO> startTournament(@PathVariable("id") Long id) {
+        try {
+            Tournament updatedTournament = tournamentService.startTournament(id);
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
+        } catch (Exception e) {
+            // Log the exception message for debugging
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+        }
+    }
 }

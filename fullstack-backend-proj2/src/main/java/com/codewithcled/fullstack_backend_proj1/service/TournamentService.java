@@ -30,4 +30,6 @@ public interface TournamentService {
 
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 
+    public Tournament startTournament(Long id) throws Exception;
+
 }
