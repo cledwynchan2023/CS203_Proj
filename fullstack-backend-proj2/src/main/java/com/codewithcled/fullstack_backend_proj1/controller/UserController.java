@@ -33,9 +33,6 @@ import java.util.List;
 @RequestMapping("/u")
 public class UserController {
     @Autowired
-    private EloRatingServiceImplementation eloRatingService;
-  
-    @Autowired
     private UserRepository userRepository;
 
     //@Autowired
@@ -45,7 +42,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-   
     public static class TokenResponse {
         private boolean valid;
 
@@ -84,13 +80,6 @@ public class UserController {
         }
         List<UserDTO> userDTOs = UserMapper.toDTOList(users);
         return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
-    }
-
-
-    @GetMapping("/test")
-    public ResponseEntity<Double> getElo() {
-        double elo=eloRatingService.eloChange(20, 1, 0.5);
-        return ResponseEntity.ok(elo);  // Return 200 OK with the list of UserDTOs
     }
 
     // Get User by Username
