@@ -55,6 +55,7 @@ public class AdminController {
             return ResponseEntity.status(401).body(new TokenResponse(false));
         }
     }
+    
     public static class TokenResponse {
         private boolean valid;
 

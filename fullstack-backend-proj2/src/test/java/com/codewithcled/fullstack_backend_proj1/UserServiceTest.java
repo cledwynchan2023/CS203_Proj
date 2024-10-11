@@ -43,7 +43,7 @@ public class UserServiceTest {
     private UserServiceImplementation userService;
 
     @Test
-    void loadUserByUsername(String username) {
+    void loadUserByUsername(String username) throws Exception {
         String userName = "testUser";
         User testUser = new User();
         testUser.setEmail(userName);
@@ -51,14 +51,10 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(userName)).thenReturn(testUser);
         when(passwordEncoder.matches(username, userName)).thenReturn(true);
-        try {
-            UserDetails result = userService.loadUserByUsername(userName);
+        UserDetails result = userService.loadUserByUsername(userName);
 
-            assertEquals(userName, result.getUsername());
-            verify(userRepository,times(2)).findByEmail(userName);
-        } catch (UsernameNotFoundException e) {
-
-        }
+        assertEquals(userName, result.getUsername());
+        verify(userRepository, times(2)).findByEmail(userName);
     }
 
     @Test
@@ -173,7 +169,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loadByUsername_Success_ReturnUser() {
+    void loadByUsername_Success_ReturnUser() throws Exception {
         String userName = "testUser";
         Long uId = (long) 10;
         User testUser = new User();
@@ -182,19 +178,15 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(userName)).thenReturn(testUser);
 
-        try {
-            User result = userService.loadByUsername(userName);
+        User result = userService.loadByUsername(userName);
 
-            assertEquals(testUser, result);
-            verify(userRepository).findByEmail(userName);
+        assertEquals(testUser, result);
+        verify(userRepository).findByEmail(userName);
 
-        } catch (Exception e) {
-
-        }
     }
 
     @Test
-    void createUser(SignUpRequest user) {
+    void createUser(SignUpRequest user) throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -219,18 +211,17 @@ public class UserServiceTest {
         when(userRepository.existsByUsername(username)).thenReturn(false);
         when(userRepository.save(testUser)).thenReturn(testUser);
         when(passwordEncoder.matches(password, password)).thenReturn(true);
-        try {
+        when(passwordEncoder.encode(password)).thenReturn(password);
 
-            AuthResponse result = userService.createUser(signUpRequestDetails);
+        AuthResponse result = userService.createUser(signUpRequestDetails);
 
-            assertEquals("Register Success", result.getMessage());
-            verify(userRepository,times(2)).findByEmail(email);
-            verify(userRepository).existsByUsername(username);
-            verify(userRepository).save(testUser);
+        assertEquals("Register Success", result.getMessage());
+        verify(userRepository, times(2)).findByEmail(email);
+        verify(userRepository).existsByUsername(username);
+        verify(userRepository, times(2)).save(testUser);
+        verify(passwordEncoder).matches(password, password);
+        verify(passwordEncoder).encode(password);
 
-        } catch (Exception e) {
-
-        }
     }
 
     @Test
@@ -256,7 +247,7 @@ public class UserServiceTest {
         AuthResponse result = userService.signInUser(loginRequest);
 
         assertEquals("Login success", result.getMessage());
-        verify(userRepository,times(2)).findByEmail(username);
+        verify(userRepository, times(2)).findByEmail(username);
     }
 
     @Test
@@ -287,17 +278,19 @@ public class UserServiceTest {
 
         when(userRepository.findById(uId)).thenReturn(returnUser);
         when(passwordEncoder.matches(password, password)).thenReturn(true);
+        when(passwordEncoder.encode(password)).thenReturn(password);
 
         Optional<User> result = userService.updateUser(uId, newUser);
 
         assertEquals(true, result.isPresent());
         assertEquals(newUsername, result.get().getUsername());
 
-        verify(userRepository,times(2)).findById(uId);
+        verify(userRepository, times(2)).findById(uId);
+        verify(passwordEncoder).encode(password);
     }
 
     @Test
-    void getUserParticipatingTournaments(Long userId) {
+    void getUserParticipatingTournaments(Long userId) throws Exception{
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -313,15 +306,10 @@ public class UserServiceTest {
 
         Optional<User> returnUser = Optional.of(testUser);
         when(userRepository.findById(uId)).thenReturn(returnUser);
-        when(passwordEncoder.matches("", "")).thenReturn(true);
 
-        try {
-            List<Tournament> result = userService.getUserParticipatingTournaments(userId);
+        List<Tournament> result = userService.getUserParticipatingTournaments(userId);
 
-            assertIterableEquals(tournamentList, result);
-            verify(userRepository,times(2)).findById(uId);
-        } catch (Exception e) {
-
-        }
+        assertIterableEquals(tournamentList, result);
+        verify(userRepository, times(2)).findById(uId);
     }
 }

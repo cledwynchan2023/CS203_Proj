@@ -30,6 +30,7 @@ public class LoginRegisterController {
             return ResponseEntity.status(401).body(new TokenResponse(false));
         }
     }
+    
     public static class TokenResponse {
         private boolean valid;
 

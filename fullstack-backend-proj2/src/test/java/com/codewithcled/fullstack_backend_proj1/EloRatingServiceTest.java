@@ -174,32 +174,22 @@ public class EloRatingServiceTest {
     }
 
     @Test
-    void EloCalculation_ValidInputs_ReturnDouble() {
+    void EloCalculation_ValidInputs_ReturnDouble() throws IllegalArgumentException {
         int elo1 = 1000;
         int elo2 = 1000;
         int outcome = 1;
 
-        try {
-            double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
-            assertEquals(990,result);
-        } catch (IllegalArgumentException e) {
-
-        }
+        double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
+        assertEquals(990, result);
     }
 
     @Test
-    void EloCalculation_ValidInputDiffK_ReturnDouble() {
+    void EloCalculation_ValidInputDiffK_ReturnDouble() throws IllegalArgumentException{
         int elo1 = 2400;
         int elo2 = 2400;
         int outcome = 1;
 
-        try {
-
-            double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
-            assertEquals(2395, result);
-
-        } catch (IllegalArgumentException e) {
-
-        }
+        double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
+        assertEquals(2395, result);
     }
 }

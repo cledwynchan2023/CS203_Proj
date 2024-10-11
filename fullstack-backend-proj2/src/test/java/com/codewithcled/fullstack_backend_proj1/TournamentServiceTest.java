@@ -59,7 +59,7 @@ public class TournamentServiceTest {
      */
 
     @Test
-    void getTournamentParticipants_Success_returnListUser() {
+    void getTournamentParticipants_Success_returnListUser() throws Exception {
         Long id = (long) 500;
         Tournament testTournament = new Tournament();
         User testUser = new User();
@@ -71,13 +71,10 @@ public class TournamentServiceTest {
         Optional<Tournament> returnT = Optional.of(testTournament);
         when(tournamentRepository.findById(id)).thenReturn(returnT);
 
-        try {
-            List<User> result = tournamentService.getTournamentParticipants(id);
-            assertNotNull(result);
-            assertIterableEquals(result, testUserList);
-            verify(tournamentRepository).findById(id);
-        } catch (Exception e) {
-        }
+        List<User> result = tournamentService.getTournamentParticipants(id);
+        assertNotNull(result);
+        assertIterableEquals(result, testUserList);
+        verify(tournamentRepository).findById(id);
     }
 
     @Test
@@ -99,7 +96,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void updateUserParticipating_Success_returnTournament() {
+    void updateUserParticipating_Success_returnTournament() throws Exception {
         Long uIdF = (long) 10;
         Long uIdT = (long) 11;
         Long tId = (long) 11;
@@ -116,19 +113,21 @@ public class TournamentServiceTest {
         List<User> finalParticipantList = new ArrayList<User>();
         finalParticipantList.add(firstUser);
         finalParticipantList.add(testUser);
+        Optional<User> returnUser = Optional.of(testUser);
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+        when(userRepository.findById(uIdT)).thenReturn(returnUser);
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
-        try {
+        Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
 
-            Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
+        assertIterableEquals(finalParticipantList, result.getParticipants());
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uIdT);
+        verify(userRepository).save(testUser);
+        verify(tournamentRepository).save(testTournament);
 
-            assertIterableEquals(finalParticipantList, result.getParticipants());
-            verify(tournamentRepository).findById(tId);
-
-        } catch (Exception e) {
-
-        }
     }
 
     @Test
@@ -187,27 +186,33 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void removeUserParticipating_Success_ReturnTournament() {
+    void removeUserParticipating_Success_ReturnTournament() throws Exception {
         Long uId = (long) 10;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
+        List<Tournament> tournamentList = new ArrayList<Tournament>();
+        tournamentList.add(testTournament);
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
+        firstUser.setCurrentTournaments(tournamentList);
         testTournament.addParticipant(new User());
         Optional<Tournament> returnTournament = Optional.of(testTournament);
+        Optional<User> returnUser = Optional.of(firstUser);
 
         List<User> finalParticipantList = new ArrayList<User>();
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
-        try {
+        when(userRepository.findById(uId)).thenReturn(returnUser);
+        when(userRepository.save(firstUser)).thenReturn(firstUser);
+        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
-            Tournament result = tournamentService.removeUserParticipating(uId, tId);
+        Tournament result = tournamentService.removeUserParticipating(uId, tId);
 
-            assertIterableEquals(finalParticipantList, result.getParticipants());
-            verify(tournamentRepository).findById(tId);
-        } catch (Exception e) {
-
-        }
+        assertIterableEquals(finalParticipantList, result.getParticipants());
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uId);
+        verify(userRepository).save(firstUser);
+        verify(tournamentRepository).save(testTournament);
     }
 
     @Test
@@ -279,7 +284,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void updateTournament_Success_ReturnTournament() {
+    void updateTournament_Success_ReturnTournament() throws Exception {
         Long tId = (long) 11;
         CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
         tournamentUpdateData.setTournament_name("newName");
@@ -290,16 +295,11 @@ public class TournamentServiceTest {
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(tournamentRepository.save(originalTournament)).thenReturn(originalTournament);
 
-        try {
+        Tournament result = tournamentService.updateTournament(tId, tournamentUpdateData);
 
-            Tournament result = tournamentService.updateTournament(tId, tournamentUpdateData);
-
-            assertEquals(tournamentUpdateData.getTournament_name(), result.getTournament_name());
-            verify(tournamentRepository).save(originalTournament);
-
-        } catch (Exception e) {
-
-        }
+        assertEquals(tournamentUpdateData.getTournament_name(), result.getTournament_name());
+        verify(tournamentRepository).findById(tId);
+        verify(tournamentRepository).save(originalTournament);
 
     }
 
@@ -327,7 +327,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getTournamentsWithNoCurrentUser_Success_ReturnTournamentList() {
+    void getTournamentsWithNoCurrentUser_Success_ReturnTournamentList() throws Exception {
         Long uId = (long) 10;
         Long tId = (long) 11;
         User testUser = new User();
@@ -339,14 +339,12 @@ public class TournamentServiceTest {
         resultList.add(testTournament);
 
         when(tournamentRepository.findAll()).thenReturn(resultList);
-        try {
-            List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
-            assertIterableEquals(resultList, result);
-            verify(tournamentRepository).findAll();
-        } catch (Exception e) {
+        List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
 
-        }
+        assertIterableEquals(resultList, result);
+        verify(tournamentRepository).findAll();
 
     }
 
@@ -377,7 +375,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void createTournament_Success_ReturnTournament() {
+    void createTournament_Success_ReturnTournament() throws Exception {
         String tournament_name = "Test tournament";
         String date = "20/10/2201";
         String status = "Active";
@@ -400,24 +398,18 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.save(returnTournament)).thenReturn(returnTournament);
 
-        try {
+        Tournament result = tournamentService.createTournament(tournamentCreateData);
 
-            Tournament result = tournamentService.createTournament(tournamentCreateData);
-
-            assertEquals(tournament_name, result.getTournament_name());
-            assertEquals(date, result.getDate());
-            assertEquals(status, result.getStatus());
-            assertEquals(size, result.getSize());
-            assertEquals(noOfRounds, result.getNoOfRounds());
-            verify(tournamentRepository).save(returnTournament);
-
-        } catch (Exception e) {
-
-        }
+        assertEquals(tournament_name, result.getTournament_name());
+        assertEquals(date, result.getDate());
+        assertEquals(status, result.getStatus());
+        assertEquals(size, result.getSize());
+        assertEquals(noOfRounds, result.getNoOfRounds());
+        verify(tournamentRepository).save(returnTournament);
     }
 
     @Test
-    void getNonParticipatingCurrentUser_Success_ReturnUserList() {
+    void getNonParticipatingCurrentUser_Success_ReturnUserList() throws Exception {
         Long tId = (long) 11;
         Long uId1 = (long) 10;
         Long uId2 = (long) 11;
@@ -445,16 +437,13 @@ public class TournamentServiceTest {
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findAll()).thenReturn(userList);
-        try {
-            List<User> result = tournamentService.getNonParticipatingCurrentUser(tId);
 
-            assertEquals(1, result.size());
-            assertEquals(tUser2, result.get(0));
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository).findAll();
-        } catch (Exception e) {
+        List<User> result = tournamentService.getNonParticipatingCurrentUser(tId);
 
-        }
+        assertEquals(1, result.size());
+        assertEquals(tUser2, result.get(0));
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findAll();
     }
 
     @Test
@@ -498,7 +487,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void findAllTournamentsDTO_Success_ReturnTournamentDTOList() {
+    void findAllTournamentsDTO_Success_ReturnTournamentDTOList() throws Exception {
         Long tId = (long) 11;
         List<Tournament> tournamentList = new ArrayList<Tournament>();
         Tournament testTournament = new Tournament();
@@ -510,15 +499,10 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        try {
-            List<TournamentDTO> result = tournamentService.findAllTournamentsDTO();
+        List<TournamentDTO> result = tournamentService.findAllTournamentsDTO();
 
-            assertEquals(tournamentDTOList.get(0).getTournamentName(), result.get(0).getTournamentName());
-            verify(tournamentRepository).findAll();
-            
-        } catch (Exception e) {
-
-        }
+        assertEquals(tournamentDTOList.get(0).getTournamentName(), result.get(0).getTournamentName());
+        verify(tournamentRepository).findAll();
 
     }
 
