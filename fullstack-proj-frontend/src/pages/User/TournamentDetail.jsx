@@ -22,7 +22,6 @@ export default function TournamentDetail() {
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [hasJoined, setHasJoined] = useState(false); 
@@ -31,42 +30,6 @@ export default function TournamentDetail() {
         
     }
 
-    const convertToCreateTournamentRequest = (editedTournament) => {
-        
-        return {
-          tournament_name: editedTournament.tournamentName,
-          date: editedTournament.date,
-          status: editedTournament.status,
-          size: editedTournament.size,
-          noOfRounds: editedTournament.noOfRounds || 0,
-          currentSize: editedTournament.currentSize || 0,
-        };
-      };
-    
-    const onSubmit= async (e)=>{
-        e.preventDefault();
-        console.log(editedTournament);
-        const tournamentData = {
-            tournament_name,
-            date,
-            status,
-            size,
-            noOfRounds
-        };
-        console.log(tournamentData.tournament_name);
-        try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
-            if (response.status === 200){
-                alert("Tournament Edited Successfully");
-                setIsEditModalOpen(false);
-                loadTournament();
-            }
-            
-        } catch (error) {
-            console.error("There was an error registering the tournament!", error);
-        }
-        
-    }
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -248,10 +211,11 @@ export default function TournamentDetail() {
     };
 
     
-    const removePlayer = async (user_id) => {
+    const removePlayer = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${user_id}`,
+            console.log(id + " " + userId);
+            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${userId}`,
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -388,94 +352,7 @@ export default function TournamentDetail() {
             </div>
             
         </section>
-        {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Tournament</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-               
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="floatingInput"
-                            placeholder="name@example.com"
-                            value={tournament_name}
-                            onChange={(e) =>onInputChange(e)}
-                            name="tournament_name"
-                        ></input>
-                        <label htmlFor="tournament_name">Tournament Name</label>
-                        </div>
-                        
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="floatingUsername"
-                            placeholder="Date"
-                            value={date}
-                            onChange={(e) =>onInputChange(e)}
-                            name="date"
-                        />
-                        <label htmlFor="Date">Date</label>
-
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <select
-                                className="form-control"
-                                id="floatingRole"
-                                value={status}
-                                onChange={(e) => onInputChange(e)}
-                                name="status"
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Not Active</option>
-                            </select>
-                            <label htmlFor="Status">Status</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="size"
-                            value={size}
-                            onChange={(e) =>onInputChange(e)}
-                            name="size"
-                        />
-                        <label htmlFor="size">Number of participants</label>
-                        </div>
-                        <div className="form-floating">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="noOfRounds"
-                            value={noOfRounds}
-                            onChange={(e) =>onInputChange(e)}
-                            name="noOfRounds"
-                        />
-                        <label htmlFor="noOfRounds">Number of rounds</label>
-                        </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Edit Tournament</button>
-                        </div>
-
-                    </form>
-            
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
+        
         <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>

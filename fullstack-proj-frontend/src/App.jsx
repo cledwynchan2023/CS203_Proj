@@ -25,6 +25,8 @@ import Homepage from './pages/User/Homepage.jsx';
 import UserNavbar from './layout/UserNavbar.jsx';
 import TournamentPage from './pages/User/TournamentPage.jsx';
 import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
+import Ranking from './pages/User/Ranking.jsx';
+
 function App() {
 
   return (
@@ -143,6 +145,12 @@ function App() {
           <>
           <UserNavbar></UserNavbar>
           <TournamentDetailUser/>
+          </>
+        }></Route>
+         <Route exact path ="/user/:userId/ranking" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <Ranking/>
           </>
         }></Route>
 

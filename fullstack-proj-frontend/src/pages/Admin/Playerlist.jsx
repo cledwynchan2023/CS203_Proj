@@ -10,12 +10,13 @@ export default function Playerlist() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const { userId } = useParams();
+    const[selectedUser, setSelectedUser]=useState(null);
     const [selectedId, setSelectedId] = useState([]);
     const [createdUser,setCreatedUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER", elo:0});
     const{username, password, email, confirmPassword, role, elo} = createdUser;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditedModalOpen, setIsEditedModalOpen] = useState(false);
-    const [editedUser,setEditedUser] = useState({editedUsername:"", editedPassword:"", editedEmail:"", editedConfirmPassword:"", editedRole:"ROLE_USER", editedElo:0});
+    const [editedUser,setEditedUser] = useState({editedUsername:"", editedEmail:"", editedRole:"ROLE_USER", editedElo:0});
     const{editedUsername, editedPassword, editedEmail, editedConfirmPassword, editedRole, editedElo} = editedUser;
 
     const clearTokens = () => {
@@ -92,14 +93,19 @@ export default function Playerlist() {
             return false;
         }
     };
-    const handleRowClick = async (userId) => {
-        setSelectedId(userId);
-        await loadEditedUser();
+    const handleRowClick = (user) => {
+
+        setEditedUser({editedUsername: user.username, editedEmail: user.email, editedRole: user.role, editedElo: user.elo});
+       setSelectedId(user.id);
+        setIsEditedModalOpen(true); 
         
     }
+    useEffect(() => {
+        console.log(editedUser.editedUsername + " user: " + editedUser.editedUsername);
+    }, [editedUser]);
 
-    const onSubmit= async (e)=>{
-        e.preventDefault();
+    const onSubmit= async ()=>{
+
         console.log(role);
         
 
@@ -113,8 +119,8 @@ export default function Playerlist() {
 
         const userData = {
             username,
-            password,
             email,
+            password,
             role,
             elo
         };
@@ -151,27 +157,16 @@ export default function Playerlist() {
     const onEditSubmit= async ()=>{
        
         
-        console.log(editedPassword);
-        console.log(editedPassword);
-        console.log(editedRole);
-        if (editedPassword !== editedConfirmPassword) {
-            alert("Passwords do not match");
-            return;
-        } else if (editedPassword.length <= 6){
-            alert("Password needs to be more than 6 characters");
-            return;
-        }
 
         const userData = {
             username: editedUsername,
-            password: editedPassword,
             email: editedEmail,
             role: editedRole,
             elo: editedElo
         };
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.put(`http://localhost:8080/u/${selectedId}`, userData, {
+            const response = await axios.put(`http://localhost:8080/u/user/${selectedId}`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -179,10 +174,8 @@ export default function Playerlist() {
     
             if (response.status === 200){
                 alert("User Edited successfully!");
-                setIsEditedModalOpen(false);
-                loadUsers();
+                
             }
-            console.log("hello");
         } 
         catch (error) {
             
@@ -235,27 +228,7 @@ export default function Playerlist() {
       
         setUser(result.data);
     };
-    const loadEditedUser= async()=>{
-        const token = localStorage.getItem('token');
-        try {
-            const result = await axios.get(`http://localhost:8080/u/id/${selectedId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
     
-            setEditedUser({
-                editedUsername: result.data.username,
-                editedEmail: result.data.email,
-                editedElo: result.data.elo,
-                editedRole: result.data.role
-            });
-            console.log("loaded successfully");
-            setIsEditedModalOpen(true); 
-        } catch (error) {
-            console.error("Error loading user data:", error);
-        }
-    };
   return (
     <>
         <div className="background-container" style={{ 
@@ -279,7 +252,7 @@ export default function Playerlist() {
                 </thead>
                 <tbody>
                     {user.map((user, index) =>
-                        <tr key={user.id} onClick={() => handleRowClick(user.id)}>
+                        <tr key={user.id} onClick={() => handleRowClick(user)}>
                             <td>{user.id}</td>
                             <td>{user.username}</td>
                             <td>{user.elo}</td>
@@ -365,7 +338,7 @@ export default function Playerlist() {
                         <label htmlFor="PasswordConfirm">Elo</label>
                             </div>
                         <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Create Player</button>
+                        <button onClick={()=> {onSubmit()}} className='button is-link is-fullwidth'>Create Player</button>
                         </div>
 
                     </form>
@@ -391,7 +364,7 @@ export default function Playerlist() {
                 </header>
                 <section class="modal-card-body" style={{height:"400px"}}>
                
-                    <form onSubmit={(e) => onSubmit(e)}>
+                    <form onSubmit={(e) => onEditSubmit(e)}>
                         <div className="form-floating mb-3">
                         <input
                             type="text"
@@ -418,30 +391,7 @@ export default function Playerlist() {
                         <label htmlFor="Username">Username</label>
 
                         </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={editedPassword}
-                                onChange={(e) => onEditInputChange(e)}
-                                name="editedPassword"
-                            
-                            />
-                            <label htmlFor="Status">Password</label>
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={editedConfirmPassword}
-                                onChange={(e) => onEditInputChange(e)}
-                                name="editedConfirmPassword"
-                            
-                            />
-                            <label htmlFor="Status">Confirm Password</label>
-                        </div>
+                        
                         <div className="form-floating mb-3 mt-3">
                             <input
                             type="number"

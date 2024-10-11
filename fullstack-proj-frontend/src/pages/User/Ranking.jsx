@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
+import "./style/Ranking.css";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { BiGroup } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
@@ -12,7 +13,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
 import { CgProfile } from "react-icons/cg";
 
-export default function RankingAdmin() {
+export default function Ranking() {
     const [selectedId, setSelectedId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const[user,setUser]=useState([]);

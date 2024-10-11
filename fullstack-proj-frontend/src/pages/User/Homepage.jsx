@@ -6,8 +6,7 @@ import backgroundImage from '/src/assets/image1.webp';
 import "./style/Homepage.css";
 export default function Homepage() {
     const navigate = useNavigate();
-    const[tournament,setTournament]=useState([]);
-    const[pastTournament, setPastTournament]=useState([]);
+    
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
     const { userId } = useParams();
@@ -15,11 +14,7 @@ export default function Homepage() {
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
-        // Add any other tokens you want to clear here
-        // localStorage.removeItem('anotherToken');
-        // tokenKeys.forEach(key => {
-        //     localStorage.removeItem(key);
-        // });
+        
     };
 
     const isTokenExpired = () => {
@@ -55,20 +50,7 @@ export default function Homepage() {
         }
     };
 
-    const loadTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/t/tournaments");
-        console.log(result.data);
-        if (!result.data.length == 0){
-            console.log("No Active Tournaments");
-            const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
-            console.log(filteredTournament);
-            setTournament(filteredTournament);
-        }
-        else{
-            setTournament([]);
-        }
-        
-    };
+   
 
     useEffect(() => {
         const fetchData = async () => {
@@ -104,9 +86,10 @@ export default function Homepage() {
 
         fetchData();
         //loadPastTournaments();
-        loadTournaments();
+ 
 
     }, []);
+    
   return (
     <>
     <div className="background-container" style={{ 

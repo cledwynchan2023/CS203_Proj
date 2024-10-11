@@ -1,5 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -34,6 +35,7 @@ public interface UserService {
     public AuthResponse signInUser(SignInRequest loginRequest);
 
     public Optional<User> updateUser(Long id, SignUpRequest newUser);
+    public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser);
 
     // public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception;
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception;
