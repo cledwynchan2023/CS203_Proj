@@ -48,4 +48,20 @@ public class Round {
     public Long getId() {
         return id;
     }
+
+    public Map<Long, Integer> getScoreboard() {
+        return scoreboard;
+    }
+
+    public void setScoreboard(Map<Long, Integer> scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
+    public Integer getRoundNum() {
+        return roundNum;
+    }
+
+    public void setRoundNum(Integer roundNum) {
+        this.roundNum = roundNum;
+    }
 }

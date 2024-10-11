@@ -1,5 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -27,6 +28,9 @@ public class TournamentServiceImplementation implements TournamentService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoundService roundService;
 
     public TournamentServiceImplementation(TournamentRepository tournamentRepository) {
         this.tournamentRepository=tournamentRepository;
@@ -104,7 +108,7 @@ public class TournamentServiceImplementation implements TournamentService{
                         tournament.setSize(newTournament.getSize());
                     }
                     if (newTournament.getStatus() != null) {
-                        tournament.setActive(newTournament.getStatus());
+                        tournament.setStatus(newTournament.getStatus());
                     }
                     if (newTournament.getNoOfRounds() != null) {
                         tournament.setNoOfRounds(newTournament.getNoOfRounds());
@@ -155,7 +159,7 @@ public class TournamentServiceImplementation implements TournamentService{
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
         createdTournament.setDate(date);
-        createdTournament.setActive(status);
+        createdTournament.setStatus(status);
         createdTournament.setSize(size);
         createdTournament.setNoOfRounds(noOfRounds);
         
@@ -235,11 +239,15 @@ public class TournamentServiceImplementation implements TournamentService{
             throw new Exception("Tournament is ongoing or completed");
         }
 
-        //code here calling round service to create rounds
+        List<User> participants = currentTournament.getParticipants();
 
-
+        Round firstRound = roundService.createFirstRound(participants);
+        firstRound.setTournament(currentTournament);
+        currentTournament.getRounds().add(firstRound);
+        currentTournament.setScoreboard(firstRound.getScoreboard());
         currentTournament.setStatus("ongoing");
-        
+
+        return tournamentRepository.save(currentTournament);
     }
 
 }
