@@ -26,6 +26,9 @@ public class RoundServiceImplementation implements RoundService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MatchService matchService;
+
     public RoundServiceImplementation(RoundRepository roundRepository){
         this.roundRepository = roundRepository;
     }
@@ -55,7 +58,7 @@ public class RoundServiceImplementation implements RoundService {
             }
         });
         for(int i = 0; i < copy.size() / 2; i++){
-            Match match = MatchService.createMatch(copy.get(i), copy.get(copy.size() - i - 1));
+            Match match = matchService.createMatch(copy.get(i), copy.get(copy.size() - i - 1));
             match.setRound(firstRound);
             firstRound.addMatch(match);
         }
