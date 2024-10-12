@@ -250,4 +250,22 @@ public class TournamentServiceImplementation implements TournamentService{
         return tournamentRepository.save(currentTournament);
     }
 
+    @Override
+    public void checkComplete(Long tournamentId) throws Exception {
+        Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+
+        //check if there are already the number of rounds specified
+        if(currentTournament.getRounds().size() == currentTournament.getNoOfRounds()){
+            //invoke endTournament, which will update the tournament status to completed
+            //and get the final rankings (tiebreak and stuff)
+            endTournament(currentTournament);
+        }
+        else {
+            //create the next round
+            Round nextRound = roundService.createNextRound(currentTournament.getId());
+            currentTournament.getRounds().add(nextRound);
+            tournamentRepository.save(currentTournament);
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class Round {
     private Integer roundNum;
 
     @ElementCollection
-    private Map<Long, Integer> scoreboard;
+    private Map<Long, Double> scoreboard;
 
 
     @OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,11 +49,11 @@ public class Round {
         return id;
     }
 
-    public Map<Long, Integer> getScoreboard() {
+    public Map<Long, Double> getScoreboard() {
         return scoreboard;
     }
 
-    public void setScoreboard(Map<Long, Integer> scoreboard) {
+    public void setScoreboard(Map<Long, Double> scoreboard) {
         this.scoreboard = scoreboard;
     }
 

@@ -32,4 +32,5 @@ public interface TournamentService {
 
     public Tournament startTournament(Long id) throws Exception;
 
+    public void checkComplete(Long tournamentId) throws Exception;
 }
