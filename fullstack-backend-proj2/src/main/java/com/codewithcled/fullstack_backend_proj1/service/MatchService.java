@@ -1,5 +1,4 @@
 package com.codewithcled.fullstack_backend_proj1.service;
-import org.aspectj.apache.bcel.classfile.ExceptionTable;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.User;
