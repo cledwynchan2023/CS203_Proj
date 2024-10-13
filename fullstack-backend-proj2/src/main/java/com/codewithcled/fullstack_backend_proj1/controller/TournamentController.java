@@ -43,6 +43,27 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
+    //get active tournaments
+    @GetMapping("/tournaments/active")
+    public ResponseEntity<List<TournamentDTO>> getActiveTournaments() {
+        List<Tournament> tournaments = tournamentService.getActiveTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
+    //get inactive tournaments
+    @GetMapping("/tournaments/inactive")
+    public ResponseEntity<List<TournamentDTO>> getInactiveTournaments() {
+        List<Tournament> tournaments = tournamentService.getInactiveTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TournamentDTO> getTournamentById(@PathVariable("id") Long id) {
@@ -84,7 +105,8 @@ public class TournamentController {
     }
 
     @PutMapping("/{id}/participant/add")
-    public ResponseEntity<TournamentDTO> updateTournamentParticipant(@RequestParam("user_id") Long userId, @PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<TournamentDTO> updateTournamentParticipant(@RequestParam("user_id") 
+    Long userId, @PathVariable("id") Long id) throws Exception {
         try {
             Tournament updatedTournament = tournamentService.updateUserParticipating(userId, id);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
@@ -158,4 +180,15 @@ public class TournamentController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TournamentDTO> startTournament(@PathVariable("id") Long id) {
+        try {
+            Tournament updatedTournament = tournamentService.startTournament(id);
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
+        } catch (Exception e) {
+            // Log the exception message for debugging
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+        }
+    }
 }

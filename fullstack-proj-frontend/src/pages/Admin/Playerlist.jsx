@@ -9,7 +9,7 @@ export default function Playerlist() {
     const[user,setUser]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const { id } = useParams();
+    const { userId } = useParams();
     const [selectedId, setSelectedId] = useState([]);
     const [createdUser,setCreatedUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER", elo:0});
     const{username, password, email, confirmPassword, role, elo} = createdUser;

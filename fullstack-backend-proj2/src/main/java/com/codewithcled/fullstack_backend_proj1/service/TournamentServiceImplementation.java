@@ -1,9 +1,12 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.annotations.DialectOverride.OverridesAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,9 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoundService roundService;
 
     @Override
     public List<Tournament> getAllTournament() {
@@ -50,7 +56,9 @@ public class TournamentServiceImplementation implements TournamentService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
-
+        if (currentTournament.getCurrentSize() >= currentTournament.getSize()) {
+            throw new Exception("Tournament is full");
+        }
         if (!user.getCurrentTournaments().contains(currentTournament)) {
             user.addCurrentTournament(currentTournament);
         }
@@ -97,7 +105,7 @@ public class TournamentServiceImplementation implements TournamentService {
                         tournament.setSize(newTournament.getSize());
                     }
                     if (newTournament.getStatus() != null) {
-                        tournament.setActive(newTournament.getStatus());
+                        tournament.setStatus(newTournament.getStatus());
                     }
                     if (newTournament.getNoOfRounds() != null) {
                         tournament.setNoOfRounds(newTournament.getNoOfRounds());
@@ -150,7 +158,7 @@ public class TournamentServiceImplementation implements TournamentService {
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
         createdTournament.setDate(date);
-        createdTournament.setActive(status);
+        createdTournament.setStatus(status);
         createdTournament.setSize(size);
         createdTournament.setNoOfRounds(noOfRounds);
 
@@ -163,28 +171,108 @@ public class TournamentServiceImplementation implements TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new Exception("Tournament not found"));
         List<User> userList = userRepository.findAll();
+        List<User> nonParticipatingUsers = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             List<Tournament> currentTournaments = user.getCurrentTournaments();
-            if (user.getRole().equals("ROLE_ADMIN")) {
-                userList.remove(user);
-            } else {
-                for (Tournament tour : currentTournaments) {
+            if (user.getRole() != null && !user.getRole().equals("ROLE_ADMIN")) {
+                boolean isValid = true;
+                for (Tournament tour: currentTournaments) {
                     if (tour.getId() == tournamentId) {
-                        userList.remove(user);
+                        isValid=false;
+                        break;
                     }
+                }
+                if (isValid){
+                    nonParticipatingUsers.add(user);
                 }
             }
 
+       }
+       return Optional.ofNullable(nonParticipatingUsers).orElseGet(ArrayList::new);
+    }
+    @Override
+    public List<Tournament> getActiveTournament() {
+        List<Tournament> list = getAllTournament();
+        List<Tournament> activeTournaments = new ArrayList<>();
+        for (Tournament tournament: list){
+            System.out.println(tournament +" and " + tournament.getStatus());
+            if (tournament.getStatus().equals("active")){
+               activeTournaments.add(tournament);
+            }
         }
-        return Optional.ofNullable(userList).orElseGet(ArrayList::new);
+       return activeTournaments;
+    }
+    @Override
+    public List<Tournament> getInactiveTournament() {
+        List<Tournament> list = getAllTournament();
+        List<Tournament> inactiveTournaments = new ArrayList<>();  
+        for (Tournament tournament: list){
+            if (tournament.getStatus().equals("inactive")){
+                inactiveTournaments.add(tournament);
+            }
+        }
+       return inactiveTournaments;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly=true)
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
         List<Tournament> tournaments = tournamentRepository.findAll();
         return TournamentMapper.toDTOList(tournaments);
     }
 
+
+    // @Override
+    // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
+    //     return tournamentRepository.findAll().stream()
+    //     .map(tournament -> new TournamentDTO(tournament.getId(),tournament.getTournament_name(),tournament.getParticipants(), tournament.getScoreboard(),tournament.getDate(),  tournament.getStatus(),tournament.getSize(), tournament.getCurrentSize(), tournament.getNoOfRounds(), tournament.getRounds()))
+    //     .collect(Collectors.toList());
+    // }
+
+    @Override
+    public Tournament startTournament(Long id) throws Exception {
+        Tournament currentTournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        if (!currentTournament.getStatus().equals("active")) {
+            throw new Exception("Tournament is ongoing or completed");
+        }
+
+        List<User> participants = currentTournament.getParticipants();
+
+        Round firstRound = roundService.createFirstRound(participants);
+        firstRound.setTournament(currentTournament);
+        currentTournament.getRounds().add(firstRound);
+        currentTournament.setScoreboard(firstRound.getScoreboard());
+        currentTournament.setStatus("ongoing");
+
+        return tournamentRepository.save(currentTournament);
+    }
+
+    @Override
+    public void checkComplete(Long tournamentId) throws Exception {
+        Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+
+        //check if there are already the number of rounds specified
+        if(currentTournament.getRounds().size() == currentTournament.getNoOfRounds()){
+            //invoke endTournament, which will update the tournament status to completed
+            //and get the final rankings (tiebreak and stuff)
+            endTournament(currentTournament.getId());
+        }
+        else {
+            //create the next round
+            Round nextRound = roundService.createNextRound(currentTournament.getId());
+            currentTournament.getRounds().add(nextRound);
+            tournamentRepository.save(currentTournament);
+        }
+    }
+
+    @Override
+    public void endTournament(Long tournamentId) throws Exception{
+        Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+
+        //to do: update tournament scoreboard
+    }
 }
