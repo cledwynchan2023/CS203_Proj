@@ -7,6 +7,7 @@ import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 
@@ -14,6 +15,9 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 public class MatchServiceImplementation implements MatchService{
     @Autowired
     private MatchRepository matchRepository;
+
+    @Autowired
+    private RoundService roundService;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -41,24 +45,32 @@ public class MatchServiceImplementation implements MatchService{
 
         currentMatch.setResult(result);
 
+        User player1 = currentMatch.getPlayer1();
+        User player2 = currentMatch.getPlayer2();
+
         Double player1StartingElo = currentMatch.getPlayer1StartingElo();
         Double player2StartingElo = currentMatch.getPlayer2StartingElo();
 
-        //todo: implement elo changes here
+        //todo: implement elo calculations here
         Double eloChange1 = eloRatingService.EloCalculation(player1StartingElo, player2StartingElo, result);
         Double eloChange2 = eloRatingService.EloCalculation(player2StartingElo, player1StartingElo, result);
         
+        //save match results to match database
         currentMatch.setEloChange1(eloChange1);
         currentMatch.setEloChange2(eloChange2);
         currentMatch.setIsComplete(true);
+        matchRepository.save(currentMatch);
 
         //still need to change the user's elo in the user database
         player1.setElo(player1StartingElo + eloChange1);
         userRepository.save(player1);
         player2.setElo(player2StartingElo + eloChange2);
         userRepository.save(player2);
+        
+        //todo: update tournament scoreboard here
 
-        matchRepository.save(currentMatch);
+        //call roundService to check if round is complete
+        roundService.checkComplete(currentMatch.getRound().getId());
     }
 
     @Override

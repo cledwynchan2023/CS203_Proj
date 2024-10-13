@@ -6,7 +6,7 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.hibernate.annotations.DialectOverride.OverridesAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -259,7 +259,7 @@ public class TournamentServiceImplementation implements TournamentService{
         if(currentTournament.getRounds().size() == currentTournament.getNoOfRounds()){
             //invoke endTournament, which will update the tournament status to completed
             //and get the final rankings (tiebreak and stuff)
-            endTournament(currentTournament);
+            endTournament(currentTournament.getId());
         }
         else {
             //create the next round
@@ -267,5 +267,13 @@ public class TournamentServiceImplementation implements TournamentService{
             currentTournament.getRounds().add(nextRound);
             tournamentRepository.save(currentTournament);
         }
+    }
+
+    @Override
+    public void endTournament(Long tournamentId) throws Exception{
+        Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+
+        //to do: update tournament scoreboard
     }
 }

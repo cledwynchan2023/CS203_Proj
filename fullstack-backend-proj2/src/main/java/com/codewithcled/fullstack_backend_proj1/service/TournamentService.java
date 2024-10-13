@@ -6,6 +6,8 @@ import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import java.util.List;
 
+import org.hibernate.internal.ExceptionConverterImpl;
+
 public interface TournamentService {
 
     public List<Tournament> getAllTournament()  ;
@@ -27,10 +29,11 @@ public interface TournamentService {
 
     public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception;
 
-
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 
     public Tournament startTournament(Long id) throws Exception;
 
     public void checkComplete(Long tournamentId) throws Exception;
+
+    public void endTournament(Long id) throws Exception;
 }

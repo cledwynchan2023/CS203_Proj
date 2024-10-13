@@ -23,7 +23,7 @@ public class Tournament {
     @Column(name = "score")
     private Map<Long, Double> scoreboard;
     private String date;
-    private String status; // the statuses are "open", "ongoing", "completed"
+    private String status; // the statuses are "active", "ongoing", "completed"
 
     private Integer size ;
     private Integer currentSize = participants.size();
