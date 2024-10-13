@@ -155,6 +155,7 @@ public class TournamentServiceImplementation implements TournamentService {
         // System.out.println("Username Taken!");
         // throw new Exception("Username is already being used with another account");
         // }
+        
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
         createdTournament.setDate(date);
@@ -221,7 +222,6 @@ public class TournamentServiceImplementation implements TournamentService {
         List<Tournament> tournaments = tournamentRepository.findAll();
         return TournamentMapper.toDTOList(tournaments);
     }
-
 
     // @Override
     // public List<TournamentDTO> findAllTournamentsDTO() throws Exception {

@@ -39,7 +39,7 @@ public class MatchServiceImplementation implements MatchService{
     }
 
     @Override
-    public void updateMatch(Long matchId, int result){
+    public void updateMatch(Long matchId, int result) throws Exception{
         Match currentMatch = matchRepository.findById(matchId)
         .orElseThrow(() -> new Exception("Match not found"));
 
@@ -49,12 +49,18 @@ public class MatchServiceImplementation implements MatchService{
         User player2 = currentMatch.getPlayer2();
 
         Double player1StartingElo = currentMatch.getPlayer1StartingElo();
-        Double player2StartingElo = currentMatch.getPlayer2StartingElo();
+        int player1StartingEloInt = player1StartingElo.intValue();
 
-        //todo: implement elo calculations here
-        Double eloChange1 = eloRatingService.EloCalculation(player1StartingElo, player2StartingElo, result);
-        Double eloChange2 = eloRatingService.EloCalculation(player2StartingElo, player1StartingElo, result);
-        
+        Double player2StartingElo = currentMatch.getPlayer2StartingElo();
+        int player2StartingEloInt = player2StartingElo.intValue();
+
+        //elo calculations done here
+        Double player1NewElo = eloRatingService.EloCalculation(player1StartingEloInt, player2StartingEloInt, result);
+        Double eloChange1 = player1NewElo - player1StartingElo;
+
+        Double player2NewElo = eloRatingService.EloCalculation(player2StartingEloInt, player1StartingEloInt, result);
+        Double eloChange2 = player2NewElo - player2StartingElo;
+
         //save match results to match database
         currentMatch.setEloChange1(eloChange1);
         currentMatch.setEloChange2(eloChange2);
@@ -62,12 +68,14 @@ public class MatchServiceImplementation implements MatchService{
         matchRepository.save(currentMatch);
 
         //still need to change the user's elo in the user database
-        player1.setElo(player1StartingElo + eloChange1);
+        player1.setElo(player1NewElo);
         userRepository.save(player1);
-        player2.setElo(player2StartingElo + eloChange2);
+        player2.setElo(player2NewElo);
         userRepository.save(player2);
         
         //todo: update tournament scoreboard here
+
+
 
         //call roundService to check if round is complete
         roundService.checkComplete(currentMatch.getRound().getId());
