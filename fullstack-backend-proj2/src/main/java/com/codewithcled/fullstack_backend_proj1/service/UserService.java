@@ -5,6 +5,7 @@ import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public interface UserService {
     // public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception;
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception;
 
-   
+    public List<Match> getUserPastMatches(Long userID) throws Exception;
     // public List<Tournament> getUserCurrentParticipatingTournament(Long id);
 
 
