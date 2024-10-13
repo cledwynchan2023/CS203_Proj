@@ -29,6 +29,8 @@ public class MatchServiceImplementation implements MatchService{
         Match newMatch = new Match();
         newMatch.setPlayer1(player1);
         newMatch.setPlayer2(player2);
+        newMatch.setPlayer1StartingElo(player1.getElo());
+        newMatch.setPlayer2StartingElo(player2.getElo());
         return matchRepository.save(newMatch);
     }
 
@@ -39,19 +41,23 @@ public class MatchServiceImplementation implements MatchService{
 
         currentMatch.setResult(result);
 
-        User player1 = currentMatch.getPlayer1();
-        User player2 = currentMatch.getPlayer2();
-        
-        Double player1Elo = player1.getElo();
-        Double player2Elo = player2.getElo();
+        Double player1StartingElo = currentMatch.getPlayer1StartingElo();
+        Double player2StartingElo = currentMatch.getPlayer2StartingElo();
 
-        Double eloChange1 = eloRatingService.EloCalculation(player1Elo, player2Elo, result);
-        Double eloChange2 = eloRatingService.EloCalculation(player2Elo, player1Elo, result);
+        //todo: implement elo changes here
+        Double eloChange1 = eloRatingService.EloCalculation(player1StartingElo, player2StartingElo, result);
+        Double eloChange2 = eloRatingService.EloCalculation(player2StartingElo, player1StartingElo, result);
         
         currentMatch.setEloChange1(eloChange1);
         currentMatch.setEloChange2(eloChange2);
         currentMatch.setIsComplete(true);
+
         //still need to change the user's elo in the user database
+        player1.setElo(player1StartingElo + eloChange1);
+        userRepository.save(player1);
+        player2.setElo(player2StartingElo + eloChange2);
+        userRepository.save(player2);
+
         matchRepository.save(currentMatch);
     }
 

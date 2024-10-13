@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
+import org.hibernate.type.descriptor.java.DoubleJavaType;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -15,16 +17,33 @@ public class Match {
     private Round round;
 
     private User player1;
+    private Double player1StartingElo;
     private User player2;
+    private Double player2StartingElo;
 
     private boolean isComplete = false;
 
     //-1 player 1 win, 0- draw, 1  player 2 win
     private Integer result;
-
     private Double eloChange1;
     private Double eloChange2;
     
+    public void setPlayer1StartingElo(Double elo) {
+        this.player1StartingElo = elo;
+    }
+
+    public Double getPlayer1StartingElo() {
+        return this.player1StartingElo;
+    }
+
+    public void setPlayer2StartingElo(Double elo) {
+        this.player2StartingElo = elo;
+    }
+
+    public Double getPlayer2StartingElo() {
+        return this.player2StartingElo;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
