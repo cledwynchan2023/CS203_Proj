@@ -2,6 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Map;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -67,18 +68,46 @@ public class MatchServiceImplementation implements MatchService{
         currentMatch.setIsComplete(true);
         matchRepository.save(currentMatch);
 
-        //still need to change the user's elo in the user database
+        //save users' new elo in the user database
         player1.setElo(player1NewElo);
         userRepository.save(player1);
         player2.setElo(player2NewElo);
         userRepository.save(player2);
         
-        //todo: update tournament scoreboard here
-
-
+        //update tournament scoreboard in database
+        Tournament currentTournament = currentMatch.getRound().getTournament();
+        updateTournamentScoreboard(currentTournament, currentMatch, result);
 
         //call roundService to check if round is complete
         roundService.checkComplete(currentMatch.getRound().getId());
+    }
+
+    public void updateTournamentScoreboard(Tournament currentTournament, Match currentMatch, int result){
+        Map<Long, Double> scoreboard = currentTournament.getScoreboard();
+        Long player1Id = currentMatch.getPlayer1().getId();
+        Long player2Id = currentMatch.getPlayer2().getId();
+        if (result == 0){
+            //draw, scores for both players +0.5
+            Double player1Score = scoreboard.get(player1Id);
+            Double player2Score = scoreboard.get(player2Id);
+            player1Score += 0.5;
+            player2Score += 0.5;
+            scoreboard.put(player1Id, player1Score);
+            scoreboard.put(player2Id, player2Score);
+        } else {
+            //player 1 or player 2 win, winner score +1
+            Long winnerId;
+            if (result == 1){ //player 2 wins
+                winnerId = player2Id;
+            } else{ //player 1 wins
+                winnerId = player1Id;
+            }
+            Double winnerScore = scoreboard.get(winnerId);
+            winnerScore += 1;
+            scoreboard.put(winnerId, winnerScore);
+        }
+        currentTournament.setScoreboard(scoreboard);
+        tournamentRepository.save(currentTournament);
     }
 
     @Override
