@@ -12,6 +12,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Match findByRound(Round round);
 
     //returns a player's past completed matches
-    List<Match> findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(Boolean isComplete, User player1, User player2);
+    List<Match> findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(Boolean isComplete, User player1, Boolean isComplete2, User player2);
     
 }
