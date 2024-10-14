@@ -26,7 +26,12 @@ public interface TournamentService {
     public Tournament createTournament(CreateTournamentRequest tournament) throws Exception;
 
     public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception;
+    
+    public List<Tournament> getFilteredTournamentsByName() throws Exception;
 
+    public List<Tournament> getFilteredTournamentsByDate() throws Exception;
+
+    public List<Tournament> getFilteredTournamentsBySize() throws Exception;
 
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 

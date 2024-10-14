@@ -11,8 +11,10 @@ import { BiGroup } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
+import {Atom} from "react-loading-indicators"
 
 export default function TournamentDetail() {
+    const [isLoading, setIsLoading] = useState(true);
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
@@ -34,7 +36,13 @@ export default function TournamentDetail() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+        return <>
+        {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", height:"100vh"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+            </div>
+            
+        ): (<section className="section is-flex is-family-sans-serif fade-in" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
                 <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
@@ -146,7 +154,9 @@ export default function TournamentDetail() {
              </div>
            </div>
             )}
-        </section>;
+        </section>
+        )}
+        </>
       case 'Players':
         return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
@@ -310,6 +320,7 @@ export default function TournamentDetail() {
                     }
                 });
                 setData(response.data);
+                setIsLoading(false);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     console.log("Invalid TOken")
@@ -317,13 +328,17 @@ export default function TournamentDetail() {
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
                 } else {
+                    setIsLoading(false);
                     setError('An error occurred while fetching data.');
                 }
             }
         };
 
-        fetchData();
-        loadTournament();     
+        setTimeout(() => {
+            fetchData();
+            loadTournament();
+        }, 1000);
+          
         //loadUsers();
 
     }, []);

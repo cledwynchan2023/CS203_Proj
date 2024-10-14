@@ -11,7 +11,7 @@ import compPic from "/src/assets/comp.webp";
 import compPic2 from "/src/assets/comp2.webp";
 import compPic3 from "/src/assets/comp3.webp";
 import { ImCross } from "react-icons/im";
-import {OrbitProgress} from "react-loading-indicators"
+import {Atom} from "react-loading-indicators"
 export default function TournamentPage() {
     const navigate = useNavigate();
     const[tournament,setTournament]=useState([]);
@@ -84,7 +84,10 @@ export default function TournamentPage() {
             case 'Overview':
                 return <>
                 {isLoading ? (
-                    <OrbitProgress color="#00ff00" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></OrbitProgress>
+                    <div style={{display:"flex", justifyContent:"center"}}>
+                        <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+                    </div>
+                    
                 ): (
                     <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
@@ -202,8 +205,8 @@ export default function TournamentPage() {
             const token = localStorage.getItem('token');
             console.log(token +" hello");
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
-                //clearTokens();
-                //window.location.href = '/'; // Redirect to login if token is missing or expired
+                clearTokens();
+                window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
 
@@ -230,9 +233,11 @@ export default function TournamentPage() {
             }
         };
 
-        fetchData();
-        //loadPastTournaments();
-        loadTournaments();
+        setTimeout(() => {
+            fetchData();
+            loadTournaments();
+        }, 2000);
+        
 
     }, []);
   return (

@@ -13,7 +13,12 @@ import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -217,6 +222,48 @@ public class TournamentServiceImplementation implements TournamentService{
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception {
         List<Tournament> tournaments = tournamentRepository.findAll();
         return TournamentMapper.toDTOList(tournaments);
+    }
+    @Override
+    public List<Tournament> getFilteredTournamentsByName() throws Exception {
+       List<Tournament> list = getAllTournament();
+       Collections.sort(list, new Comparator<Tournament>() {
+        @Override
+            public int compare(Tournament t1, Tournament t2) {
+                return t1.getTournament_name().compareTo(t2.getTournament_name());
+            }
+        });
+        return list;
+    }
+    @Override
+    public List<Tournament> getFilteredTournamentsByDate() throws Exception {
+        List<Tournament> list = getAllTournament();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Collections.sort(list, new Comparator<Tournament>() {
+            @Override
+            public int compare(Tournament t1, Tournament t2) {
+                try {
+                    Date date1 = dateFormat.parse(t1.getDate());
+                    Date date2 = dateFormat.parse(t2.getDate());
+                    return date2.compareTo(date1); // Sort in descending order
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        return list;
+    }
+    @Override
+    public List<Tournament> getFilteredTournamentsBySize() throws Exception {
+        List<Tournament> list = getAllTournament();
+    Collections.sort(list, new Comparator<Tournament>() {
+        @Override
+        public int compare(Tournament t1, Tournament t2) {
+            int availableSlots1 = t1.getSize() - t1.getCurrentSize();
+            int availableSlots2 = t2.getSize() - t2.getCurrentSize();
+            return Integer.compare(availableSlots2, availableSlots1); // Sort in descending order
+        }
+    });
+    return list;
     }
 
 

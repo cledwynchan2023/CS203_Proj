@@ -38,6 +38,9 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SSEController sseController;
+
     @Value("${admin.token}")
     private String adminToken;
 
@@ -162,6 +165,21 @@ public class AdminController {
                     return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+    }
+
+    //update Tournament
+    @PutMapping("/tournament/{id}")
+    public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament, @PathVariable("id") Long id) {
+        try {
+            System.out.println(newTournament.getTournament_name());
+            Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
+            TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            sseController.sendTournamentUpdate(updatedTournament);
+            return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
+        } catch (Exception e) {
+            // Log the exception message for debugging
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+        }
     }
 
 

@@ -4,6 +4,8 @@ import { jwtDecode } from 'jwt-decode';
 import './style/TournamentPageStyle.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp'; 
+import {Atom} from "react-loading-indicators"
+
 export default function TournamentLandingPage() {
     const navigate = useNavigate();
     const[tournament,setTournament]=useState([]);
@@ -11,6 +13,9 @@ export default function TournamentLandingPage() {
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
     const { userId } = useParams();
+    const [isDropdownActive, setIsDropdownActive] = useState(false);
+    const [selectedDropdownContent, setSelectedDropdownContent] = useState('Click to filter');
+    const [isLoading, setIsLoading] = useState(true);
 
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -43,6 +48,11 @@ export default function TournamentLandingPage() {
         navigate(`/admin/${userId}/tournament/${tournamentId}`);
     };
 
+    const toggleDropdown = () => {
+        setIsDropdownActive(!isDropdownActive);
+    };
+
+
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
@@ -55,11 +65,12 @@ export default function TournamentLandingPage() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get('http://localhost:8080/update/sse/tournament', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                setTournament(response.data);
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -75,9 +86,11 @@ export default function TournamentLandingPage() {
             }
         };
 
-        fetchData();
-        //loadPastTournaments();
-        loadTournaments();
+        setTimeout(() => {
+            fetchData();
+            loadTournaments();
+        }, 2000);
+        
 
     }, []);
 
@@ -85,8 +98,10 @@ export default function TournamentLandingPage() {
         return <div>{error}</div>;
     }
 
-    const loadTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/t/tournaments");
+    const loadTournamentsByName= async(content)=>{
+        setSelectedDropdownContent(content);
+        setIsDropdownActive(false);
+        const result = await axios.get("http://localhost:8080/t/tournaments/name");
         console.log(result.data);
         if (!result.data.length == 0){
             setTournament(result.data);
@@ -94,7 +109,59 @@ export default function TournamentLandingPage() {
         else{
             setTournament([]);
         }
-        
+    };
+
+    const loadTournamentsByDate= async(content)=>{
+        setSelectedDropdownContent(content);
+        setIsDropdownActive(false);
+        const result = await axios.get("http://localhost:8080/t/tournaments/date");
+        console.log(result.data);
+        if (!result.data.length == 0){
+            setTournament(result.data);
+        }
+        else{
+            setTournament([]);
+        }
+    };
+
+    const loadTournamentsByCapacity= async(content)=>{
+        setSelectedDropdownContent(content);
+        setIsDropdownActive(false);
+        const result = await axios.get("http://localhost:8080/t/tournaments/capacity");
+        console.log(result.data);
+        if (!result.data.length == 0){
+            setTournament(result.data);
+        }
+        else{
+            setTournament([]);
+        }
+    };
+
+
+    const loadTournaments= async()=>{
+        const result = await axios.get("http://localhost:8080/t/tournaments");
+        console.log(result.data);
+        if (!result.data.length == 0){
+            setTournament(result.data);
+            setIsLoading(false);
+        }
+        else{
+            setTournament([]);
+            setIsLoading(false);
+        }
+    };
+
+    const deleteTournament= async(tournament_id)=>{
+        const token = localStorage.getItem('token');
+        const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (result.status == 200){
+            alert("Tournament deleted successfully");
+            loadTournaments();
+        }
     };
   return (
     <>
@@ -116,11 +183,39 @@ export default function TournamentLandingPage() {
         <section className="section is-large" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
             <div className="hero-body" style={{marginBottom:"5%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Tournament</p>
-                <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
+                <div style={{display:"flex", width:"100%"}}>
+                    <div style={{width:"80%"}}>
+                        <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
+                    </div>
+                    <div style={{display:"flex", width:"20%"}}>
+                        <p>Filter by:</p>
+                    <div style={{marginLeft:"20px", backgroundColor:"black"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
+                        <div className="dropdown-trigger">
+                            <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={toggleDropdown}>
+                                <span>{selectedDropdownContent}</span>
+                            </button>
+                        </div>
+                        <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{height:"100%", backgroundColor:"black"}}>
+                            <div className="dropdown-content">
+                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByName("Name")}}> Name</span>
+                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByDate("Date")}}> Date</span>
+                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByCapacity("Capacity")}}> Capacity</span>
+                            </div>
+                        </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
             </div>
-            <table className="table is-hoverable custom-table" >
+            {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+             </div>    
+                ) : (
+            <table className="table is-hoverable custom-table fade-in" >
                 <thead>
-                    <tr>
+                    <tr style={{height:"50px", paddingBottom:"5px"}}>
                         <th>ID</th>
                         <th>Tournament Name</th>
                         <th>Start Date</th>
@@ -136,17 +231,22 @@ export default function TournamentLandingPage() {
                             <td>{tournament.date}</td>
                             <td>{tournament.status}</td>
                             <td>{tournament.currentSize}  / {tournament.size}</td>
-                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {removePlayer(user.id);
-                                            event.stopPropagation();
-                            }}>Remove</button>
+                            
+                                <button className="button is-text" style={{marginTop:"20px", marginLeft:"20px"}} onClick={(event) => {
+                                  event.stopPropagation();
+                                  deleteTournament(tournament.id);
+                                }}>Remove</button>
+                         
                         </tr>   
                     )}
                 </tbody>
             </table>
+            )}
         </section>
     </div>
     
     </div>
+
     <footer className="footer" style={{textAlign:"center"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
