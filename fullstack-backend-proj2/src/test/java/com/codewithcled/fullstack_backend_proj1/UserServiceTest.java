@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +21,6 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
-
-import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -356,7 +352,6 @@ public class UserServiceTest {
         Optional<User> returnUser = Optional.of(oldUser);
 
         when(userRepository.findById(uId)).thenReturn(returnUser);
-        when(passwordEncoder.matches(password, password)).thenReturn(true);
         when(passwordEncoder.encode(password)).thenReturn(password);
         when(userRepository.save(oldUser)).thenReturn(oldUser);
 
@@ -365,12 +360,41 @@ public class UserServiceTest {
         assertEquals(true, result.isPresent());
         assertEquals(newUsername, result.get().getUsername());
 
-        verify(userRepository, times(2)).findById(uId);
+        verify(userRepository).findById(uId);
         verify(passwordEncoder).encode(password);
+        verify(userRepository).save(oldUser);
     }
 
     @Test
-    void getUserParticipatingTournaments(Long userId) throws Exception{
+    void updateUser_Failure() {
+        Long uId = (long) 11;
+        SignUpRequest updateUserDetails = new SignUpRequest();
+
+        String username = "testUser";
+        String password = "password";
+        String role = "ROLE_USER";
+        int elo = 1000;
+
+        String newUsername = "newUser";
+        updateUserDetails.setUsername(newUsername);
+        updateUserDetails.setEmail(username);
+        updateUserDetails.setPassword(password);
+        updateUserDetails.setRole(role);
+        updateUserDetails.setElo((double) elo);
+
+        Optional<User> returnUser = Optional.empty();
+
+        when(userRepository.findById(uId)).thenReturn(returnUser);
+
+        Optional<User> result = userService.updateUser(uId, updateUserDetails);
+
+        assertEquals(false, result.isPresent());
+
+        verify(userRepository).findById(uId);
+    }
+
+    @Test
+    void getUserParticipatingTournaments_Success() throws Exception{
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -387,9 +411,37 @@ public class UserServiceTest {
         Optional<User> returnUser = Optional.of(testUser);
         when(userRepository.findById(uId)).thenReturn(returnUser);
 
-        List<Tournament> result = userService.getUserParticipatingTournaments(userId);
+        List<Tournament> result = userService.getUserParticipatingTournaments(uId);
 
         assertIterableEquals(tournamentList, result);
-        verify(userRepository, times(2)).findById(uId);
+        verify(userRepository).findById(uId);
+    }
+
+    @Test
+    void getUserParticipatingTournaments_Failure() throws Exception{
+        Long uId = (long) 11;
+
+        List<Tournament> tournamentList = new ArrayList<Tournament>();
+        Tournament testTournament = new Tournament();
+        testTournament.setTournament_name("TestT");
+        testTournament.setId((long) 12);
+        tournamentList.add(testTournament);
+
+        User testUser = new User();
+        testUser.setId(uId);
+        testUser.setUsername("testUser");
+        testUser.setCurrentTournaments(tournamentList);
+
+        Optional<User> returnUser = Optional.empty();
+        when(userRepository.findById(uId)).thenReturn(returnUser);
+
+        try {
+            List<Tournament> result = userService.getUserParticipatingTournaments(uId);
+        } catch (Exception e) {
+
+            assertEquals("User not found",e.getMessage());
+        }
+
+        verify(userRepository).findById(uId);
     }
 }
