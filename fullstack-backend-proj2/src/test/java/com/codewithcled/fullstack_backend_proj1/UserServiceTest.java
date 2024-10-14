@@ -43,18 +43,38 @@ public class UserServiceTest {
     private UserServiceImplementation userService;
 
     @Test
-    void loadUserByUsername(String username) throws Exception {
+    void loadUserByUsername_Success() throws Exception {
         String userName = "testUser";
         User testUser = new User();
+        testUser.setPassword(userName);
         testUser.setEmail(userName);
         testUser.setId((long) 11);
 
         when(userRepository.findByEmail(userName)).thenReturn(testUser);
-        when(passwordEncoder.matches(username, userName)).thenReturn(true);
+
         UserDetails result = userService.loadUserByUsername(userName);
 
         assertEquals(userName, result.getUsername());
-        verify(userRepository, times(2)).findByEmail(userName);
+        verify(userRepository).findByEmail(userName);
+    }
+
+    @Test
+    void loadUserByUsername_Failure() throws Exception {
+        String userName = "testUser";
+        User testUser = new User();
+        testUser.setPassword(userName);
+        testUser.setEmail(userName);
+        testUser.setId((long) 11);
+
+        when(userRepository.findByEmail(userName)).thenReturn(null);
+
+        try {
+            UserDetails result = userService.loadUserByUsername(userName);
+        } catch (UsernameNotFoundException e) {
+            assertEquals("User not found with this email"+userName, e.getMessage());
+        }
+        
+        verify(userRepository).findByEmail(userName);
     }
 
     @Test
@@ -186,7 +206,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser(SignUpRequest user) throws Exception {
+    void createUser_Success() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -201,27 +221,86 @@ public class UserServiceTest {
         signUpRequestDetails.setElo(elo);
 
         User testUser = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setRole(role);
-        user.setElo(elo);
+        testUser.setUsername(username);
+        testUser.setPassword(password);
+        testUser.setEmail(email);
+        testUser.setRole(role);
+        testUser.setElo(elo);
 
         when(userRepository.findByEmail(email)).thenReturn(null);
         when(userRepository.existsByUsername(username)).thenReturn(false);
         when(userRepository.save(testUser)).thenReturn(testUser);
-        when(passwordEncoder.matches(password, password)).thenReturn(true);
         when(passwordEncoder.encode(password)).thenReturn(password);
 
         AuthResponse result = userService.createUser(signUpRequestDetails);
 
         assertEquals("Register Success", result.getMessage());
-        verify(userRepository, times(2)).findByEmail(email);
+        verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
         verify(userRepository, times(2)).save(testUser);
-        verify(passwordEncoder).matches(password, password);
         verify(passwordEncoder).encode(password);
 
+    }
+
+    @Test
+    void createUser_Failure_SameEmail() throws Exception {
+        String username = "test";
+        String password = "password";
+        String email = "email";
+        String role = "ROLE_USER";
+        double elo = 100;
+
+        SignUpRequest signUpRequestDetails = new SignUpRequest();
+        signUpRequestDetails.setUsername(username);
+        signUpRequestDetails.setPassword(password);
+        signUpRequestDetails.setEmail(email);
+        signUpRequestDetails.setRole(role);
+        signUpRequestDetails.setElo(elo);
+
+        User testUser = new User();
+        testUser.setUsername(username);
+        testUser.setPassword(password);
+        testUser.setEmail(email);
+        testUser.setRole(role);
+        testUser.setElo(elo);
+
+        when(userRepository.findByEmail(email)).thenReturn(testUser);
+
+        try {
+            AuthResponse result = userService.createUser(signUpRequestDetails);
+        } catch (Exception e) {
+            assertEquals("Email Is Already Used With Another Account", e.getMessage());
+        }
+        
+        verify(userRepository).findByEmail(email);
+    }
+
+    @Test
+    void createUser_Failure_SameUserName() throws Exception {
+        String username = "test";
+        String password = "password";
+        String email = "email";
+        String role = "ROLE_USER";
+        double elo = 100;
+
+        SignUpRequest signUpRequestDetails = new SignUpRequest();
+        signUpRequestDetails.setUsername(username);
+        signUpRequestDetails.setPassword(password);
+        signUpRequestDetails.setEmail(email);
+        signUpRequestDetails.setRole(role);
+        signUpRequestDetails.setElo(elo);
+
+        when(userRepository.findByEmail(email)).thenReturn(null);
+        when(userRepository.existsByUsername(username)).thenReturn(true);
+
+        try {
+            AuthResponse result = userService.createUser(signUpRequestDetails);
+        } catch (Exception e) {
+            assertEquals("Username is already being used with another account", e.getMessage());
+        }
+        
+        verify(userRepository).findByEmail(email);
+        verify(userRepository).existsByUsername(username);
     }
 
     @Test
@@ -251,7 +330,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUser(Long id, SignUpRequest newUser) {
+    void updateUser_Success() {
         Long uId = (long) 11;
         SignUpRequest updateUserDetails = new SignUpRequest();
 
@@ -279,8 +358,9 @@ public class UserServiceTest {
         when(userRepository.findById(uId)).thenReturn(returnUser);
         when(passwordEncoder.matches(password, password)).thenReturn(true);
         when(passwordEncoder.encode(password)).thenReturn(password);
+        when(userRepository.save(oldUser)).thenReturn(oldUser);
 
-        Optional<User> result = userService.updateUser(uId, newUser);
+        Optional<User> result = userService.updateUser(uId, updateUserDetails);
 
         assertEquals(true, result.isPresent());
         assertEquals(newUsername, result.get().getUsername());
