@@ -87,7 +87,7 @@ public class SSEControllerIntegrationTest {
         Tournament testTournament = new Tournament();
         testTournament.setTournament_name("testTournament");
         testTournament.setDate("22/12/2013");
-        testTournament.setActive("Active");
+        testTournament.setStatus("active");
         testTournament.setSize(0);
         testTournament.setNoOfRounds(0);
         tournamentRepository.save(testTournament);

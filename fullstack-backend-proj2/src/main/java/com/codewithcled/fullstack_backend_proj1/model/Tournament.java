@@ -21,9 +21,9 @@ public class Tournament {
     @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
     @MapKeyColumn(name = "user_id")
     @Column(name = "score")
-    private Map<Long, Integer> scoreboard;
+    private Map<Long, Double> scoreboard;
     private String date;
-    private String status;
+    private String status; // the statuses are "active", "ongoing", "completed"
 
     private Integer size ;
     private Integer currentSize = participants.size();
@@ -68,7 +68,7 @@ public class Tournament {
         return status;
     }
 
-    public void setActive(String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -121,11 +121,11 @@ public class Tournament {
     }
 
 
-    public Map<Long, Integer> getScoreboard() {
+    public Map<Long, Double> getScoreboard() {
         return scoreboard;
     }
 
-    public void setScoreboard(Map<Long, Integer> scoreboard) {
+    public void setScoreboard(Map<Long, Double> scoreboard) {
         this.scoreboard = scoreboard;
     }
 

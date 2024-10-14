@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
 import java.time.LocalDateTime;
@@ -41,6 +43,16 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
+
+    public UserServiceImplementation(UserRepository userRepository) {
+        this.userRepository=userRepository;
+    }
 
     // @Override
     // public List<UserDTO> getUserChanges() {
@@ -218,7 +230,13 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     }
 
-    
+    @Override
+    public List<Match> getUserPastMatches(Long userId) throws Exception {
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+
+        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser, currentUser);  // Return the list of tournaments the user is participating in
+    }
 
 }
 

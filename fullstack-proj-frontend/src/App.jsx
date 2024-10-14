@@ -24,6 +24,7 @@ import TournamentDetail from './pages/Admin/TournamentDetail.jsx';
 import Homepage from './pages/User/Homepage.jsx';
 import UserNavbar from './layout/UserNavbar.jsx';
 import TournamentPage from './pages/User/TournamentPage.jsx';
+import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
 function App() {
 
   return (
@@ -51,13 +52,13 @@ function App() {
           <TournamentAdmin/>
           </>
         }></Route> */}
-        <Route exact path ="/admin/:id/tournament" element={
+        <Route exact path ="/admin/:userId/tournament" element={
           <>
           <AdminNavbar></AdminNavbar>
           <TournamentLandingPageAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/:id/tournament/create" element={
+        <Route exact path ="/admin/:userId/tournament/create" element={
           <>
           <AdminNavbar></AdminNavbar>
           <TournamentAdminCreate/>
@@ -81,13 +82,13 @@ function App() {
           <TournamentDetail/>
           </>
         }></Route>
-        <Route exact path ="/admin/:id/playerlist" element={
+        <Route exact path ="/admin/:userId/playerlist" element={
           <>
           <AdminNavbar></AdminNavbar>
           <PlayerListAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/:id/playerlist/create" element={
+        <Route exact path ="/admin/:userId/playerlist/create" element={
           <>
           <AdminNavbar></AdminNavbar>
           <PlayerListAdminCreate/>
@@ -111,7 +112,7 @@ function App() {
           <TournamentStartAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/:id/ranking" element={
+        <Route exact path ="/admin/:userId/ranking" element={
           <>
           <AdminNavbar></AdminNavbar>
           <RankingAdmin/>
@@ -125,17 +126,23 @@ function App() {
           </>
         }></Route> */}
 
-        <Route exact path ="/user/:id/home" element={
+        <Route exact path ="/user/:userId/home" element={
           <>
           <UserNavbar></UserNavbar>
           <Homepage/>
           </>
         }></Route>
 
-      <Route exact path ="/user/:id/tournament" element={
+      <Route exact path ="/user/:userId/tournament" element={
           <>
           <UserNavbar></UserNavbar>
           <TournamentPage/>
+          </>
+        }></Route>
+        <Route exact path ="/user/:userId/tournament/:id" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <TournamentDetailUser/>
           </>
         }></Route>
 

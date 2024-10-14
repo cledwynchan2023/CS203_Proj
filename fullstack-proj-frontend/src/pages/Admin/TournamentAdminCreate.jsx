@@ -9,7 +9,7 @@ import './style/TournamentPageStyle.css';
 export default function TournamentAdminCreate() {
 
     let navigate=useNavigate();
-    const { id } = useParams();
+    const { userId } = useParams();
     const [tournament,setTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const{tournament_name, date, status, size, noOfRounds} = tournament;
     
@@ -63,7 +63,7 @@ export default function TournamentAdminCreate() {
             alert("Invalid date! Please enter in the format MM/DD/YYYY");
             return;
         }
-
+        console.log(status);
         const tournamentData = {
             tournament_name,
             date,
@@ -81,7 +81,7 @@ export default function TournamentAdminCreate() {
           });
             if (response.status === 201){
                 alert("Tournament Created Successfully");
-                navigate(`/admin/${id}/tournament`);
+                navigate(`/admin/${userId}/tournament`);
             }
         } catch (error) {
             console.error("There was an error registering the tournament!", error);
@@ -187,7 +187,7 @@ export default function TournamentAdminCreate() {
             </div>
 
             </form>
-            <Link className='button is-text is-fullwidth' to={`/admin/${id}/tournament`} id="returnrBtn">Cancel</Link>
+            <Link className='button is-text is-fullwidth' to={`/admin/${userId}/tournament`} id="returnrBtn">Cancel</Link>
           </div>
         </div>
           

@@ -1,12 +1,16 @@
 .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s forwards;
 }
-
-.card:hover {
+.custom-card:hover {
     background-color: grey;
     transform: translateY(-10px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+
 
 @keyframes fadeIn {
     from {
@@ -21,13 +25,6 @@
     animation: fadeIn 1.4s ease-in-out;
   }
   
-
-  .custom-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.5s forwards;
-  }
   
   .custom-card:nth-child(1) {
     animation-delay: 0.1s;
@@ -44,9 +41,13 @@
   /* Add more nth-child rules as needed */
   
   @keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
   }
 

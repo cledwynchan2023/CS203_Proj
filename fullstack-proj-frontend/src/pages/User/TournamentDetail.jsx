@@ -6,20 +6,26 @@ import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
 import "./style/TournamentDetailStyle.css";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+import { BiGroup } from "react-icons/bi";
+import { TiTick } from "react-icons/ti";
+import { IoMdInformationCircleOutline } from "react-icons/io";
+import swissPic from '/src/assets/swiss.png';
+
 export default function TournamentDetail() {
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const{userId} = useParams()
+    const {userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
-
+    const [hasJoined, setHasJoined] = useState(false); 
     const onInputChange=(e)=>{
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
         
@@ -83,56 +89,105 @@ export default function TournamentDetail() {
                         </div>
                         </div>
 
-                        <div class="content">
+                        <div className="content">
                         Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
                         <br />
                         </div>
                     </div>
                 </div>
                 <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                    <div className="card" style={{width:"45%", minWidth:"250px"}} onClick={() => setIsModalOpen(true)} >
+                        <div className="card-content">
+                        <div className="content" style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
+                                <div style={{marginRight:"5%"}}>
+                                    <IoMdInformationCircleOutline size={45}></IoMdInformationCircleOutline>
+                                </div>
+                                <div>
+                                    <p className="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                                    <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                        <div className="card-content">
+                        <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
+                                <div style={{marginRight:"5%"}}>
+                                    <IoCalendarNumberOutline size={45}></IoCalendarNumberOutline>
+                                </div>
+                                <div>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                                </div> 
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                        <div className="card-content">
+                        <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
+                                <div style={{marginRight:"5%"}}>
+                                    <BiGroup size={45}></BiGroup>
+                                </div>
+                                <div>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                                </div> 
                             </div>
                         </div>
+                           
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                        <div className="card-content">
+                        <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
+                                <div style={{marginRight:"5%"}}>
+                                    <TiTick size={40}></TiTick>
+                                </div>
+                                <div>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>Status</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                                </div> 
                             </div>
                         </div>
                     </div>
                 </div>
                 
             </div>
+            {isModalOpen && (
+             <div class="modal is-active fade-in">
+             <div class="modal-background"></div>
+             <div class="modal-card">
+               <header class="modal-card-head">
+                 <p class="modal-card-title">Swiss Tournament</p>
+                 <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+               </header>
+               <section class="modal-card-body" style={{height:"400px", overflowY:"scroll"}}>
+                <img className="image is-2by1" src={swissPic}>
+                </img>
+                <div style={{marginTop:"20px"}}>
+                    <p className="title">Swiss System</p>
+                    <p>
+                    If you like to play or watch chess tournaments, you've probably come across the term "Swiss system." 
+                    But what exactly does it mean? 
+                    Here's everything you need to know about this widely popular tournament format:
+                    </p>
+                </div>
+               
+               </section>
+               <footer class="modal-card-foot">
+                 <div class="buttons">
+                   
+                   <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                 </div>
+               </footer>
+             </div>
+           </div>
+            )}
         </section>;
       case 'Players':
         return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
                 <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
-                <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px"}}>
-                    <button className="button is-link" style={{width:"80px", height:"30px"}} onClick={() => setIsModalOpen(true)}>Add</button>
-                </div>
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -147,51 +202,12 @@ export default function TournamentDetail() {
                                     <tr>
                                         <td>{user.username}</td>
                                         <td>{user.elo}</td>
-                                        <td style={{display:"flex", justifyContent:"flex-end"}}>
-                                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {removePlayer(user.id);
-                                            event.stopPropagation();
-                                            }}>Remove</button>
-                                        </td>
+                                        
                                     </tr>
                                  )}
                             </tbody>
                     </table>
                 </div>
-                {isModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Add Player</p>
-                  <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-                <table className="table is-hoverable" >
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Elo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {nonParticpatingUser.map((user, index) =>
-                        <tr key={user.id} onClick={() => addPlayer(user.id)}>
-                            <td>{user.username}</td>
-                            <td>{user.elo}</td>
-                        </tr>   
-                    )}
-                </tbody>
-            </table>
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
             </section>;
       case 'Scoreboard':
         return <div>Scoreboard Content</div>;
@@ -231,37 +247,7 @@ export default function TournamentDetail() {
         
     };
 
-    const loadNonParticipatingUsers = async () => {
-        const token = localStorage.getItem('token');
-        console.log("id is" +id);
-        const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log(response.data);
-        setNonParticipatingUser(response.data);
-    };
-
-    const deleteTournament = async (id) => {
-        try {
-            if (tournament.currentSize > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
-            }
-            const response = await axios.delete(`http://localhost:8080/t/tournament/${id}`);
-            // Refresh the tournament list after deletion
-            if (response.status === 200){
-                alert("Tournament Deleted Successfully");
-                loadTournaments();
-                Navigate(`/admin/${userId}/tournament`);
-            }
-            
-        } catch (error) {
-            setError('An error occurred while deleting the tournament.');
-        }
-    };
-
+    
     const removePlayer = async (user_id) => {
         try {
             const token = localStorage.getItem('token');
@@ -273,7 +259,8 @@ export default function TournamentDetail() {
             });
 
             if (response1.status === 200){
-                alert("Player Removed Successfully");
+                alert("Left Tournament Successfully");
+                setHasJoined(false);
                 loadTournament();
             }
             
@@ -282,26 +269,33 @@ export default function TournamentDetail() {
             setError('An error occurred while deleting the tournament.');
         }
     };
-    const addPlayer = async (user_id) => {
+    const addPlayer = async () => {
         try {
-            console.log(user_id);
             const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${user_id}`,
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const decodedToken = jwtDecode(token);
 
-            if (response1.status === 200){
-                //setIsModalOpen(false);
-                alert("Player added Successfully");
-                loadTournament();
+
+            if (decodedToken.authorities === 'ROLE_USER'){
+                
+                const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${userId}`,
+                    {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (response1.status === 200){
+                    alert("Joined Tournament Successfully");
+                    setHasJoined(true);
+                    loadTournament();
+                }
+            } 
+            if (decodedToken.authorities === 'ROLE_ADMIN'){
+                alert("You cannot join a tournament as an admin!");
             }
-            
+               
         } catch (error) {
-            alert("Tournament Full");
-            
+            console.log(error);
+            setError('An error occurred while deleting the tournament.');
         }
     };
 
@@ -316,9 +310,18 @@ export default function TournamentDetail() {
         try {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
+            console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
+            if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
+
+                return true;
+            } else {
+                
+                return false;
+            }
+          
         } catch (error) {
+            
             return false;
         }
     };
@@ -331,6 +334,7 @@ export default function TournamentDetail() {
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
+                console.log(isAdminToken(token));
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
@@ -344,6 +348,7 @@ export default function TournamentDetail() {
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
+                    console.log("Invalid TOken")
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
@@ -354,9 +359,7 @@ export default function TournamentDetail() {
         };
 
         fetchData();
-        loadTournament();
-        loadNonParticipatingUsers();
-        
+        loadTournament();     
         //loadUsers();
 
     }, []);
@@ -379,9 +382,9 @@ export default function TournamentDetail() {
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
-            <div style={{alignContent:"center",width:"300px"}}>
-                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger" style={{width:"45%", height:"40px", fontWeight:"bold"}}>Delete</button>
+            <div style={{alignContent:"center",width:"500px"}}>
+                <button className="button is-link" disabled={hasJoined} onClick={() => addPlayer()} style={{ height:"40px",marginRight:"5%", fontWeight:"bold"}}>{hasJoined ? 'Joined' : 'Join Tournament'}</button>
+                <button className="button is-danger" disabled={!hasJoined} onClick={() => removePlayer()} style={{width:"45%", height:"40px", fontWeight:"bold"}}>Leave</button>
             </div>
             
         </section>
