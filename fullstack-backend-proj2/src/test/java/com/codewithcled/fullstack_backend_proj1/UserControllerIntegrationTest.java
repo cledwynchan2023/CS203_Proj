@@ -118,7 +118,7 @@ public class UserControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("active");
         tournament.setDate("10/20/1203");
 
         User user = new User();

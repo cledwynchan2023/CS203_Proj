@@ -64,7 +64,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournamentRepository.save(tournament);
 
@@ -101,7 +101,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
         tournament.setDate("10/20/1203");
-        tournament.setActive("Active");
+        tournament.setStatus("active");
         Tournament savedTournament = tournamentRepository.save(tournament);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + savedTournament.getId());
@@ -129,7 +129,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
         tournament.setDate("10/20/1203");
-        tournament.setActive("Active");
+        tournament.setStatus("active");
         tournament.setRounds(new ArrayList<>());
         Tournament savedTournament = tournamentRepository.save(tournament);
 
@@ -173,7 +173,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
 
         List<Tournament> tournamentList = new ArrayList<>();
@@ -225,7 +225,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
 
         List<Tournament> tournamentList = new ArrayList<>();
@@ -280,7 +280,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournamentRepository.save(tournament);
 
@@ -308,7 +308,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournamentRepository.save(tournament);
 
@@ -338,7 +338,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournament.setParticipants(new ArrayList<>());
         Tournament saveTournament = tournamentRepository.save(tournament);
@@ -375,7 +375,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournament.setParticipants(new ArrayList<>());
         Tournament saveTournament = tournamentRepository.save(tournament);
@@ -402,7 +402,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
 
         List<Tournament> tournamentList = new ArrayList<>();
@@ -463,7 +463,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         Tournament savedTournament = tournamentRepository.save(tournament);
 
@@ -499,7 +499,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
         tournament.setNoOfRounds(0);
-        tournament.setActive("Active");
+        tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         Tournament savedTournament = tournamentRepository.save(tournament);
 

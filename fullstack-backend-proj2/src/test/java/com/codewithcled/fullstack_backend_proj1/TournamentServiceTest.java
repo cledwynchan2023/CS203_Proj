@@ -392,7 +392,7 @@ public class TournamentServiceTest {
         Tournament returnTournament = new Tournament();
         returnTournament.setTournament_name(tournament_name);
         returnTournament.setDate(date);
-        returnTournament.setActive(status);
+        returnTournament.setStatus(status);
         returnTournament.setSize(size);
         returnTournament.setNoOfRounds(noOfRounds);
 
