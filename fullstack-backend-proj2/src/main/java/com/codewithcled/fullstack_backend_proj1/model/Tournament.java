@@ -10,7 +10,7 @@ import java.util.*;
 public class Tournament {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String tournament_name;
     @ManyToMany(mappedBy = "currentTournament")
@@ -21,7 +21,7 @@ public class Tournament {
     @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
     @MapKeyColumn(name = "user_id")
     @Column(name = "score")
-    private Map<Long, Double> scoreboard;
+    private Map<Long, Double> scoreboard = new HashMap<>();
     private String date;
     private String status; // the statuses are "active", "ongoing", "completed"
 

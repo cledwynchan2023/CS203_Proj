@@ -32,8 +32,8 @@ public class MatchServiceImplementation implements MatchService{
     @Override
     public Match createMatch(User player1, User player2) throws Exception{
         Match newMatch = new Match();
-        newMatch.setPlayer1(player1);
-        newMatch.setPlayer2(player2);
+        newMatch.setPlayer1(player1.getId());
+        newMatch.setPlayer2(player2.getId());
         newMatch.setPlayer1StartingElo(player1.getElo());
         newMatch.setPlayer2StartingElo(player2.getElo());
         return matchRepository.save(newMatch);
@@ -51,8 +51,10 @@ public class MatchServiceImplementation implements MatchService{
         currentMatch.setResult(result);
         currentMatch.setIsComplete(true);
 
-        User player1 = currentMatch.getPlayer1();
-        User player2 = currentMatch.getPlayer2();
+        User player1 = userRepository.findById(currentMatch.getPlayer1())
+        .orElseThrow(() -> new Exception("Match not found"));
+        User player2 = userRepository.findById(currentMatch.getPlayer2())
+        .orElseThrow(() -> new Exception("Match not found"));
 
         Double player1StartingElo = currentMatch.getPlayer1StartingElo();
         int player1StartingEloInt = player1StartingElo.intValue();
@@ -89,8 +91,8 @@ public class MatchServiceImplementation implements MatchService{
 
     public void updateTournamentScoreboard(Tournament currentTournament, Match currentMatch, int result){
         Map<Long, Double> scoreboard = currentTournament.getScoreboard();
-        Long player1Id = currentMatch.getPlayer1().getId();
-        Long player2Id = currentMatch.getPlayer2().getId();
+        Long player1Id = currentMatch.getPlayer1();
+        Long player2Id = currentMatch.getPlayer2();
         if (result == 0){
             //draw, scores for both players +0.5
             Double player1Score = scoreboard.get(player1Id);
