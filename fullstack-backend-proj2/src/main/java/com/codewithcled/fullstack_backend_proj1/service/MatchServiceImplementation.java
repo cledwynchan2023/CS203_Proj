@@ -44,7 +44,12 @@ public class MatchServiceImplementation implements MatchService{
         Match currentMatch = matchRepository.findById(matchId)
         .orElseThrow(() -> new Exception("Match not found"));
 
+        if (currentMatch.getIsComplete()){
+            throw new Exception("Match already complete, cannot update again");
+        }
+        
         currentMatch.setResult(result);
+        currentMatch.setIsComplete(true);
 
         User player1 = currentMatch.getPlayer1();
         User player2 = currentMatch.getPlayer2();

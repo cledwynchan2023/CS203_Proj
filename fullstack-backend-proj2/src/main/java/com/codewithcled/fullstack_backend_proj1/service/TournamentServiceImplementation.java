@@ -16,8 +16,11 @@ import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class TournamentServiceImplementation implements TournamentService {
@@ -188,7 +191,6 @@ public class TournamentServiceImplementation implements TournamentService {
                     nonParticipatingUsers.add(user);
                 }
             }
-
        }
        return Optional.ofNullable(nonParticipatingUsers).orElseGet(ArrayList::new);
     }
@@ -272,7 +274,8 @@ public class TournamentServiceImplementation implements TournamentService {
     public void endTournament(Long tournamentId) throws Exception{
         Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new Exception("Tournament not found"));
-
-        //to do: update tournament scoreboard
+        
+        currentTournament.setStatus("completed");
+        tournamentRepository.save(currentTournament);
     }
 }
