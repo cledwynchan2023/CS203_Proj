@@ -3,6 +3,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private RoundRepository roundRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -243,9 +247,12 @@ public class TournamentServiceImplementation implements TournamentService {
 
         List<User> participants = currentTournament.getParticipants();
 
-        Round firstRound = roundService.createFirstRound(participants);
-        firstRound.setTournament(currentTournament);
-        currentTournament.getRounds().add(firstRound);
+        Round firstRound = roundService.createFirstRound(id);
+        roundRepository.save(firstRound);
+
+        List<Round> rounds = currentTournament.getRounds();
+        rounds.add(firstRound);
+        currentTournament.setRounds(rounds);
         currentTournament.setScoreboard(firstRound.getScoreboard());
         currentTournament.setStatus("ongoing");
 

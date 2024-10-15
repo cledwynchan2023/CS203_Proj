@@ -6,7 +6,7 @@ import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 
 public interface RoundService {
-    public Round createFirstRound(List<User> participants) throws Exception;
+    public Round createFirstRound(Long tournamentId) throws Exception;
 
     public void checkComplete(Long roundId) throws Exception;
 
