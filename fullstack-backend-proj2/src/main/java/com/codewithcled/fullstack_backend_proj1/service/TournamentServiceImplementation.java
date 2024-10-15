@@ -246,11 +246,12 @@ public class TournamentServiceImplementation implements TournamentService {
 
         List<User> participants = currentTournament.getParticipants();
 
-        Round firstRound = roundService.createFirstRound(participants);
-        firstRound.setTournament(currentTournament);
+        Round firstRound = roundService.createFirstRound(id);
         roundRepository.save(firstRound);
 
-        currentTournament.getRounds().add(firstRound);
+        List<Round> rounds = currentTournament.getRounds();
+        rounds.add(firstRound);
+        currentTournament.setRounds(rounds);
         currentTournament.setScoreboard(firstRound.getScoreboard());
         currentTournament.setStatus("ongoing");
 

@@ -1,7 +1,5 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
-import org.hibernate.type.descriptor.java.DoubleJavaType;
-
 import jakarta.persistence.*;
 
 @Entity

@@ -42,7 +42,12 @@ public class RoundServiceImplementation implements RoundService {
     }
 
     @Override
-    public Round createFirstRound(List<User> participants) throws Exception {
+    public Round createFirstRound(Long tournamentId) throws Exception {
+
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new Exception("Tournament not found"));
+        List<User> participants = tournament.getParticipants();
+
         //for now, we only support even number of participants
         //ie throw exception for odd number of participants
         if(participants.size() % 2 != 0){
@@ -50,6 +55,9 @@ public class RoundServiceImplementation implements RoundService {
         }
         Round firstRound = new Round();
         firstRound.setRoundNum(1);
+        firstRound.setTournament(tournament);
+        roundRepository.save(firstRound);
+
         List<User> copy = new ArrayList<>(participants);
         Collections.sort(copy, new Comparator<User>(){
             @Override
@@ -73,8 +81,9 @@ public class RoundServiceImplementation implements RoundService {
             matches.add(match);
         }
         firstRound.setMatchList(matches);
+        roundRepository.save(firstRound);
 
-        return roundRepository.save(firstRound);
+        return firstRound;
     }
 
     @Override
