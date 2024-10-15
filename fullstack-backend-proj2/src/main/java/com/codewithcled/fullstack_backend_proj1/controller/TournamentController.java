@@ -191,4 +191,10 @@ public class TournamentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
         }
     }
+
+    @GetMapping({"/tournament/{id}/tournamentService/checkComplete"})
+    public ResponseEntity<String> checkTournamentComplete(@PathVariable("id") Long id) throws Exception{
+        tournamentService.checkComplete(id);
+        return ResponseEntity.ok("Successfully checked roundService.isComplete");
+    }
 }

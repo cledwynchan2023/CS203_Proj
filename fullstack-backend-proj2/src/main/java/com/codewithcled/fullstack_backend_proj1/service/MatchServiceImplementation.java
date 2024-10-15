@@ -24,9 +24,6 @@ public class MatchServiceImplementation implements MatchService{
     private MatchRepository matchRepository;
 
     @Autowired
-    private RoundService roundService;
-
-    @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
