@@ -38,13 +38,13 @@ export default function TournamentDetail() {
       case 'Overview':
         return <>
         {isLoading ? (
-            <div style={{display:"flex", justifyContent:"center", height:"100vh"}}>
+            <div style={{display:"flex", justifyContent:"center", height:"100%"}}>
                 <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
             </div>
             
-        ): (<section className="section is-flex is-family-sans-serif fade-in" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+        ): (<section className="section is-flex is-family-sans-serif fade-in" style={{height:"80%",width:"100%", overflowY:"scroll"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                <div class="card" style={{height:"700px", width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
                         <figure class="image is-4by3">
                         <img
@@ -216,9 +216,9 @@ export default function TournamentDetail() {
     
         setTournament(result.data);
         setUser(result.data.participants);
-        
-        
     };
+
+ 
 
     
     const removePlayer = async () => {
@@ -234,6 +234,7 @@ export default function TournamentDetail() {
 
             if (response1.status === 200){
                 alert("Left Tournament Successfully");
+                localStorage.setItem('joinedTournament', 'false');
                 setHasJoined(false);
                 loadTournament();
             }
@@ -258,9 +259,12 @@ export default function TournamentDetail() {
                     }
                 });
                 if (response1.status === 200){
+                    localStorage.setItem('joinedTournament', 'true');
+                    console.log(localStorage.getItem('joinedTournament'));
                     alert("Joined Tournament Successfully");
                     setHasJoined(true);
                     loadTournament();
+                    
                 }
             } 
             if (decodedToken.authorities === 'ROLE_ADMIN'){
@@ -320,6 +324,7 @@ export default function TournamentDetail() {
                     }
                 });
                 setData(response.data);
+                setUser(response.data.participants);
                 setIsLoading(false);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -329,6 +334,7 @@ export default function TournamentDetail() {
                     window.location.href = '/'; // Redirect to login if token is invalid
                 } else {
                     setIsLoading(false);
+                    console.log(error);
                     setError('An error occurred while fetching data.');
                 }
             }
@@ -337,9 +343,14 @@ export default function TournamentDetail() {
         setTimeout(() => {
             fetchData();
             loadTournament();
+            const buttonClicked = localStorage.getItem('joinedTournament');
+            console.log(buttonClicked);
+            if (buttonClicked === 'true') {
+                setHasJoined(true);
+            }
         }, 1000);
           
-        //loadUsers();
+       
 
     }, []);
 
@@ -350,9 +361,10 @@ export default function TournamentDetail() {
   return (
     <>
     <div className="background-container" style={{ 
-        backgroundImage: `url(${backgroundImage})`, 
+        backgroundImage: `url(${backgroundImage})`,
+        height: "100vh",
     }}> 
-    <div className="content" style={{width:"100%"}}>
+    <div className="content" style={{width:"100%", height:"100%"}}>
         <section className="hero is-flex-direction-row" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
@@ -368,7 +380,7 @@ export default function TournamentDetail() {
             
         </section>
         
-        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>
@@ -383,7 +395,7 @@ export default function TournamentDetail() {
                 </li>
               </ul>
             </div>
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%"}}>
               {renderTabContent()}
             </div>
           </section>

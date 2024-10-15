@@ -236,7 +236,7 @@ export default function Playerlist() {
         }}> 
             <div className="content container fade-in" style={{height:"100%", width:"100%",paddingTop:"100px", paddingBottom:"50px"}}>
        
-        <section className="section is-large" style={{ height:"600px", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", overflowY:"scroll",overflowX:"scroll"}}>
+        <section className="section is-large" style={{ height:"100%", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", overflowY:"scroll",overflowX:"scroll"}}>
             <div className="hero-body" style={{marginBottom:"5%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Player List</p>
                 <button className="button is-link is-rounded" onClick={()=> {setIsModalOpen(true)}}>Create Players</button>
@@ -257,7 +257,7 @@ export default function Playerlist() {
                             <td>{user.username}</td>
                             <td>{user.elo}</td>
                             <td>{user.role}</td>
-                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {deleteUser(user.id);
+                            <button className="button is-text" style={{marginTop:"20px", marginLeft:"20px"}} onClick={(event) => {deleteUser(user.id);
                             event.stopPropagation();
                             }}>Remove</button>           
                         </tr>   

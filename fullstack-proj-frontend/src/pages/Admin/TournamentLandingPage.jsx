@@ -65,11 +65,12 @@ export default function TournamentLandingPage() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/update/sse/tournament', {
+                const response = await axios.get('http://localhost:8080/t/tournaments', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                setIsLoading(false);
                 setTournament(response.data);
                 setData(response.data);
             } catch (error) {
@@ -88,7 +89,7 @@ export default function TournamentLandingPage() {
 
         setTimeout(() => {
             fetchData();
-            loadTournaments();
+            //loadTournaments();
         }, 2000);
         
 
@@ -159,8 +160,9 @@ export default function TournamentLandingPage() {
             }
         });
         if (result.status == 200){
-            alert("Tournament deleted successfully");
             loadTournaments();
+            alert("Tournament deleted successfully");
+
         }
     };
   return (
