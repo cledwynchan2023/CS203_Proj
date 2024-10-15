@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.apache.hc.client5.http.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,6 @@ public class RoundServiceImplementation implements RoundService {
 
     @Autowired
     private MatchService matchService;
-
-    @Autowired
-    private TournamentService tournamentService;
 
     public RoundServiceImplementation(RoundRepository roundRepository){
         this.roundRepository = roundRepository;
@@ -87,7 +85,11 @@ public class RoundServiceImplementation implements RoundService {
         }
 
         if(complete){
-            tournamentService.checkComplete(round.getTournament().getId());
+            //call roundService to check if round is complete
+            Tournament currentTournament = round.getTournament();
+            Long currentTournamentId = currentTournament.getId();
+            String url = "/tournament/" + currentTournamentId + "/tournamentService/checkComplete";
+            Request.get(url).execute().returnContent().asString();
         }
     }
 
