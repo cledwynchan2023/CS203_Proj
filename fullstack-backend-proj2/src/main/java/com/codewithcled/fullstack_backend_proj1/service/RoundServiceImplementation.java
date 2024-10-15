@@ -14,6 +14,7 @@ import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
@@ -23,6 +24,9 @@ public class RoundServiceImplementation implements RoundService {
 
     @Autowired
     private RoundRepository roundRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -65,6 +69,7 @@ public class RoundServiceImplementation implements RoundService {
         for(int i = 0; i < copy.size() / 2; i++){
             Match match = matchService.createMatch(copy.get(i), copy.get(copy.size() - i - 1));
             match.setRound(firstRound);
+            matchRepository.save(match);
             matches.add(match);
         }
         firstRound.setMatchList(matches);

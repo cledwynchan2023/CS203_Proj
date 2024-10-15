@@ -33,13 +33,13 @@ public class MatchServiceImplementation implements MatchService{
     private EloRatingService eloRatingService;
 
     @Override
-    public Match createMatch(User player1, User player2) throws Exception{
+    public Match createMatch(User player1, User player2){
         Match newMatch = new Match();
         newMatch.setPlayer1(player1.getId());
         newMatch.setPlayer2(player2.getId());
         newMatch.setPlayer1StartingElo(player1.getElo());
         newMatch.setPlayer2StartingElo(player2.getElo());
-        return matchRepository.save(newMatch);
+        return newMatch;
     }
 
     @Override
