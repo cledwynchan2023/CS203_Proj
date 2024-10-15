@@ -55,9 +55,9 @@ public class MatchServiceImplementation implements MatchService{
         currentMatch.setIsComplete(true);
 
         User player1 = userRepository.findById(currentMatch.getPlayer1())
-        .orElseThrow(() -> new Exception("Match not found"));
+            .orElseThrow(() -> new Exception("User not found"));
         User player2 = userRepository.findById(currentMatch.getPlayer2())
-        .orElseThrow(() -> new Exception("Match not found"));
+            .orElseThrow(() -> new Exception("User not found"));
 
         Double player1StartingElo = currentMatch.getPlayer1StartingElo();
         int player1StartingEloInt = player1StartingElo.intValue();
@@ -69,7 +69,7 @@ public class MatchServiceImplementation implements MatchService{
         Double player1NewElo = eloRatingService.EloCalculation(player1StartingEloInt, player2StartingEloInt, result);
         Double eloChange1 = player1NewElo - player1StartingElo;
 
-        Double player2NewElo = eloRatingService.EloCalculation(player2StartingEloInt, player1StartingEloInt, result);
+        Double player2NewElo = eloRatingService.EloCalculation(player2StartingEloInt, player1StartingEloInt, -1 * result);
         Double eloChange2 = player2NewElo - player2StartingElo;
 
         //save match results to match database
