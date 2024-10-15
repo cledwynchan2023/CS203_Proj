@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Table(name = "matches")
 public class Match {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Id
     private Long id;
 

@@ -195,6 +195,6 @@ public class TournamentController {
     @GetMapping({"/tournament/{id}/tournamentService/checkComplete"})
     public ResponseEntity<String> checkTournamentComplete(@PathVariable("id") Long id) throws Exception{
         tournamentService.checkComplete(id);
-        return ResponseEntity.ok("Successfully checked roundService.isComplete");
+        return ResponseEntity.ok("Successfully checked tournamentService.isComplete");
     }
 }

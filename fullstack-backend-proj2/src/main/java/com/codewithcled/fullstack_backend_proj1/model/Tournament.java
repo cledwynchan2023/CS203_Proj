@@ -10,7 +10,7 @@ import java.util.*;
 public class Tournament {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     private String tournament_name;
     @ManyToMany(mappedBy = "currentTournament")
