@@ -180,7 +180,7 @@ public class TournamentController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/start")
     public ResponseEntity<TournamentDTO> startTournament(@PathVariable("id") Long id) {
         try {
             Tournament updatedTournament = tournamentService.startTournament(id);
