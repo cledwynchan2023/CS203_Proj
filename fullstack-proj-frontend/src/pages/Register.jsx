@@ -3,7 +3,7 @@ import {useState} from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import './Register.css';
-
+import background from '/src/assets/background_2.jpg';
 export default function Register() {
     let navigate=useNavigate();
     const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER"});
@@ -108,7 +108,7 @@ export default function Register() {
     return (
       <>
         <div className="register-container" style={{ 
-          backgroundImage: 'url(src/assets/image.webp)', 
+         backgroundImage: `url(${background})`,
           backgroundSize: 'cover', 
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

@@ -15,7 +15,7 @@ import {Atom} from "react-loading-indicators"
 
 export default function TournamentDetail() {
     const [isLoading, setIsLoading] = useState(true);
-    const[user,setUser]=useState([]);
+    const[user,setUser]=useState(null);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
@@ -215,7 +215,8 @@ export default function TournamentDetail() {
         });
     
         setTournament(result.data);
-        setUser(result.data.participants);
+      
+       
     };
 
  
@@ -318,7 +319,7 @@ export default function TournamentDetail() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get(`http://localhost:8080/t/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

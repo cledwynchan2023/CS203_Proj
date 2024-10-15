@@ -8,6 +8,8 @@ import {
 } from 'mdb-react-ui-kit'; 
 import { jwtDecode } from 'jwt-decode';
 import '../pages/Login.css';
+import background from '/src/assets/background_2.jpg';
+import logo from '/src/assets/chesscomp.png';
 
 function Login() { 
     let navigate=useNavigate();
@@ -55,8 +57,7 @@ function Login() {
 	return ( 
 		<>
 		<div className="" style={{ 
-                backgroundImage: 'url(src/assets/image.webp)', 
-                backgroundSize: 'cover', 
+                backgroundImage: `url(${background})`,
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
 				display: 'flex',
@@ -65,28 +66,33 @@ function Login() {
 				justifyContent: 'center',
 				alignContent: 'center',
             }}>  
-			<div style={{width:"70%",backgroundColor:"rgba(0,0,0,0.5)", height:"70%", minHeight:"450px", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", borderRadius:"30px"}}>
-			<div className="content is-medium" style={{ width:"100%", paddingTop:"20px"}}>
-				<h1 className="text-center " style={{ marginBottom:"0", color: "rgba(255, 255, 255, 0.8)", fontWeight:"bold"}}>Welcome to Chess.io</h1>
-			</div>
-			<div className= "box has-background-light fade-in" style={{ width: '500px', height: '400px', borderRadius:"30px", padding:"50px"}}> 
-				<MDBContainer className="p-3"> 
-					<h2 className="mb-4 text-center">Login to Chess.io</h2> 
-					<MDBInput wrapperClass='mb-4' placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+			<div className="content is-family-sans-serif" style={{width:"100%",backgroundColor:"rgba(0,0,0,0.2)", height:"100%", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", borderRadius:"30px", width:"100%"}}>
+				<div className="content is-medium" style={{ width:"100%", paddingTop:"20px", display:"flex", justifyContent:"center", alignItems:"center"}}>
+					<img src={logo} style={{width:"100px", height:"100px", backgroundColor: "transparent", marginRight:"20px"}}></img>
+					<p className="text-center " style={{fontSize:"50px", fontWeight:"bold",marginBottom:"0", color: "rgba(0, 0, 0, 0.7)"}}>Chess.io</p>
+				</div>
+			<div className= "fade-in" style={{ height: '400px', borderRadius:"30px", padding:"50px", width:"50%"}}> 
+				<div className="content" style={{width:"100%"}}> 
+					<p className="text" style={{fontSize:"20px", fontWeight:"bold"}}>Login</p> 
+					<div style={{width:"100%", marginBottom:"20px"}}>
+					<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"65px", width:"450px", borderRadius:"30px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+					<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"65px", width:"450px", borderRadius:"30px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> 
+					{error && <p className="text-danger" style={{ fontSize:"1rem"}}>{error}</p>}
+
+					</div>
 					
-					<MDBInput wrapperClass='mb-4' placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> 
-					{error && <p className="text-danger">{error}</p>} {/* Render error message if exists */} 
-					<button className="btn mb-4 btn-outline-primary" style={{ height:'50px',width: '100%', borderRadius:"30px" }} onClick={handleLogin}>Sign in</button> 
-					<div className="text-center"> 
-						<p>Not a member? <a href="/register" >Register</a></p> 
+					
+					<button className="button is-link" style={{ height:'50px',width: '450px', borderRadius:"30px" }} onClick={handleLogin}>Sign in</button> 
+					<div className="text-center" style={{marginTop:"20px", fontSize:"17px"}}> 
+						<p>Not a member? <a href="/register" style={{textDecoration: "underline"}}>Register</a></p> 
 					</div> 
-				</MDBContainer> 
+				</div> 
 			</div> 
 			</div>
 			
 		</div> 
 		
-		<footer className="footer">
+		<footer className="footer" style={{textAlign:"center"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
 		</>

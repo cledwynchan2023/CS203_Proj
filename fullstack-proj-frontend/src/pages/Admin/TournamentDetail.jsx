@@ -370,7 +370,7 @@ export default function TournamentDetail() {
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
     }}> 
-    <div className="content" style={{width:"100%"}}>
+    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
         <section className="hero is-flex-direction-row" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
@@ -379,7 +379,8 @@ export default function TournamentDetail() {
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
-            <div style={{alignContent:"center",width:"300px"}}>
+            <div style={{display:"flex",alignItems:"center", backgroundColor:"black"}}>
+                <button className="button is-primary" style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Start</button>
                 <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
                 <button className="button is-danger" style={{width:"45%", height:"40px", fontWeight:"bold"}}>Delete</button>
             </div>
@@ -473,24 +474,24 @@ export default function TournamentDetail() {
               </div>
             </div>
             )}
-        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
-            <div style={{width:"100%", height:"20px"}}></div>
-            <div className="tabs is-left" style={{ height:"70px"}}>
-              <ul>
-                <li className={activeTab === 'Overview' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Overview')}>Overview</a>
-                </li>
-                <li className={activeTab === 'Players' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Players')}>Players</a>
-                </li>
-                <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
-                </li>
-              </ul>
-            </div>
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}>
-              {renderTabContent()}
-            </div>
+        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+
+                <div className="tabs is-left" style={{ height:"70px"}}>
+                <ul>
+                    <li className={activeTab === 'Overview' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Overview')}>Overview</a>
+                    </li>
+                    <li className={activeTab === 'Players' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Players')}>Players</a>
+                    </li>
+                    <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
+                    </li>
+                </ul>
+                </div>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%"}}>
+                {renderTabContent()}
+                </div>
           </section>
     </div>
     </div>

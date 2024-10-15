@@ -48,12 +48,7 @@ function App() {
           </>
           
         }></Route>
-        {/* <Route exact path ="/admin/:id/tournament" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <TournamentAdmin/>
-          </>
-        }></Route> */}
+      
         <Route exact path ="/admin/:userId/tournament" element={
           <>
           <AdminNavbar></AdminNavbar>
@@ -90,24 +85,8 @@ function App() {
           <PlayerListAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/:userId/playerlist/create" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <PlayerListAdminCreate/>
-          </>
-        }></Route>
-        <Route exact path ="/admin/:userId/edit/:id" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <PlayerListAdminEdit/>
-          </>
-        }></Route>
-        <Route exact path ="/admin/tournament/:id/add_particpant" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <AddParticpant/>
-          </>
-        }></Route>
+       
+        
         <Route exact path ="/admin/tournament/:id/start_page" element={
           <>
           <AdminNavbar></AdminNavbar>

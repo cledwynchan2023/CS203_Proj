@@ -271,9 +271,9 @@ export default function Playerlist() {
               <div class="modal-card">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Create User</p>
-                  <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+                  <button  class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
+                <section class="modal-card-body" style={{height:"450px"}}>
                
                     <form onSubmit={(e) => onSubmit(e)}>
                         <div className="form-floating mb-3">
@@ -336,18 +336,16 @@ export default function Playerlist() {
                             name="elo"
                         />
                         <label htmlFor="PasswordConfirm">Elo</label>
-                            </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button onClick={()=> {onSubmit()}} className='button is-link is-fullwidth'>Create Player</button>
                         </div>
+                        
 
                     </form>
             
                 </section>
                 <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <div class="buttons" style={{display:"flex", width:"100%", justifyContent:"center"}}>
+                    <button onClick={()=> {onSubmit()}} className='button is-link is-fullwidth'>Create Player</button>
+                    <button class="button is-text" onClick={() => setIsModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
               </div>
