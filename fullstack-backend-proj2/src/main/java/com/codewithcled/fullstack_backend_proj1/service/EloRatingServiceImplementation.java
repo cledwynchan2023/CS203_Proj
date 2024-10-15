@@ -1,7 +1,8 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
 
-import org.springframework.beans.factory.annotation.Value;
+import java.util.List;
+import java.util.Arrays;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,6 +60,7 @@ public class EloRatingServiceImplementation implements EloRatingService {
         return Math.round(eloA + eloChange(k, winValue, p1Win));
     }
 
+    @Override
     public double eloChange(int k,double winValue, double winProbability){
         return k * (winValue-winProbability);
     }
@@ -70,5 +72,12 @@ public class EloRatingServiceImplementation implements EloRatingService {
         } else {
             return 20;
         }
+    }
+
+    @Override
+    public List<Double> eloRatingForBoth(int elo1,int elo2,int outcome){
+        double newEloA=EloCalculation(elo1, elo2, outcome);
+        double newEloB=EloCalculation(elo2, elo1, outcome*-1);
+        return Arrays.asList(newEloA,newEloB);
     }
 }

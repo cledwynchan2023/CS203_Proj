@@ -50,9 +50,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private MatchRepository matchRepository;
 
-    public UserServiceImplementation(UserRepository userRepository) {
-        this.userRepository=userRepository;
-    }
+    // public UserServiceImplementation(UserRepository userRepository) {
+    //     this.userRepository=userRepository;
+    // }
 
     // @Override
     // public List<UserDTO> getUserChanges() {

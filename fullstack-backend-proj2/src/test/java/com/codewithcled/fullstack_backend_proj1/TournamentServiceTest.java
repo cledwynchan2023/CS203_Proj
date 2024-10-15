@@ -84,15 +84,20 @@ public class TournamentServiceTest {
         User testUser = new User();
         testUser.setUsername("testUser");
         testUser.setId(id);
-        Optional<Tournament> returnT = Optional.of(testTournament);
-        when(tournamentRepository.findById(id)).thenReturn(returnT);
+        boolean exceptionThrown=false;
+
+        when(tournamentRepository.findById(id)).thenReturn(Optional.empty());
 
         try {
             tournamentService.getTournamentParticipants(id);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Error Occured");
             verify(tournamentRepository).findById(id);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -101,6 +106,8 @@ public class TournamentServiceTest {
         Long uIdT = (long) 11;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
+        testTournament.setSize(5);
+        testTournament.setCurrentSize(1);
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
         firstUser.setId(uIdF);
@@ -111,8 +118,10 @@ public class TournamentServiceTest {
         Optional<Tournament> returnTournament = Optional.of(testTournament);
 
         List<User> finalParticipantList = new ArrayList<User>();
+        List<Tournament> finalTournamentList=new ArrayList();
         finalParticipantList.add(firstUser);
         finalParticipantList.add(testUser);
+        finalTournamentList.add(testTournament);
         Optional<User> returnUser = Optional.of(testUser);
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
@@ -123,6 +132,7 @@ public class TournamentServiceTest {
         Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
 
         assertIterableEquals(finalParticipantList, result.getParticipants());
+        assertIterableEquals(finalTournamentList, testUser.getCurrentTournaments());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uIdT);
         verify(userRepository).save(testUser);
@@ -145,6 +155,7 @@ public class TournamentServiceTest {
         List<User> finalParticipantList = new ArrayList<User>();
         finalParticipantList.add(firstUser);
         finalParticipantList.add(testUser);
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
 
@@ -156,7 +167,11 @@ public class TournamentServiceTest {
             assertEquals("Tournament not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
             verify(userRepository, never()).findById(uIdT);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -171,6 +186,7 @@ public class TournamentServiceTest {
         testTournament.addParticipant(firstUser);
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         Optional<User> returnUser = Optional.empty();
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findById(uIdT)).thenReturn(returnUser);
@@ -182,7 +198,11 @@ public class TournamentServiceTest {
             assertEquals("User not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
             verify(userRepository).findById(uIdT);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -190,16 +210,19 @@ public class TournamentServiceTest {
         Long uId = (long) 10;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
+        testTournament.setSize(5);
+        testTournament.setCurrentSize(1);
         List<Tournament> tournamentList = new ArrayList<Tournament>();
         tournamentList.add(testTournament);
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
         firstUser.setCurrentTournaments(tournamentList);
-        testTournament.addParticipant(new User());
+        testTournament.addParticipant(firstUser);
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         Optional<User> returnUser = Optional.of(firstUser);
 
         List<User> finalParticipantList = new ArrayList<User>();
+        List<Tournament> finalTournamentList=new ArrayList<Tournament>();
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findById(uId)).thenReturn(returnUser);
@@ -209,6 +232,7 @@ public class TournamentServiceTest {
         Tournament result = tournamentService.removeUserParticipating(uId, tId);
 
         assertIterableEquals(finalParticipantList, result.getParticipants());
+        assertIterableEquals(finalTournamentList, firstUser.getCurrentTournaments());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uId);
         verify(userRepository).save(firstUser);
@@ -224,8 +248,11 @@ public class TournamentServiceTest {
         firstUser.setUsername("FirstUser");
         testTournament.addParticipant(new User());
         Optional<Tournament> returnTournament = Optional.empty();
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+
+        
         try {
 
             tournamentService.removeUserParticipating(uId, tId);
@@ -233,7 +260,11 @@ public class TournamentServiceTest {
         } catch (Exception e) {
             assertEquals("Tournament not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -246,6 +277,7 @@ public class TournamentServiceTest {
         testTournament.addParticipant(new User());
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         Optional<User> returnUser = Optional.empty();
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findById(uId)).thenReturn(returnUser);
@@ -257,7 +289,11 @@ public class TournamentServiceTest {
             assertEquals("User not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
             verify(userRepository).findById(uId);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -269,6 +305,7 @@ public class TournamentServiceTest {
         firstUser.setUsername("FirstUser");
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         Optional<User> returnUser = Optional.of(firstUser);
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findById(uId)).thenReturn(returnUser);
@@ -280,7 +317,11 @@ public class TournamentServiceTest {
             assertEquals("User is not participating in the tournament", e.getMessage());
             verify(tournamentRepository).findById(tId);
             verify(userRepository).findById(uId);
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -310,10 +351,9 @@ public class TournamentServiceTest {
         tournamentUpdateData.setTournament_name("newName");
         Tournament originalTournament = new Tournament();
         originalTournament.setTournament_name("oldName");
-        Optional<Tournament> returnTournament = Optional.of(originalTournament);
+        boolean exceptionThrown=false;
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
-        when(tournamentRepository.save(originalTournament)).thenReturn(originalTournament);
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
         try {
 
@@ -322,8 +362,11 @@ public class TournamentServiceTest {
         } catch (Exception e) {
             assertEquals("Tournament not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
+
+            exceptionThrown=true;
         }
 
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -360,9 +403,11 @@ public class TournamentServiceTest {
         testTournament.setTournament_name("testTournament");
         resultList.add(testTournament);
         Optional<User> returnUser = Optional.empty();
+        boolean exceptionThrown=false;
 
         when(tournamentRepository.findAll()).thenReturn(resultList);
         when(userRepository.findById(uId)).thenReturn(returnUser);
+
         try {
             tournamentService.getTournamentsWithNoCurrentUser(uId);
 
@@ -370,7 +415,10 @@ public class TournamentServiceTest {
             assertEquals("User not found", e.getMessage());
             verify(tournamentRepository).findAll();
             verify(userRepository).findById(uId);
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
 
     }
 
@@ -473,6 +521,9 @@ public class TournamentServiceTest {
 
         Optional<Tournament> returnTournament = Optional.empty();
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+
+        boolean exceptionThrown=false;
+
         try {
 
             tournamentService.getNonParticipatingCurrentUser(tId);
@@ -482,8 +533,10 @@ public class TournamentServiceTest {
             assertEquals("Tournament not found", e.getMessage());
             verify(tournamentRepository).findById(tId);
             verify(userRepository, never()).findAll();
+            exceptionThrown=true;
 
         }
+        assertEquals(true,exceptionThrown);
     }
 
     @Test

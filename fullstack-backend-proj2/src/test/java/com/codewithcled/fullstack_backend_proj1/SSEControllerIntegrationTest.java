@@ -10,6 +10,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -17,6 +19,7 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -59,8 +62,15 @@ public class SSEControllerIntegrationTest {
         testUser.setElo(1000.0);
         testUser.setCurrentTournaments(new ArrayList<Tournament>());
         userRepository.save(testUser);
+        List<User> userList=new ArrayList<>();
+        userList.add(testUser);
+        List<UserDTO> userDTOs=UserMapper.toDTOList(userList);
 
-        webClient.get().uri(uri).exchange().expectStatus().isOk();
+        webClient
+        .get()
+        .uri(uri)
+        .exchange()
+        .expectStatus().isOk();
 
     }
 

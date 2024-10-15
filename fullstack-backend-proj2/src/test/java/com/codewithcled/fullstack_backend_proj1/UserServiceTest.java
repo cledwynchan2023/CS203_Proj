@@ -35,6 +35,7 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+
     @InjectMocks
     private UserServiceImplementation userService;
 
@@ -61,6 +62,7 @@ public class UserServiceTest {
         testUser.setPassword(userName);
         testUser.setEmail(userName);
         testUser.setId((long) 11);
+        boolean exceptionThrown=false;
 
         when(userRepository.findByEmail(userName)).thenReturn(null);
 
@@ -68,8 +70,12 @@ public class UserServiceTest {
             UserDetails result = userService.loadUserByUsername(userName);
         } catch (UsernameNotFoundException e) {
             assertEquals("User not found with this email"+userName, e.getMessage());
+
+            exceptionThrown=true;
         }
-        
+
+        assertEquals(true,exceptionThrown);
+
         verify(userRepository).findByEmail(userName);
     }
 
@@ -259,6 +265,7 @@ public class UserServiceTest {
         testUser.setEmail(email);
         testUser.setRole(role);
         testUser.setElo(elo);
+        boolean exceptionThrown=false;
 
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
@@ -266,7 +273,11 @@ public class UserServiceTest {
             AuthResponse result = userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Email Is Already Used With Another Account", e.getMessage());
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
         
         verify(userRepository).findByEmail(email);
     }
@@ -288,13 +299,16 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(null);
         when(userRepository.existsByUsername(username)).thenReturn(true);
+        boolean exceptionThrown=false;
 
         try {
             AuthResponse result = userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Username is already being used with another account", e.getMessage());
+            exceptionThrown=true;
         }
         
+        assertEquals(true,exceptionThrown);
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
     }
@@ -435,12 +449,18 @@ public class UserServiceTest {
         Optional<User> returnUser = Optional.empty();
         when(userRepository.findById(uId)).thenReturn(returnUser);
 
+        boolean exceptionThrown=false;
+
         try {
             List<Tournament> result = userService.getUserParticipatingTournaments(uId);
         } catch (Exception e) {
 
             assertEquals("User not found",e.getMessage());
+
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
 
         verify(userRepository).findById(uId);
     }

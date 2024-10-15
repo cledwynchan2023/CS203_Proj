@@ -32,6 +32,8 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
+import java.util.Optional;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TournamentControllerIntegrationTest {
     @LocalServerPort
@@ -135,13 +137,15 @@ public class TournamentControllerIntegrationTest {
 
         Round round = new Round();
         round.setRoundNum(1);
+        round.setId((long) 134);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");
 
         ResponseEntity<String> result = restTemplate.postForEntity(url, round, String.class);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+      
         assertEquals("Round added successfully to the tournament", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
@@ -149,16 +153,19 @@ public class TournamentControllerIntegrationTest {
 
         Round round = new Round();
         round.setRoundNum(1);
+        boolean exceptionThrown=false;
 
         try {
 
             URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
             restTemplate.postForEntity(url, round, String.class);
-
         } catch (Exception e) {
             assertEquals("Tournament not found", e.getMessage());
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
 
     }
 
@@ -332,7 +339,8 @@ public class TournamentControllerIntegrationTest {
         user.setPassword(passwordEncoder.encode("testUser"));
         user.setElo((double) 100);
         user.setCurrentTournaments(new ArrayList<>());
-        userRepository.save(user);
+        User savedUser=userRepository.save(user);
+
 
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
@@ -341,18 +349,18 @@ public class TournamentControllerIntegrationTest {
         tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
         tournament.setParticipants(new ArrayList<>());
-        Tournament saveTournament = tournamentRepository.save(tournament);
+        tournamentRepository.save(tournament);
 
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/" + saveTournament.getId());
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/" + savedUser.getId());
 
-        ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<UserDTO>>() {
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
                 });
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("testUser", result.getBody().get(0).getUsername());
+        assertEquals("testTournament", result.getBody().get(0).getTournamentName());
     }
 
     @Test
@@ -360,10 +368,10 @@ public class TournamentControllerIntegrationTest {
 
         URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/12380");
 
-        ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<UserDTO>>() {
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
                 });
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -477,6 +485,7 @@ public class TournamentControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("Tournament with ID " + savedTournament.getId() + " has been deleted.", result.getBody());
+        assertEquals(0,tournamentRepository.count());
     }
 
     @Test

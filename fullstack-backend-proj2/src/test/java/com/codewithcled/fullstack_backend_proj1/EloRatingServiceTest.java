@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.List;
 
 import com.codewithcled.fullstack_backend_proj1.service.EloRatingServiceImplementation;
 
@@ -110,6 +111,7 @@ public class EloRatingServiceTest {
         int elo1 = -1;
         int elo2 = 1000;
         int outcome = 1;
+        boolean exceptionThrown=false;
 
         try {
 
@@ -118,8 +120,10 @@ public class EloRatingServiceTest {
         } catch (IllegalArgumentException e) {
 
             assertEquals("Invalid elo values", e.getMessage());
-
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
     }
 
     @Test
@@ -127,6 +131,7 @@ public class EloRatingServiceTest {
         int elo1 = 1000;
         int elo2 = 1000;
         int outcome = 12;
+        boolean exceptionThrown=false;
 
         try {
 
@@ -137,7 +142,21 @@ public class EloRatingServiceTest {
             assertEquals("Invalid match result only accepts -1 for A wins, 1 for B wins and 0 for draw",
                     e.getMessage());
 
+            exceptionThrown=true;
         }
+
+        assertEquals(true,exceptionThrown);
+    }
+
+    @Test
+    void EloCalculationForBoth() throws IllegalArgumentException{
+        int elo1 = 1000;
+        int elo2 = 1000;
+        int outcome = 1;
+
+        List<Double> result = EloRatingService.eloRatingForBoth(elo1, elo2, outcome);
+        assertEquals(990, result.get(0));
+        assertEquals(1010, result.get(1));
     }
 
     @Test

@@ -14,6 +14,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -50,14 +52,18 @@ public class AdminControllerIntegrationTest {
 
     private String urlPrefix = "/admin";
 
+
+
     @BeforeEach
     public void setUp() {
         User admin = new User();
+        admin.setId((long)23408);
         admin.setUsername("AdminUser");
         admin.setEmail("AdminUser");
         admin.setPassword(passwordEncoder.encode("Admin"));
         admin.setRole("ROLE_ADMIN");
         userRepository.save(admin);
+
     }
 
     @AfterEach
@@ -73,9 +79,9 @@ public class AdminControllerIntegrationTest {
         tokenRequest.setToken(adminToken);
 
         ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, tokenRequest, TokenResponse.class);
+                .postForEntity(uri, tokenRequest, null);
 
-        assertEquals(200, result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
@@ -85,9 +91,9 @@ public class AdminControllerIntegrationTest {
         tokenRequest.setToken("fa");
 
         ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, tokenRequest, TokenResponse.class);
+                .postForEntity(uri, tokenRequest, null);
 
-        assertEquals(401, result.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
     }
 
     @Test
@@ -105,7 +111,7 @@ public class AdminControllerIntegrationTest {
                 .postForEntity(uri, createTournamentRequest,
                         TournamentDTO.class);
 
-        assertEquals(200, result.getStatusCode());
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals("TestTournament", result.getBody().getTournamentName());
 
@@ -118,7 +124,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<TournamentDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .postForEntity(uri, null, TournamentDTO.class);
 
-        assertEquals(400, result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -134,7 +140,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<AuthResponse> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .postForEntity(uri, signUpRequest, AuthResponse.class);
 
-        assertEquals(201, result.getStatusCode());
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     @Test
@@ -158,7 +164,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<AuthResponse> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .postForEntity(uri, signUpRequest, AuthResponse.class);
 
-        assertEquals(409, result.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
     }
 
     @Test
@@ -176,7 +182,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<Void> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.DELETE, null, Void.class);
 
-        assertEquals(204, result.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
     }
 
     @Test
@@ -186,7 +192,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<Void> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.DELETE, null, void.class);
 
-        assertEquals(404, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -204,7 +210,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .getForEntity(uri, UserDTO.class);
 
-        assertEquals(200, result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
@@ -214,7 +220,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .getForEntity(uri, UserDTO.class);
 
-        assertEquals(404, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -234,8 +240,9 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.DELETE, null, String.class);
 
-        assertEquals(200, result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("Tournament with ID " + tId + " has been deleted.", result.getBody());
+        assertEquals(0,tournamentRepository.count());
     }
 
     @Test
@@ -245,7 +252,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.DELETE, null, String.class);
 
-        assertEquals(500, result.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
         assertEquals("An error occurred while deleting the tournament.", result.getBody());
     }
 
@@ -272,7 +279,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.PUT, updateUser, UserDTO.class);
 
-        assertEquals(200, result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals("updatedUser", result.getBody().getUsername());
     }
@@ -292,8 +299,7 @@ public class AdminControllerIntegrationTest {
         ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.PUT, updateUser, UserDTO.class);
 
-        assertEquals(200, result.getStatusCode());
-        assertEquals("updatedUser", result.getBody().getUsername());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     public static class TokenRequest {

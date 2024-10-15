@@ -26,7 +26,7 @@ public class SSEController {
     @Autowired
     TournamentService tournamentService;
 
-    private final int timer = 5;
+    private final int timer = 2;
 
     @CrossOrigin(allowedHeaders = "*")
     @GetMapping(value = "/sse/users", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

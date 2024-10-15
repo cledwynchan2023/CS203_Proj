@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import java.util.List;
+
 public interface EloRatingService {
 
     public double WinProbabilityOnElo(int elo1,int elo2);
@@ -13,4 +15,6 @@ public interface EloRatingService {
     public boolean isValidElo(int elo);
 
     public double eloChange(int k,double winValue, double winProbability);
+
+    public List<Double> eloRatingForBoth(int elo1,int elo2,int outcome);
 }

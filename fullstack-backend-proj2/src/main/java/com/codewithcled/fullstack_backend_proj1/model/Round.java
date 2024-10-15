@@ -8,7 +8,7 @@ import java.util.Map;
 @Entity
 public class Round {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Id
     private Long id;
 
