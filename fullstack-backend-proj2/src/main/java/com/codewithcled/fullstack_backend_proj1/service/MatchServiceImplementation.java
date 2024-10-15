@@ -2,6 +2,12 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.client5.http.fluent.Request;
+import org.apache.hc.client5.http.fluent.Form;
+
 import java.util.Map;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -86,7 +92,11 @@ public class MatchServiceImplementation implements MatchService{
         updateTournamentScoreboard(currentTournament, currentMatch, result);
 
         //call roundService to check if round is complete
-        roundService.checkComplete(currentMatch.getRound().getId());
+        Round currentRound = currentMatch.getRound();
+        Long currentRoundId = currentRound.getId();
+        String url = "/round/" + currentRoundId + "/roundService/checkComplete";
+        Request.get(url).execute().returnContent().asString();
+        //roundService.checkComplete(currentMatch.getRound().getId());
     }
 
     public void updateTournamentScoreboard(Tournament currentTournament, Match currentMatch, int result){
