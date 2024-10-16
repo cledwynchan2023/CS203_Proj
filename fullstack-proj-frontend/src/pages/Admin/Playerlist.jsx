@@ -236,11 +236,13 @@ export default function Playerlist() {
         }}> 
             <div className="content container fade-in" style={{height:"100%", width:"100%",paddingTop:"100px", paddingBottom:"50px"}}>
        
-        <section className="section is-large" style={{ height:"100%", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", overflowY:"scroll",overflowX:"scroll"}}>
-            <div className="hero-body" style={{marginBottom:"5%"}}>
+        <section className="section is-large" style={{ height:"100%", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px",overflowX:"scroll"}}>
+            <div className="hero-body" style={{marginBottom:"5%", height:"20%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Player List</p>
                 <button className="button is-link is-rounded" onClick={()=> {setIsModalOpen(true)}}>Create Players</button>
             </div>
+            <div className="section animate__animated animate__fadeInUpBig" style={{height:"110%", paddingBottom:"20px",overflowY:"scroll"}}>
+
             <table className="table is-hoverable custom-table" >
                 <thead>
                     <tr>
@@ -264,11 +266,12 @@ export default function Playerlist() {
                     )}
                 </tbody>
             </table>
+            </div>
         </section>
         {isModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal-card animate__animated animate__fadeInUpBig">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Create User</p>
                   <button  class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
@@ -355,15 +358,15 @@ export default function Playerlist() {
         {isEditedModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal-card animate__animated animate__fadeInUpBig">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Edit User {selectedId}</p>
                   <button class="delete"  onClick={() => setIsEditedModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
+                <section class="modal-card-body" style={{height:"300px"}}>
                
                     <form onSubmit={(e) => onEditSubmit(e)}>
-                        <div className="form-floating mb-3">
+                        {/* <div className="form-floating mb-3">
                         <input
                             type="text"
                             className="form-control form-control-lg"
@@ -374,7 +377,7 @@ export default function Playerlist() {
                             name="editedEmail"
                         ></input>
                         <label htmlFor="tournament_name">Email Address</label>
-                        </div>
+                        </div> */}
                         
                         <div className="form-floating mb-3">
                         <input

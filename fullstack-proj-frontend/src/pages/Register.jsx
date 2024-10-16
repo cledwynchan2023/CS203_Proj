@@ -114,7 +114,7 @@ export default function Register() {
           backgroundRepeat: 'no-repeat',
   flexWrap: 'wrap',
       }}>
-          <div className="form-container fade-in" style={{backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+          <div className="form-container animate__animated animate__slideInLeft" style={{backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
             <form onSubmit={(e) => onSubmit(e)}>
               <div className="field">
                 <label className="label has-text-primary-light">Email</label>
@@ -200,9 +200,9 @@ export default function Register() {
           </div>
          
         </div>
-        <footer className="footer">
-        <p>&copy; 2024 CS203. All rights reserved.</p>
-        </footer>
+        <footer className="footer" style={{textAlign:"center"}}>
+		<p>&copy; 2024 CS203. All rights reserved.</p>
+		</footer>
         </>
       );
 }

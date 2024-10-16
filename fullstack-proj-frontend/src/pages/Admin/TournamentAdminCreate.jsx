@@ -119,7 +119,7 @@ export default function TournamentAdminCreate() {
           
       }}>
         <div className="content fade-in" style={{width:"100%", height:"100%", backgroundColor:"rgba(0,0,0,0.8)",}}>
-        <div className="container" style={{ width:"100%", height:"70%", paddingLeft:"20%", paddingRight:"20%", paddingTop:"5%"}}>
+        <div className="container animate__animated animate__fadeInUpBig" style={{ width:"100%", height:"70%", paddingLeft:"20%", paddingRight:"20%", paddingTop:"5%"}}>
           <p style={{fontSize:"20px"}}>Create Tournament</p>
             <form onSubmit={(e) => onSubmit(e)}>
             <div className="form-floating mb-3">

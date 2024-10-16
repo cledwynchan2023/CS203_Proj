@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Navbar from './layout/Navbar.jsx';
 //import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import 'bulma/css/bulma.min.css';
+import 'animate.css';
 import Login from './pages/Login.jsx';
 import {BrowserRouter as Router, Route, Routes, useLocation} from "react-router-dom";
 import NavbarLogin from './layout/NavbarLogin.jsx';
@@ -36,6 +37,7 @@ function App() {
         <Routes>
         <Route exact path="/" element={
           <>
+          <NavbarLogin></NavbarLogin>
           <Login/>
           </>
           
@@ -43,7 +45,7 @@ function App() {
 
         <Route exact path="/register" element={
           <>
-
+          <NavbarLogin></NavbarLogin>
           <Register/>
           </>
           

@@ -65,7 +65,7 @@ export default function TournamentDetail() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
                 <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
@@ -127,7 +127,7 @@ export default function TournamentDetail() {
             </div>
         </section>;
       case 'Players':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
                 <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
                 <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px"}}>
@@ -157,41 +157,7 @@ export default function TournamentDetail() {
                             </tbody>
                     </table>
                 </div>
-                {isModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Add Player</p>
-                  <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-                <table className="table is-hoverable" >
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Elo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {nonParticpatingUser.map((user, index) =>
-                        <tr key={user.id} onClick={() => addPlayer(user.id)}>
-                            <td>{user.username}</td>
-                            <td>{user.elo}</td>
-                        </tr>   
-                    )}
-                </tbody>
-            </table>
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
+               
             </section>;
       case 'Scoreboard':
         return <div>Scoreboard Content</div>;
@@ -226,6 +192,7 @@ export default function TournamentDetail() {
         });
     
         setTournament(result.data);
+        loadNonParticipatingUsers();
         setUser(result.data.participants);
         
         
@@ -297,6 +264,7 @@ export default function TournamentDetail() {
                 //setIsModalOpen(false);
                 alert("Player added Successfully");
                 loadTournament();
+               
             }
             
         } catch (error) {
@@ -371,7 +339,7 @@ export default function TournamentDetail() {
         backgroundImage: `url(${backgroundImage})`, 
     }}> 
     <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
@@ -386,6 +354,41 @@ export default function TournamentDetail() {
             </div>
             
         </section>
+        {isModalOpen && (
+              <div className="modal is-active fade-in">
+              <div className="modal-background"></div>
+              <div className="modal-card animate__animated animate__fadeInUpBig">
+                <header class="modal-card-head">
+                  <p className="modal-card-title">Add Player</p>
+                  <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+                </header>
+                <section className="modal-card-body" style={{height:"400px"}}>
+                <table className="table is-hoverable" >
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Elo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {nonParticpatingUser.map((user, index) =>
+                        <tr key={user.id} onClick={() => addPlayer(user.id)}>
+                            <td>{user.username}</td>
+                            <td>{user.elo}</td>
+                        </tr>   
+                    )}
+                </tbody>
+            </table>
+                </section>
+                <footer class="modal-card-foot">
+                  <div class="buttons">
+                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
+                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  </div>
+                </footer>
+              </div>
+            </div>
+            )}
         {isEditModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
@@ -474,7 +477,7 @@ export default function TournamentDetail() {
               </div>
             </div>
             )}
-        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
                 <div className="tabs is-left" style={{ height:"70px"}}>
                 <ul>

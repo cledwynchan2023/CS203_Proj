@@ -71,7 +71,11 @@ export default function TournamentLandingPage() {
                     }
                 });
                 setIsLoading(false);
-                setTournament(response.data);
+                if (response.data ==null){
+                    setTournament(response.data);
+                } else {
+                    setTournament(response.data);
+                }
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -143,7 +147,7 @@ export default function TournamentLandingPage() {
         const result = await axios.get("http://localhost:8080/t/tournaments");
         console.log(result.data);
         if (!result.data.length == 0){
-            setTournament(result.data);
+            
             setIsLoading(false);
         }
         else{
@@ -215,7 +219,12 @@ export default function TournamentLandingPage() {
                 <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
              </div>    
                 ) : (
-            <table className="table is-hoverable custom-table fade-in" >
+                    tournament.length === 0 ? (
+                        <div style={{textAlign: "center", marginTop: "20px"}}>
+                            <p style={{fontSize:"20px"}}>No tournaments available. Create one!</p>
+                        </div>
+                    ) : (
+            <table className="table is-hoverable custom-table animate__animated animate__fadeIn" >
                 <thead>
                     <tr style={{height:"50px", paddingBottom:"5px"}}>
                         <th>ID</th>
@@ -243,7 +252,7 @@ export default function TournamentLandingPage() {
                     )}
                 </tbody>
             </table>
-            )}
+            ))}
         </section>
     </div>
     

@@ -5,7 +5,6 @@ import { Link, useParams } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
-import "./style/Ranking.css";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { BiGroup } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
@@ -63,7 +62,7 @@ export default function Ranking() {
         switch (activeTab) {
             case 'Global':
                 return <>
-                <section className="section is-large" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
+                <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"90%"}}>
             
             <table className="table is-hoverable custom-table" >
                 <thead>
@@ -89,7 +88,7 @@ export default function Ranking() {
         {isModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal-card animate__animated animate__fadeInDown">
                 <header class="modal-card-head">
                   <p class="modal-card-title">{selectedUser.username}</p>
                   <button class="delete" onClick={() => setIsModalOpen(false)} aria-label="close"></button>
@@ -120,7 +119,7 @@ export default function Ranking() {
                 </>
             case 'Region':
                 return <>
-                <section className="section is-large" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
+                <section className="section is-large" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"70%"}}>
             <table className="table is-hoverable custom-table" >
                 <thead>
                     <tr>
@@ -205,15 +204,14 @@ export default function Ranking() {
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`,
-        height:"100%"
+        height:"100vh"
     }}>
-        <div className="content" style={{width:"100%", height:"100%"}}>
-            <section className="hero fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center", marginBottom:"20px"}}>
-                <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
+        <div className="content" style={{width:"100%", height:"90%", display:"flex", justifyContent:"center", marginTop:"50px"}}>
+
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"70%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
+            <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Ranking</p>
                 </div>
-            </section>
-            <section className="hero" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>
@@ -225,7 +223,7 @@ export default function Ranking() {
                 </li>
               </ul>
             </div>
-            <div className="fade-in" style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}>
+            <div className="fade-in" style={{backgroundColor: "rgba(0, 0, 0, 0)", display:"flex", justifyContent:"center"}}>
               {renderTabContent()}
             </div>
           </section>

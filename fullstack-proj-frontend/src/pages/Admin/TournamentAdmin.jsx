@@ -136,13 +136,6 @@ const TournamentAdmin = () => {
         
     };
 
-    const loadPastTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/auth/tournaments");
-  
-        const filteredPastTournament = result.data.tournaments
-                .filter(tournament => tournament.status === 'inactive');
-            setPastTournament(filteredPastTournament);
-    };
     const handleRowClick = (tournamentId) => {
         navigate(`/admin/${id}/tournament/${tournamentId}`);
     };

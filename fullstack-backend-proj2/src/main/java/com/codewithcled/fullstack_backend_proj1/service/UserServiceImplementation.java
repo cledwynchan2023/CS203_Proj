@@ -224,7 +224,6 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setElo(newUser.getElo());
-                    user.setEmail(newUser.getEmail());
                     user.setRole(newUser.getRole());
                     return userRepository.save(user);  // Save and return updated user
                 });

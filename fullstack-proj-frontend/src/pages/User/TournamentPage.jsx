@@ -147,7 +147,7 @@ export default function TournamentPage() {
                 return <>
                 <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
-                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
                 {pastTournament.map((tournament) => (
                     <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                     <div className="card-image">
@@ -246,13 +246,13 @@ export default function TournamentPage() {
         backgroundImage: `url(${backgroundImage})`, 
         height:"100%"
     }}> 
-         <div className="content media-content" style={{width:"100%",height:"100%"}}>
+         <div className="content media-content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)"}}>
             <section className="hero fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center", marginBottom:"20px"}}>
                 <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Browse Tournaments</p>
                 </div>
             </section>
-            <section className="hero" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll"}}>
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.2)", paddingBottom:"50px", overflowY:"scroll"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>

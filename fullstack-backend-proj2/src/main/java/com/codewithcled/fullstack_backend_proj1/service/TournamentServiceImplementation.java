@@ -88,7 +88,7 @@ public class TournamentServiceImplementation implements TournamentService{
             user.removeCurrentTournament(currentTournament);
             System.out.println(currentTournament.getParticipants().size());
             currentTournament.removeParticipant(user);
-            currentTournament.setCurrentSize(currentTournament.getParticipants().size() - 1);
+            currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
             userRepository.save(user);
         } else {
 
