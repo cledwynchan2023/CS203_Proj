@@ -15,11 +15,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -52,18 +53,26 @@ public class AdminControllerIntegrationTest {
 
     private String urlPrefix = "/admin";
 
-
+    private String JWT;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         User admin = new User();
-        admin.setId((long)23408);
         admin.setUsername("AdminUser");
         admin.setEmail("AdminUser");
         admin.setPassword(passwordEncoder.encode("Admin"));
         admin.setRole("ROLE_ADMIN");
         userRepository.save(admin);
 
+        URI uri = new URI(baseUrl + port + "/auth/signin");
+
+        SignInRequest signInRequest = new SignInRequest();
+        signInRequest.setUsername("AdminUser");
+        signInRequest.setPassword("Admin");
+
+        ResponseEntity<AuthResponse> result = restTemplate.postForEntity(uri, signInRequest, AuthResponse.class);
+
+        JWT = result.getBody().getJwt();
     }
 
     @AfterEach
@@ -77,9 +86,16 @@ public class AdminControllerIntegrationTest {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin/validate-admin-token");
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setToken(adminToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", JWT);
 
         ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .postForEntity(uri, tokenRequest, null);
+        // ResponseEntity<?> result = restTemplate.exchange(
+        // uri,
+        // HttpMethod.POST,
+        // new HttpEntity<>(tokenRequest,headers),
+        // null);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
@@ -225,24 +241,22 @@ public class AdminControllerIntegrationTest {
 
     @Test
     public void deleteTournament_Success() throws Exception {
-        Long tId = (long) 110;
 
         Tournament originalTournament = new Tournament();
         originalTournament.setSize(0);
         originalTournament.setDate("20/10/2002");
-        originalTournament.setId(tId);
         originalTournament.setNoOfRounds(1);
         originalTournament.setTournament_name("TestUser");
-        tournamentRepository.save(originalTournament);
+        Tournament savedTournament=tournamentRepository.save(originalTournament);
 
-        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + tId);
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId());
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.DELETE, null, String.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("Tournament with ID " + tId + " has been deleted.", result.getBody());
-        assertEquals(0,tournamentRepository.count());
+        assertEquals("Tournament with ID " + savedTournament.getId() + " has been deleted.", result.getBody());
+        assertEquals(0, tournamentRepository.count());
     }
 
     @Test

@@ -230,15 +230,15 @@ public class TournamentControllerIntegrationTest {
 
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
-        tournament.setSize(0);
+        tournament.setSize(5);
         tournament.setNoOfRounds(0);
         tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
 
         List<Tournament> tournamentList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
-        tournamentList.add(tournament);
-        userList.add(user);
+        tournament.setParticipants(userList);
+        user.setCurrentTournaments(tournamentList);
 
         User savedUser = userRepository.save(user);
         Tournament savedTournament = tournamentRepository.save(tournament);
