@@ -2,6 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -80,8 +81,19 @@ public class RoundServiceImplementation implements RoundService {
             matchRepository.save(match);
             matches.add(match);
         }
+
+        //create scoreboard
+        Map<Long, Double> newScoreboard = new HashMap<>();
+        for(int i = 0; i < copy.size(); i++){
+            newScoreboard.put(copy.get(i).getId(), 0.0);
+        }
+        
+        firstRound.setScoreboard(newScoreboard);
         firstRound.setMatchList(matches);
         roundRepository.save(firstRound);
+
+        tournament.setScoreboard(newScoreboard);
+        tournamentRepository.save(tournament);
 
         return firstRound;
     }
