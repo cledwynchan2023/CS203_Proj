@@ -206,12 +206,24 @@ public class TournamentServiceImplementation implements TournamentService{
         }
        return activeTournaments;
     }
+
+    @Override
+    public List<Tournament> getOngoingTournament() {
+        List<Tournament> list = getAllTournament();
+        List<Tournament> inactiveTournaments = new ArrayList<>();  
+        for (Tournament tournament: list){
+            if (tournament.getStatus().equals("ongoing")){
+                inactiveTournaments.add(tournament);
+            }
+        }
+       return inactiveTournaments;
+    }
     @Override
     public List<Tournament> getInactiveTournament() {
         List<Tournament> list = getAllTournament();
         List<Tournament> inactiveTournaments = new ArrayList<>();  
         for (Tournament tournament: list){
-            if (tournament.getStatus().equals("inactive")){
+            if (tournament.getStatus().equals("completed")){
                 inactiveTournaments.add(tournament);
             }
         }
