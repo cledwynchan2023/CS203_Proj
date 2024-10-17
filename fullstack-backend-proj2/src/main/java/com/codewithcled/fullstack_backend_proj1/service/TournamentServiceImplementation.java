@@ -110,7 +110,7 @@ public class TournamentServiceImplementation implements TournamentService{
                         tournament.setSize(newTournament.getSize());
                     }
                     if (newTournament.getStatus() != null) {
-                        tournament.setActive(newTournament.getStatus());
+                        tournament.setStatus(newTournament.getStatus());
                     }
                     if (newTournament.getNoOfRounds() != null) {
                         tournament.setNoOfRounds(newTournament.getNoOfRounds());
@@ -161,7 +161,7 @@ public class TournamentServiceImplementation implements TournamentService{
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
         createdTournament.setDate(date);
-        createdTournament.setActive(status);
+        createdTournament.setStatus(status);
         createdTournament.setSize(size);
         createdTournament.setNoOfRounds(noOfRounds);
         

@@ -68,7 +68,7 @@ public class Tournament {
         return status;
     }
 
-    public void setActive(String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
