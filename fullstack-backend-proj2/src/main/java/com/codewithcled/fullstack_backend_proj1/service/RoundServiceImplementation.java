@@ -57,7 +57,6 @@ public class RoundServiceImplementation implements RoundService {
         Round firstRound = new Round();
         firstRound.setRoundNum(1);
         firstRound.setTournament(tournament);
-        roundRepository.save(firstRound);
 
         List<User> copy = new ArrayList<>(participants);
         Collections.sort(copy, new Comparator<User>(){
@@ -76,9 +75,8 @@ public class RoundServiceImplementation implements RoundService {
         });
         List<Match> matches = new ArrayList<>();
         for(int i = 0; i < copy.size() / 2; i++){
-            Match match = matchService.createMatch(copy.get(i), copy.get(copy.size() - i - 1));
+            Match match = matchService.createMatch(copy.get(i), copy.get(copy.size() / 2 + i));
             match.setRound(firstRound);
-            matchRepository.save(match);
             matches.add(match);
         }
 
@@ -90,10 +88,9 @@ public class RoundServiceImplementation implements RoundService {
         
         firstRound.setScoreboard(newScoreboard);
         firstRound.setMatchList(matches);
-        roundRepository.save(firstRound);
-
-        tournament.setScoreboard(newScoreboard);
-        tournamentRepository.save(tournament);
+        roundRepository.save(firstRound)
+            .getMatchList()
+            .forEach(match -> matchRepository.save(match));
 
         return firstRound;
     }

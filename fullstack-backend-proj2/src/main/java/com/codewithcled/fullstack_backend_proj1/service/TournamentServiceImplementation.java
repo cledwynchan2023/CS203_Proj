@@ -216,7 +216,7 @@ public class TournamentServiceImplementation implements TournamentService {
         List<Tournament> list = getAllTournament();
         List<Tournament> inactiveTournaments = new ArrayList<>();  
         for (Tournament tournament: list){
-            if (tournament.getStatus().equals("inactive")){
+            if (!tournament.getStatus().equals("active")){
                 inactiveTournaments.add(tournament);
             }
         }
@@ -248,12 +248,13 @@ public class TournamentServiceImplementation implements TournamentService {
         List<User> participants = currentTournament.getParticipants();
 
         Round firstRound = roundService.createFirstRound(id);
-        roundRepository.save(firstRound);
+        // roundRepository.save(firstRound);
 
         List<Round> rounds = currentTournament.getRounds();
         rounds.add(firstRound);
         currentTournament.setRounds(rounds);
         currentTournament.setScoreboard(firstRound.getScoreboard());
+        System.out.println("it happened");
         currentTournament.setStatus("ongoing");
 
         return tournamentRepository.save(currentTournament);
