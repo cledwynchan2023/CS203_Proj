@@ -4,11 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import './Register.css';
 import background from '/src/assets/background_2.jpg';
+import {Atom} from "react-loading-indicators"
+
 export default function Register() {
     let navigate=useNavigate();
     const [user,setUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER"});
     const{username, password, email, confirmPassword, role} = user;
-
+    const [isLoading, setIsLoading] = useState(false);
     const onInputChange=(e)=>{
         setUser({...user, [e.target.name]:e.target.value});
        
@@ -47,7 +49,7 @@ export default function Register() {
     const onSubmit= async (e)=>{
         e.preventDefault();
         console.log(role);
-        
+        setIsLoading(true);
         if (!isValidEmail(email)) {
             alert("Invalid email address");
             return;
@@ -58,6 +60,7 @@ export default function Register() {
             const isValid = await validateAdminToken(inputToken);
             console.log(isValid);
             if (!isValid) {
+              setIsLoading(false);
               alert("Invalid admin token");
               return;
             }
@@ -65,14 +68,17 @@ export default function Register() {
 
         const domainValid = await isDomainValid(email);
         if (!domainValid) {
+          setIsLoading(false);
             alert("Email domain does not exist or cannot receive emails");
             return;
         }
 
         if (password !== confirmPassword) {
+          setIsLoading(false);
             alert("Passwords do not match");
             return;
         } else if (password.length <= 6){
+          setIsLoading(false);
             alert("Password needs to be more than 6 characters");
             return;
         }
@@ -94,9 +100,11 @@ export default function Register() {
         } 
         catch (error) {
             if (error.response.status === 409) {
+              setIsLoading(false);
                 alert("Username or Email already taken.");
                 console.error( "Conflict: Username or Email already exists!");
             } else {
+              setIsLoading(false);
                 console.error("There was an error registering the user!", error);
             }
             
@@ -113,8 +121,11 @@ export default function Register() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
   flexWrap: 'wrap',
+  height:"100vh",
+
       }}>
-          <div className="form-container animate__animated animate__slideInLeft" style={{backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+        <div className="content is-family-sans-serif fade-in" style={{height:"100%", textAlign:"center", display:"flex", justifyContent:"center", alignItems:"center", width:"100%", backgroundColor:"rgba(0,0,0,0.4)"}}>
+          <div className="form-container animate__animated animate__fadeInUpBig" style={{height:"65%", minHeight:"450px",backgroundColor:"rgba(0, 0, 0, 0.6)", borderRadius:"30px", textAlign:"left", paddingTop:"50px"}}>
             <form onSubmit={(e) => onSubmit(e)}>
               <div className="field">
                 <label className="label has-text-primary-light">Email</label>
@@ -189,16 +200,30 @@ export default function Register() {
                   </div>
               </div>
               </div>
-            <button type="submit" className="button is-link is-fullwidth">Register</button>
-            
+              {isLoading ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50px' }}>
+							<div>
+								<Atom size={24} color="white" />
+								<p style={{width:"100%"}}>Registering....</p>
+							</div>
+
+                        </div>
+                    ) : (
+                      <div>
+                          <button type="submit" className="button is-link is-fullwidth">Register</button>
+                          <Link type="cancel" className='button is-text is-fullwidth' to='/' id="returnrBtn">Cancel</Link>
+                      </div>
+              
+                    )}
             </form>
             <div className="block">
-            <Link type="cancel" className='button is-text is-fullwidth' to='/' id="returnrBtn">Cancel</Link>
+           
             </div>
             
            
           </div>
          
+        </div>
         </div>
         <footer className="footer" style={{textAlign:"center"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>

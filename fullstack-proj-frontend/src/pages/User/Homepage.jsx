@@ -140,7 +140,7 @@ export default function Homepage() {
                     
                     </a>
         
-                <div class="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
+                    <a href={`/user/${userId}/profile`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
                     <div class="card-image">
                         {/* <figure class="image is-4by3">
                         <img
@@ -160,7 +160,7 @@ export default function Homepage() {
                         Click here to view your personal stats and track your progress over time.
                         </div>
                     </div>
-                </div>
+                </a>
                 </div>
             
             </section>

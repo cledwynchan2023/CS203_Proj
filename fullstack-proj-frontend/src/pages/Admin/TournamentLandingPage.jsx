@@ -147,7 +147,7 @@ export default function TournamentLandingPage() {
         const result = await axios.get("http://localhost:8080/t/tournaments");
         console.log(result.data);
         if (!result.data.length == 0){
-            
+            setTournament(result.data);
             setIsLoading(false);
         }
         else{
@@ -178,15 +178,15 @@ export default function TournamentLandingPage() {
         backgroundRepeat: 'no-repeat',
 		flexWrap: 'wrap',
         marginTop:"80px",
-        height:"100%"
+        height:"100%",
     }}> 
-    <div className="content container fade-in" style={{height:"auto",paddingTop:"100px", paddingBottom:"50px"}}>
+    <div className="content container fade-in" style={{height:"auto",paddingTop:"100px", paddingBottom:"50px",margin:"0"}}>
         {/* <section className="hero">
             <div className="hero-body">
                 <p className="title">Tournament</p>
             </div>
         </section> */}
-        <section className="section is-large" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
+        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
             <div className="hero-body" style={{marginBottom:"5%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Tournament</p>
                 <div style={{display:"flex", width:"100%"}}>

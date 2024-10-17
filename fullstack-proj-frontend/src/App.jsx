@@ -27,6 +27,7 @@ import UserNavbar from './layout/UserNavbar.jsx';
 import TournamentPage from './pages/User/TournamentPage.jsx';
 import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
 import Ranking from './pages/User/Ranking.jsx';
+import Profile from './pages/User/Profile.jsx';
 
 function App() {
 
@@ -132,6 +133,12 @@ function App() {
           <>
           <UserNavbar></UserNavbar>
           <Ranking/>
+          </>
+        }></Route>
+         <Route exact path ="/user/:userId/profile" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <Profile/>
           </>
         }></Route>
 

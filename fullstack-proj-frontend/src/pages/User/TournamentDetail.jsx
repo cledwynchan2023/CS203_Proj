@@ -160,7 +160,31 @@ export default function TournamentDetail() {
                 </div>
             </section>;
       case 'Scoreboard':
-        return <div>Scoreboard Content</div>;
+        return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+            
+        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+
+            <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
+                <thead>
+                    <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Previous Games</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {   
+                        user.map((user, index) =>
+                            <tr>
+                                <td>{user.username}</td>
+                                <td>0</td>
+                                <td>Nil</td>
+                            </tr>
+                         )}
+                    </tbody>
+            </table>
+        </div>
+    </section>;
       default:
         return null;
     }
@@ -170,7 +194,7 @@ export default function TournamentDetail() {
     const clearTokens = () => {
         localStorage.removeItem('token'); 
         localStorage.removeItem('tokenExpiry'); 
-        localStorage.removeItem('buttonClicked');
+        
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
@@ -192,7 +216,7 @@ export default function TournamentDetail() {
         });
     
         setTournament(result.data);
-      
+
        
     };
 
@@ -212,8 +236,12 @@ export default function TournamentDetail() {
 
             if (response1.status === 200){
                 alert("Left Tournament Successfully");
-                localStorage.setItem('joinedTournament', 'false');
+                const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
+                delete joinedTournaments[id];
+                localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
+    
                 setHasJoined(false);
+                loadUsers();
                 loadTournament();
             }
             
@@ -238,9 +266,12 @@ export default function TournamentDetail() {
                 });
                 if (response1.status === 200){
                     localStorage.setItem('joinedTournament', 'true');
-                    console.log(localStorage.getItem('joinedTournament'));
+                    loadUsers();
                     alert("Joined Tournament Successfully");
                     setHasJoined(true);
+                    const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
+                    joinedTournaments[id] = true;
+                    localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
                     loadTournament();
                     
                 }
@@ -269,7 +300,9 @@ export default function TournamentDetail() {
             console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
-
+                if (decodedToken.authorities === 'ROLE_ADMIN'){
+                    setHasJoined(true);
+                }
                 return true;
             } else {
                 
@@ -282,6 +315,18 @@ export default function TournamentDetail() {
         }
     };
     
+    const loadUsers = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.get(`http://localhost:8080/t/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            setUser(response.data.participants);
+    } catch (error) {}
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -321,16 +366,22 @@ export default function TournamentDetail() {
         setTimeout(() => {
             fetchData();
             loadTournament();
-            const buttonClicked = localStorage.getItem('joinedTournament');
-            console.log(buttonClicked);
-            if (buttonClicked === 'true') {
+            
+            console.log()
+            const join = checkJoined();
+            if (join) {
                 setHasJoined(true);
             }
-        }, 1000);
+        },1000);
           
        
 
     }, []);
+
+    const checkJoined = () => {
+        const joinedTournaments = JSON.parse(localStorage.getItem('joinendTournaments')) || {};
+            return joinedTournaments[id] === true;
+    };
 
     if (error) {
         return <div>{error}</div>;
