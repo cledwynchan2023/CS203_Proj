@@ -1,5 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -237,6 +238,19 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
         return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser, true, currentUser);  // Return the list of tournaments the user is participating in
     }
+
+    @Override
+    public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setUsername(newUser.getUsername());
+                    user.setElo(newUser.getElo());
+                    user.setRole(newUser.getRole());
+                    return userRepository.save(user);  // Save and return updated user
+                });
+    }
+
+    
 
 }
 

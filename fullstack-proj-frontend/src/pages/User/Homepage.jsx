@@ -6,8 +6,7 @@ import backgroundImage from '/src/assets/image1.webp';
 import "./style/Homepage.css";
 export default function Homepage() {
     const navigate = useNavigate();
-    const[tournament,setTournament]=useState([]);
-    const[pastTournament, setPastTournament]=useState([]);
+    
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
     const { userId } = useParams();
@@ -15,11 +14,7 @@ export default function Homepage() {
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
-        // Add any other tokens you want to clear here
-        // localStorage.removeItem('anotherToken');
-        // tokenKeys.forEach(key => {
-        //     localStorage.removeItem(key);
-        // });
+        
     };
 
     const isTokenExpired = () => {
@@ -55,20 +50,7 @@ export default function Homepage() {
         }
     };
 
-    const loadTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/t/tournaments");
-        console.log(result.data);
-        if (!result.data.length == 0){
-            console.log("No Active Tournaments");
-            const filteredTournament = result.data.filter(tournament => tournament.status === 'active');
-            console.log(filteredTournament);
-            setTournament(filteredTournament);
-        }
-        else{
-            setTournament([]);
-        }
-        
-    };
+   
 
     useEffect(() => {
         const fetchData = async () => {
@@ -104,19 +86,20 @@ export default function Homepage() {
 
         fetchData();
         //loadPastTournaments();
-        loadTournaments();
+ 
 
     }, []);
+    
   return (
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
     }}> 
-         <div className="content" style={{width:"100%",height:"100vh", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+         <div className="content" style={{width:"100%",height:"100vh", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"50px"}}>
             <section className="hero fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center"}}>
                 <div style={{width:"70%", textAlign:"center", paddingTop:"50px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Master Your Moves, Conquer the Board – Join the Ultimate Chess Challenge!</p>
-                    <p className="subtitles" style={{width:"100%"}}>
+                    <p className="subtitles" style={{width:"100%", fontSize:"20px"}}>
                     Welcome to the premier destination for chess enthusiasts of all skill levels! Whether you’re a grandmaster or a beginner, our platform offers exciting tournaments that challenge your strategic thinking and push your skills to new heights. 
                     Engage with players from around the globe, compete in real-time matches, 
                     and rise through the ranks to claim your place among the champions. With intuitive features, live leaderboards, and exclusive insights from top players, you’ll have everything you need to master 
@@ -124,17 +107,10 @@ export default function Homepage() {
                     </p>
                 </div>
             </section>
-            <section className="hero" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"5%"}}>
+            <section className="hero" style={{width:"100%", paddingTop:"5%", height:"72%"}}>
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", justifyContent:"space-evenly", flexWrap:"wrap"}}>
                 <a href={`/user/${userId}/tournament`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
-                    <div class="card-image">
-                        {/* <figure class="image is-4by3">
-                        <img
-                            
-                            alt="Placeholder image"
-                        />
-                        </figure> */}
-                    </div>
+                   
                     <div class="card-content">
                         <div class="media">
                         <div class="media-content">
@@ -148,16 +124,9 @@ export default function Homepage() {
                         </div>
                     </div>
                 </a>
-                <div class="card custom-card" style={{width:"30%", minWidth:"300px"}}>
-                    <div class="card-image">
-                        {/* <figure class="image is-4by3">
-                        <img
-                            
-                            alt="Placeholder image"
-                        />
-                        </figure> */}
-                    </div>
-                    <div class="card-content">
+              
+                    <a href={`/user/${userId}/ranking`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px", padding:"25px"}}>
+                   
                         <div class="media">
                         <div class="media-content">
                             <p class="title is-4">Leaderboard</p>
@@ -168,9 +137,10 @@ export default function Homepage() {
                         Click here to view the leaderboard and see how you stack up against other players.
                         <br />
                         </div>
-                    </div>
-                </div>
-                <div class="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
+                    
+                    </a>
+        
+                    <a href={`/user/${userId}/profile`} className="card custom-card" style={{width:"30%", minWidth:"300px", height:"200px"}}>
                     <div class="card-image">
                         {/* <figure class="image is-4by3">
                         <img
@@ -190,7 +160,7 @@ export default function Homepage() {
                         Click here to view your personal stats and track your progress over time.
                         </div>
                     </div>
-                </div>
+                </a>
                 </div>
             
             </section>

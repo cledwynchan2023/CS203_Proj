@@ -28,6 +28,7 @@ const UserNavbar = () => {
                 <a class="navbar-item" href={`/user/${userId}/home`}> Home </a>
                 <a class="navbar-item" href={`/user/${userId}/tournament`}> Tournament </a>
                 <a class="navbar-item" href={`/user/${userId}/ranking`}> Ranking </a>
+                <a class="navbar-item" href={`/user/${userId}/profile`}> Profile </a>
                
             </div>
             

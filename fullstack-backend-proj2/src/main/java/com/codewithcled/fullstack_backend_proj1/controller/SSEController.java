@@ -6,14 +6,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.io.IOException;
 import java.time.Duration;
 
 @RestController
@@ -25,8 +29,10 @@ public class SSEController {
 
     @Autowired
     TournamentService tournamentService;
+    
 
-    private final int timer = 2;
+    private final List<SseEmitter> emitters = new ArrayList<>();
+    private final int timer = 5;
 
     @CrossOrigin(allowedHeaders = "*")
     @GetMapping(value = "/sse/users", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -34,10 +40,6 @@ public class SSEController {
         return Flux.interval(Duration.ofSeconds(timer)).map(tick -> userService.findAllUsersDTO());
     }
 
-    @GetMapping(value = "/sse/user", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public List<UserDTO> getUserDTOS() {
-        return userService.findAllUsersDTO();
-    }
 
     @GetMapping(value = "/sse/tournament", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<List<TournamentDTO>> getTournament() {
@@ -52,6 +54,18 @@ public class SSEController {
                         return Collections.emptyList();
                     }
                 });
+    }
+
+    public void sendTournamentUpdate(Object tournament) {
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+        emitters.forEach(emitter -> {
+            try {
+                emitter.send(SseEmitter.event().name("tournamentUpdate").data(tournament));
+            } catch (IOException e) {
+                deadEmitters.add(emitter);
+            }
+        });
+        emitters.removeAll(deadEmitters);
     }
 
 }

@@ -7,6 +7,20 @@
   }
 }
 
+.login-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-items: start;
+
+}
+
+
 .fade-in {
   animation: fadeIn 1.4s ease-in-out;
 }
@@ -17,32 +31,27 @@
   /* Add any additional styles for your content here */
 }
 
-.background-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: url('../assets/image.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
 
-.background-container::before {
+.login-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1); /* Adjust the opacity as needed */
+/* Adjust the opacity as needed */
   z-index: 1;
 }
 
 .content {
   position: relative;
   z-index: 2;
-  /* Add any additional styles for your content here */
+  
+}
+
+.custom-input::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Change this to your desired color */
+  font-style: italic; /* Example style */
+  font-size: 1rem; /* Example style */
+  
 }

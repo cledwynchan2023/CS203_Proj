@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Navbar from './layout/Navbar.jsx';
 //import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import 'bulma/css/bulma.min.css';
+import 'animate.css';
 import Login from './pages/Login.jsx';
 import {BrowserRouter as Router, Route, Routes, useLocation} from "react-router-dom";
 import NavbarLogin from './layout/NavbarLogin.jsx';
@@ -25,6 +26,9 @@ import Homepage from './pages/User/Homepage.jsx';
 import UserNavbar from './layout/UserNavbar.jsx';
 import TournamentPage from './pages/User/TournamentPage.jsx';
 import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
+import Ranking from './pages/User/Ranking.jsx';
+import Profile from './pages/User/Profile.jsx';
+
 function App() {
 
   return (
@@ -34,6 +38,7 @@ function App() {
         <Routes>
         <Route exact path="/" element={
           <>
+          <NavbarLogin></NavbarLogin>
           <Login/>
           </>
           
@@ -41,17 +46,12 @@ function App() {
 
         <Route exact path="/register" element={
           <>
-
+          <NavbarLogin></NavbarLogin>
           <Register/>
           </>
           
         }></Route>
-        {/* <Route exact path ="/admin/:id/tournament" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <TournamentAdmin/>
-          </>
-        }></Route> */}
+      
         <Route exact path ="/admin/:userId/tournament" element={
           <>
           <AdminNavbar></AdminNavbar>
@@ -88,24 +88,8 @@ function App() {
           <PlayerListAdmin/>
           </>
         }></Route>
-        <Route exact path ="/admin/:userId/playerlist/create" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <PlayerListAdminCreate/>
-          </>
-        }></Route>
-        <Route exact path ="/admin/:userId/edit/:id" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <PlayerListAdminEdit/>
-          </>
-        }></Route>
-        <Route exact path ="/admin/tournament/:id/add_particpant" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <AddParticpant/>
-          </>
-        }></Route>
+       
+        
         <Route exact path ="/admin/tournament/:id/start_page" element={
           <>
           <AdminNavbar></AdminNavbar>
@@ -143,6 +127,18 @@ function App() {
           <>
           <UserNavbar></UserNavbar>
           <TournamentDetailUser/>
+          </>
+        }></Route>
+         <Route exact path ="/user/:userId/ranking" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <Ranking/>
+          </>
+        }></Route>
+         <Route exact path ="/user/:userId/profile" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <Profile/>
           </>
         }></Route>
 

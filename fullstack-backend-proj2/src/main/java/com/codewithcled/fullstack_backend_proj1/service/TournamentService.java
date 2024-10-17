@@ -13,6 +13,7 @@ public interface TournamentService {
     public List<Tournament> getAllTournament()  ;
     public List<Tournament> getActiveTournament()  ;
     public List<Tournament> getInactiveTournament()  ;
+    public List<Tournament> getOngoingTournament();
     public Tournament findTournamentByName(String name) ;
 
     public List<User> getTournamentParticipants (Long id) throws Exception;
@@ -28,6 +29,12 @@ public interface TournamentService {
     public Tournament createTournament(CreateTournamentRequest tournament) throws Exception;
 
     public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception;
+    
+    public List<Tournament> getFilteredTournamentsByName() throws Exception;
+
+    public List<Tournament> getFilteredTournamentsByDate() throws Exception;
+
+    public List<Tournament> getFilteredTournamentsBySize() throws Exception;
 
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 

@@ -70,6 +70,15 @@
   scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
+.content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers */
+}
+
+.content {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
 .card::-webkit-scrollbar {
   display: none; /* Hide scrollbar for WebKit browsers */
 }

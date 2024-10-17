@@ -4,6 +4,8 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.EloRatingServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
+import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
@@ -132,6 +134,16 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
         return userService.updateUser(id, newUser)
+                .map(updatedUser -> {
+                    UserDTO userDTO = UserMapper.toDTO(updatedUser);
+                    return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<UserDTO> updateUserWithoutPassword (@RequestBody EditUserRequest newUser, @PathVariable("id") Long id) {
+        return userService.updateUserWithoutPassword(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);
                     return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO

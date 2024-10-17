@@ -11,9 +11,11 @@ import { BiGroup } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
+import {Atom} from "react-loading-indicators"
 
 export default function TournamentDetail() {
-    const[user,setUser]=useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const[user,setUser]=useState(null);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
@@ -22,7 +24,6 @@ export default function TournamentDetail() {
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [hasJoined, setHasJoined] = useState(false); 
@@ -31,49 +32,19 @@ export default function TournamentDetail() {
         
     }
 
-    const convertToCreateTournamentRequest = (editedTournament) => {
-        
-        return {
-          tournament_name: editedTournament.tournamentName,
-          date: editedTournament.date,
-          status: editedTournament.status,
-          size: editedTournament.size,
-          noOfRounds: editedTournament.noOfRounds || 0,
-          currentSize: editedTournament.currentSize || 0,
-        };
-      };
-    
-    const onSubmit= async (e)=>{
-        e.preventDefault();
-        console.log(editedTournament);
-        const tournamentData = {
-            tournament_name,
-            date,
-            status,
-            size,
-            noOfRounds
-        };
-        console.log(tournamentData.tournament_name);
-        try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
-            if (response.status === 200){
-                alert("Tournament Edited Successfully");
-                setIsEditModalOpen(false);
-                loadTournament();
-            }
-            
-        } catch (error) {
-            console.error("There was an error registering the tournament!", error);
-        }
-        
-    }
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+        return <>
+        {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", height:"100%"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+            </div>
+            
+        ): (<section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"80%",width:"100%", overflowY:"scroll"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                <div class="card" style={{height:"700px", width:"30%", minWidth:"350px",marginright:"10px"}}>
                     <div class="card-image">
                         <figure class="image is-4by3">
                         <img
@@ -96,21 +67,27 @@ export default function TournamentDetail() {
                     </div>
                 </div>
                 <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div className="card" style={{width:"45%", minWidth:"250px"}} onClick={() => setIsModalOpen(true)} >
-                        <div className="card-content">
-                        <div className="content" style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
+                    <div className="card" style={{width:"45%", minWidth:"350px", height:"200px"}} onClick={() => setIsModalOpen(true)} >
+                        <div className="card-content" style={{width:"100%", height:"100%"}}>
+                    
+                            <div style={{ display: "flex", alignItems: "center", width:"100%",height:"50%"}}> 
                                 <div style={{marginRight:"5%"}}>
-                                    <IoMdInformationCircleOutline size={45}></IoMdInformationCircleOutline>
-                                </div>
-                                <div>
-                                    <p className="subtitle" style={{fontSize:"1rem"}}>Format</p>
-                                    <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                                        <IoMdInformationCircleOutline size={45}></IoMdInformationCircleOutline>
+                                    </div>
+                                    <div>
+                                        <p className="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                                        <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                                    </div>
+                            </div>
+
+                                <div style={{height:"50%", paddingTop:"50px"}}>
+                                    <p>Click here to find out more!</p>
                                 </div>
                                 
                             </div>
-                        </div>
+                   
                     </div>
-                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                    <div className="card" style={{width:"45%", minWidth:"350px",  height:"200px"}}>
                         <div className="card-content">
                         <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
                                 <div style={{marginRight:"5%"}}>
@@ -123,7 +100,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                    <div className="card" onClick={() => setActiveTab('Players')} style={{width:"45%", minWidth:"350px", height:"150px"}}>
                         <div className="card-content">
                         <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
                                 <div style={{marginRight:"5%"}}>
@@ -137,7 +114,7 @@ export default function TournamentDetail() {
                         </div>
                            
                     </div>
-                    <div className="card" style={{width:"45%", minWidth:"250px"}}>
+                    <div className="card" style={{width:"45%", minWidth:"350px", height:"150px"}}>
                         <div className="card-content">
                         <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
                                 <div style={{marginRight:"5%"}}>
@@ -153,37 +130,10 @@ export default function TournamentDetail() {
                 </div>
                 
             </div>
-            {isModalOpen && (
-             <div class="modal is-active fade-in">
-             <div class="modal-background"></div>
-             <div class="modal-card">
-               <header class="modal-card-head">
-                 <p class="modal-card-title">Swiss Tournament</p>
-                 <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
-               </header>
-               <section class="modal-card-body" style={{height:"400px", overflowY:"scroll"}}>
-                <img className="image is-2by1" src={swissPic}>
-                </img>
-                <div style={{marginTop:"20px"}}>
-                    <p className="title">Swiss System</p>
-                    <p>
-                    If you like to play or watch chess tournaments, you've probably come across the term "Swiss system." 
-                    But what exactly does it mean? 
-                    Here's everything you need to know about this widely popular tournament format:
-                    </p>
-                </div>
-               
-               </section>
-               <footer class="modal-card-foot">
-                 <div class="buttons">
-                   
-                   <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                 </div>
-               </footer>
-             </div>
-           </div>
-            )}
-        </section>;
+            
+        </section>
+        )}
+        </>
       case 'Players':
         return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
@@ -210,7 +160,31 @@ export default function TournamentDetail() {
                 </div>
             </section>;
       case 'Scoreboard':
-        return <div>Scoreboard Content</div>;
+        return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+            
+        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+
+            <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
+                <thead>
+                    <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Previous Games</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {   
+                        user.map((user, index) =>
+                            <tr>
+                                <td>{user.username}</td>
+                                <td>0</td>
+                                <td>Nil</td>
+                            </tr>
+                         )}
+                    </tbody>
+            </table>
+        </div>
+    </section>;
       default:
         return null;
     }
@@ -220,7 +194,7 @@ export default function TournamentDetail() {
     const clearTokens = () => {
         localStorage.removeItem('token'); 
         localStorage.removeItem('tokenExpiry'); 
-       
+        
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
@@ -242,16 +216,18 @@ export default function TournamentDetail() {
         });
     
         setTournament(result.data);
-        setUser(result.data.participants);
-        
-        
+
+       
     };
 
+ 
+
     
-    const removePlayer = async (user_id) => {
+    const removePlayer = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${user_id}`,
+            console.log(id + " " + userId);
+            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${userId}`,
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -260,7 +236,12 @@ export default function TournamentDetail() {
 
             if (response1.status === 200){
                 alert("Left Tournament Successfully");
+                const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
+                delete joinedTournaments[id];
+                localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
+    
                 setHasJoined(false);
+                loadUsers();
                 loadTournament();
             }
             
@@ -284,9 +265,15 @@ export default function TournamentDetail() {
                     }
                 });
                 if (response1.status === 200){
+                    localStorage.setItem('joinedTournament', 'true');
+                    loadUsers();
                     alert("Joined Tournament Successfully");
                     setHasJoined(true);
+                    const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
+                    joinedTournaments[id] = true;
+                    localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
                     loadTournament();
+                    
                 }
             } 
             if (decodedToken.authorities === 'ROLE_ADMIN'){
@@ -313,7 +300,9 @@ export default function TournamentDetail() {
             console.log(decodedToken.userId);
             console.log(decodedToken.authorities)
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
-
+                if (decodedToken.authorities === 'ROLE_ADMIN'){
+                    setHasJoined(true);
+                }
                 return true;
             } else {
                 
@@ -326,6 +315,18 @@ export default function TournamentDetail() {
         }
     };
     
+    const loadUsers = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.get(`http://localhost:8080/t/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            setUser(response.data.participants);
+    } catch (error) {}
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -340,12 +341,14 @@ export default function TournamentDetail() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get(`http://localhost:8080/t/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
                 setData(response.data);
+                setUser(response.data.participants);
+                setIsLoading(false);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     console.log("Invalid TOken")
@@ -353,16 +356,32 @@ export default function TournamentDetail() {
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
                 } else {
+                    setIsLoading(false);
+                    console.log(error);
                     setError('An error occurred while fetching data.');
                 }
             }
         };
 
-        fetchData();
-        loadTournament();     
-        //loadUsers();
+        setTimeout(() => {
+            fetchData();
+            loadTournament();
+            
+            console.log()
+            const join = checkJoined();
+            if (join) {
+                setHasJoined(true);
+            }
+        },1000);
+          
+       
 
     }, []);
+
+    const checkJoined = () => {
+        const joinedTournaments = JSON.parse(localStorage.getItem('joinendTournaments')) || {};
+            return joinedTournaments[id] === true;
+    };
 
     if (error) {
         return <div>{error}</div>;
@@ -371,10 +390,11 @@ export default function TournamentDetail() {
   return (
     <>
     <div className="background-container" style={{ 
-        backgroundImage: `url(${backgroundImage})`, 
+        backgroundImage: `url(${backgroundImage})`,
+        height: "100vh",
     }}> 
-    <div className="content" style={{width:"100%"}}>
-        <section className="hero is-flex-direction-row" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
+        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.7)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
@@ -388,95 +408,8 @@ export default function TournamentDetail() {
             </div>
             
         </section>
-        {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Tournament</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-               
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="floatingInput"
-                            placeholder="name@example.com"
-                            value={tournament_name}
-                            onChange={(e) =>onInputChange(e)}
-                            name="tournament_name"
-                        ></input>
-                        <label htmlFor="tournament_name">Tournament Name</label>
-                        </div>
-                        
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="floatingUsername"
-                            placeholder="Date"
-                            value={date}
-                            onChange={(e) =>onInputChange(e)}
-                            name="date"
-                        />
-                        <label htmlFor="Date">Date</label>
-
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <select
-                                className="form-control"
-                                id="floatingRole"
-                                value={status}
-                                onChange={(e) => onInputChange(e)}
-                                name="status"
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Not Active</option>
-                            </select>
-                            <label htmlFor="Status">Status</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="size"
-                            value={size}
-                            onChange={(e) =>onInputChange(e)}
-                            name="size"
-                        />
-                        <label htmlFor="size">Number of participants</label>
-                        </div>
-                        <div className="form-floating">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="noOfRounds"
-                            value={noOfRounds}
-                            onChange={(e) =>onInputChange(e)}
-                            name="noOfRounds"
-                        />
-                        <label htmlFor="noOfRounds">Number of rounds</label>
-                        </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Edit Tournament</button>
-                        </div>
-
-                    </form>
-            
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
-        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+        
+        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>
@@ -491,13 +424,52 @@ export default function TournamentDetail() {
                 </li>
               </ul>
             </div>
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%"}}>
               {renderTabContent()}
             </div>
           </section>
     </div>
+    {isModalOpen && (
+             <div className="modal is-active fade-in">
+             <div className="modal-background"></div>
+             <div className="modal-card animate__animated animate__fadeInUpBig" style={{height:"700px"}}>
+               <header className="modal-card-head">
+                 <p className="modal-card-title">Swiss Tournament</p>
+                 <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+               </header>
+               <section className="modal-card-body" style={{height:"400px", overflowY:"scroll"}}>
+                <img className="image is-2by1" src={swissPic}>
+                </img>
+                <div style={{marginTop:"20px"}}>
+                    <p className="title">Swiss System</p>
+                    <p style={{fontSize:"20px"}}>
+                    The Swiss system in chess is a tournament format where players are paired based on their scores after each round, 
+                    with winners playing other winners and losers playing other losers. No one is eliminated, and the goal is to have players of similar skill levels face off, allowing for a clear winner in fewer rounds than a round-robin format.
+                    </p>
+                </div>
+                <div className="video-container" style={{marginTop:"20px",position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", maxWidth: "100%", background: "#000"}}>
+                        <iframe 
+                            style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}
+                            src="https://www.youtube.com/embed/vrxVSRlt-Qo" 
+                            frameBorder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowFullScreen
+                            title="Swiss System Video"
+                        ></iframe>
+                    </div>
+               
+               </section>
+               <footer class="modal-card-foot">
+                 <div class="buttons">
+                   
+                   <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                 </div>
+               </footer>
+             </div>
+           </div>
+            )}
     </div>
-    <footer className="footer" style={{textAlign:"center",marginTop:"100px",height:"100px"}}>
+    <footer className="footer" style={{textAlign:"center",height:"100px"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
     </>

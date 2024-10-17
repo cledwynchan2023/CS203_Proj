@@ -12,7 +12,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
 import { CgProfile } from "react-icons/cg";
 
-export default function RankingAdmin() {
+export default function Ranking() {
     const [selectedId, setSelectedId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const[user,setUser]=useState([]);
@@ -175,6 +175,7 @@ export default function RankingAdmin() {
                 }
             }
         };
+
         fetchData();
         
         loadUsers();

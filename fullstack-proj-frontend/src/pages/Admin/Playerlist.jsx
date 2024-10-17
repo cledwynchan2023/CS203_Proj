@@ -10,12 +10,13 @@ export default function Playerlist() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const { userId } = useParams();
+    const[selectedUser, setSelectedUser]=useState(null);
     const [selectedId, setSelectedId] = useState([]);
     const [createdUser,setCreatedUser] = useState({username:"", password:"", email:"", confirmPassword:"", role:"ROLE_USER", elo:0});
     const{username, password, email, confirmPassword, role, elo} = createdUser;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditedModalOpen, setIsEditedModalOpen] = useState(false);
-    const [editedUser,setEditedUser] = useState({editedUsername:"", editedPassword:"", editedEmail:"", editedConfirmPassword:"", editedRole:"ROLE_USER", editedElo:0});
+    const [editedUser,setEditedUser] = useState({editedUsername:"", editedEmail:"", editedRole:"ROLE_USER", editedElo:0});
     const{editedUsername, editedPassword, editedEmail, editedConfirmPassword, editedRole, editedElo} = editedUser;
 
     const clearTokens = () => {
@@ -92,14 +93,19 @@ export default function Playerlist() {
             return false;
         }
     };
-    const handleRowClick = async (userId) => {
-        setSelectedId(userId);
-        await loadEditedUser();
+    const handleRowClick = (user) => {
+
+        setEditedUser({editedUsername: user.username, editedEmail: user.email, editedRole: user.role, editedElo: user.elo});
+       setSelectedId(user.id);
+        setIsEditedModalOpen(true); 
         
     }
+    useEffect(() => {
+        console.log(editedUser.editedUsername + " user: " + editedUser.editedUsername);
+    }, [editedUser]);
 
-    const onSubmit= async (e)=>{
-        e.preventDefault();
+    const onSubmit= async ()=>{
+
         console.log(role);
         
 
@@ -113,8 +119,8 @@ export default function Playerlist() {
 
         const userData = {
             username,
-            password,
             email,
+            password,
             role,
             elo
         };
@@ -151,27 +157,16 @@ export default function Playerlist() {
     const onEditSubmit= async ()=>{
        
         
-        console.log(editedPassword);
-        console.log(editedPassword);
-        console.log(editedRole);
-        if (editedPassword !== editedConfirmPassword) {
-            alert("Passwords do not match");
-            return;
-        } else if (editedPassword.length <= 6){
-            alert("Password needs to be more than 6 characters");
-            return;
-        }
 
         const userData = {
             username: editedUsername,
-            password: editedPassword,
             email: editedEmail,
             role: editedRole,
             elo: editedElo
         };
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.put(`http://localhost:8080/u/${selectedId}`, userData, {
+            const response = await axios.put(`http://localhost:8080/u/user/${selectedId}`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -179,10 +174,8 @@ export default function Playerlist() {
     
             if (response.status === 200){
                 alert("User Edited successfully!");
-                setIsEditedModalOpen(false);
-                loadUsers();
+                
             }
-            console.log("hello");
         } 
         catch (error) {
             
@@ -235,27 +228,7 @@ export default function Playerlist() {
       
         setUser(result.data);
     };
-    const loadEditedUser= async()=>{
-        const token = localStorage.getItem('token');
-        try {
-            const result = await axios.get(`http://localhost:8080/u/id/${selectedId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
     
-            setEditedUser({
-                editedUsername: result.data.username,
-                editedEmail: result.data.email,
-                editedElo: result.data.elo,
-                editedRole: result.data.role
-            });
-            console.log("loaded successfully");
-            setIsEditedModalOpen(true); 
-        } catch (error) {
-            console.error("Error loading user data:", error);
-        }
-    };
   return (
     <>
         <div className="background-container" style={{ 
@@ -263,11 +236,13 @@ export default function Playerlist() {
         }}> 
             <div className="content container fade-in" style={{height:"100%", width:"100%",paddingTop:"100px", paddingBottom:"50px"}}>
        
-        <section className="section is-large" style={{ height:"600px", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", overflowY:"scroll",overflowX:"scroll"}}>
-            <div className="hero-body" style={{marginBottom:"5%"}}>
+        <section className="section is-large" style={{ height:"100%", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px",overflowX:"scroll"}}>
+            <div className="hero-body" style={{marginBottom:"5%", height:"20%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Player List</p>
                 <button className="button is-link is-rounded" onClick={()=> {setIsModalOpen(true)}}>Create Players</button>
             </div>
+            <div className="section animate__animated animate__fadeInUpBig" style={{height:"110%", paddingBottom:"20px",overflowY:"scroll"}}>
+
             <table className="table is-hoverable custom-table" >
                 <thead>
                     <tr>
@@ -279,28 +254,29 @@ export default function Playerlist() {
                 </thead>
                 <tbody>
                     {user.map((user, index) =>
-                        <tr key={user.id} onClick={() => handleRowClick(user.id)}>
+                        <tr key={user.id} onClick={() => handleRowClick(user)}>
                             <td>{user.id}</td>
                             <td>{user.username}</td>
                             <td>{user.elo}</td>
                             <td>{user.role}</td>
-                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {deleteUser(user.id);
+                            <button className="button is-text" style={{marginTop:"20px", marginLeft:"20px"}} onClick={(event) => {deleteUser(user.id);
                             event.stopPropagation();
                             }}>Remove</button>           
                         </tr>   
                     )}
                 </tbody>
             </table>
+            </div>
         </section>
         {isModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal-card animate__animated animate__fadeInUpBig">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Create User</p>
-                  <button class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+                  <button  class="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
+                <section class="modal-card-body" style={{height:"450px"}}>
                
                     <form onSubmit={(e) => onSubmit(e)}>
                         <div className="form-floating mb-3">
@@ -363,18 +339,16 @@ export default function Playerlist() {
                             name="elo"
                         />
                         <label htmlFor="PasswordConfirm">Elo</label>
-                            </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Create Player</button>
                         </div>
+                        
 
                     </form>
             
                 </section>
                 <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <div class="buttons" style={{display:"flex", width:"100%", justifyContent:"center"}}>
+                    <button onClick={()=> {onSubmit()}} className='button is-link is-fullwidth'>Create Player</button>
+                    <button class="button is-text" onClick={() => setIsModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
               </div>
@@ -384,15 +358,15 @@ export default function Playerlist() {
         {isEditedModalOpen && (
               <div class="modal is-active fade-in">
               <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal-card animate__animated animate__fadeInUpBig">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Edit User {selectedId}</p>
                   <button class="delete"  onClick={() => setIsEditedModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
+                <section class="modal-card-body" style={{height:"300px"}}>
                
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
+                    <form onSubmit={(e) => onEditSubmit(e)}>
+                        {/* <div className="form-floating mb-3">
                         <input
                             type="text"
                             className="form-control form-control-lg"
@@ -403,7 +377,7 @@ export default function Playerlist() {
                             name="editedEmail"
                         ></input>
                         <label htmlFor="tournament_name">Email Address</label>
-                        </div>
+                        </div> */}
                         
                         <div className="form-floating mb-3">
                         <input
@@ -418,30 +392,7 @@ export default function Playerlist() {
                         <label htmlFor="Username">Username</label>
 
                         </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={editedPassword}
-                                onChange={(e) => onEditInputChange(e)}
-                                name="editedPassword"
-                            
-                            />
-                            <label htmlFor="Status">Password</label>
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={editedConfirmPassword}
-                                onChange={(e) => onEditInputChange(e)}
-                                name="editedConfirmPassword"
-                            
-                            />
-                            <label htmlFor="Status">Confirm Password</label>
-                        </div>
+                        
                         <div className="form-floating mb-3 mt-3">
                             <input
                             type="number"

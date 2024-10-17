@@ -27,6 +27,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/t")
 public class TournamentController {
+    @Autowired
+    private SSEController sseController;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -58,6 +60,36 @@ public class TournamentController {
     @GetMapping("/tournaments/inactive")
     public ResponseEntity<List<TournamentDTO>> getInactiveTournaments() {
         List<Tournament> tournaments = tournamentService.getInactiveTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
+    @GetMapping("/tournaments/name")
+    public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByName() throws Exception {
+        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByName();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
+    @GetMapping("/tournaments/date")
+    public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByDate() throws Exception {
+        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByDate();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
+    @GetMapping("/tournaments/capacity")
+    public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsBySize() throws Exception {
+        List<Tournament> tournaments = tournamentService.getFilteredTournamentsBySize();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -173,6 +205,7 @@ public class TournamentController {
             System.out.println(newTournament.getTournament_name());
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            sseController.sendTournamentUpdate(updatedTournament);
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging
