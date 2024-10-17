@@ -67,6 +67,16 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
 
+    @GetMapping("/tournaments/ongoing")
+    public ResponseEntity<List<TournamentDTO>> getOngoingTournaments() {
+        List<Tournament> tournaments = tournamentService.getOngoingTournament();
+        if (tournaments.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
+        return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+    }
+
     @GetMapping("/tournaments/name")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByName() throws Exception {
         List<Tournament> tournaments = tournamentService.getFilteredTournamentsByName();

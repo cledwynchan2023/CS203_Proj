@@ -16,6 +16,7 @@ export default function TournamentPage() {
     const navigate = useNavigate();
     const[tournament,setTournament]=useState([]);
     const[pastTournament, setPastTournament]=useState([]);
+    const[ongoingTournaments, setOngoingTournaments]=useState([]);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
     const { userId } = useParams();
@@ -64,6 +65,7 @@ export default function TournamentPage() {
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments/active");
         const result1 = await axios.get("http://localhost:8080/t/tournaments/inactive");
+        const result2 = await axios.get("http://localhost:8080/t/tournaments/ongoing");
     
         if (!result.data.length == 0){
             setTournament(result.data);
@@ -76,6 +78,11 @@ export default function TournamentPage() {
         } else {
             setPastTournament([]);
         }
+        if (!result2.data.length == 0){
+            setOngoingTournaments(result2.data);
+        } else {
+            setOngoingTournaments([]);
+        }
         
     };
 
@@ -83,12 +90,16 @@ export default function TournamentPage() {
         switch (activeTab) {
             case 'Overview':
                 return <>
-                {isLoading ? (
-                    <div style={{display:"flex", justifyContent:"center"}}>
-                        <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
-                    </div>
-                    
-                ): (
+              {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+             </div>    
+                ) : (
+                    tournament.length === 0 ? (
+                        <div style={{textAlign: "center", marginTop: "20px"}}>
+                            <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
+                        </div>
+                    ) : (
                     <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
                 <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
@@ -140,11 +151,21 @@ export default function TournamentPage() {
                 ))}
                 </div>
                 </section>
-                )}
+                ))}
                 
                 </>
-            case 'Inactive':
+            case 'Completed':
                 return <>
+                {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+             </div>    
+                ) : (
+                    tournament.length === 0 ? (
+                        <div style={{textAlign: "center", marginTop: "20px"}}>
+                            <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
+                        </div>
+                    ) : (
                 <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
                 <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
@@ -196,7 +217,73 @@ export default function TournamentPage() {
                 ))}
                 </div>
                 </section>
+                    ))}
                 </>
+                case 'Ongoing':
+                    return <>
+                    {isLoading ? (
+            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+             </div>    
+                ) : (
+                    ongoingTournaments.length === 0 ? (
+                        <div style={{textAlign: "center", marginTop: "20px"}}>
+                            <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
+                        </div>
+                    ) : (
+                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                    
+                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                    {ongoingTournaments.map((ongoingTournaments) => (
+                        <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                        <div className="card-image">
+                            <figure className="image is-16by9">
+                            <img
+                                src={getRandomImage()} // Replace with your image URL field
+                                alt={ongoingTournaments.name}
+                            />
+                            </figure>
+                        </div>
+                        <div className="card-content">
+                            <div className="media">
+                            <div className="media-content noScroll">
+                                <p className="title is-4">{ongoingTournaments.tournamentName}</p>
+                            </div>
+                            </div>
+    
+                            <div className="content" style={{fontWeight:"bold"}}>
+                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
+                                <p style={{color:"rgb(106, 90, 205)"}}>
+                                    {ongoingTournaments.date}
+                                </p>
+                                </div>
+                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
+                                <p style={{}}>
+                                    {ongoingTournaments.currentSize}/{ongoingTournaments.size}
+                                </p>
+                                </div>
+                                <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
+                                <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
+                                <p style={{color:"rgba(255, 199, 0, 0.8)"}}>
+                                    Ongoing
+                                </p>
+                                </div>
+                                <div>
+                                {/* <button className="button is-link is-rounded" onClick={(event) => {
+                                    join(tournament.id);
+                                    event.stopPropagation(); // Prevent the click event from bubbling up to the card
+                                }}>Join Tournament</button> */}
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    ))}
+                    </div>
+                    </section>
+                    ))}
+                    </>
         }
         };
 
@@ -259,8 +346,11 @@ export default function TournamentPage() {
                 <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                   <a onClick={() => setActiveTab('Overview')}>Available Tournaments</a>
                 </li>
-                <li className={activeTab === 'Inactive' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Inactive')}>Finished Tournaments</a>
+                <li className={activeTab === 'Ongoing' ? 'is-active' : ''}>
+                  <a onClick={() => setActiveTab('Ongoing')}>Ongoing Tournaments</a>
+                </li>
+                <li className={activeTab === 'Completed' ? 'is-active' : ''}>
+                  <a onClick={() => setActiveTab('Completed')}>Completed Tournaments</a>
                 </li>
               </ul>
             </div>
