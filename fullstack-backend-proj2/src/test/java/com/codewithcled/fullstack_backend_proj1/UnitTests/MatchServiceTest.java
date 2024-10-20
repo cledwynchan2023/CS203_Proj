@@ -1,17 +1,12 @@
 package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
-import org.apache.hc.client5.http.fluent.Request;
-import org.hibernate.mapping.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
-import com.codewithcled.fullstack_backend_proj1.model.Round;
-import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -41,28 +36,28 @@ public class MatchServiceTest {
     @InjectMocks
     MatchServiceImplementation matchService;
 
-    // @Test
-    // public void createMatch_Success(){
-    //     Double elo1=(double)1000;
-    //     Double elo2=(double)1010;
-    //     long uId1=(long)1;
-    //     long uId2=(long)2;
+    //@Test
+    public void createMatch_Success(){
+        Double elo1=(double)1000;
+        Double elo2=(double)1010;
+        long uId1=(long)1;
+        long uId2=(long)2;
 
-    //     User p1=new User();
-    //     p1.setElo(elo1);
-    //     p1.setId(uId1);
+        User p1=new User();
+        p1.setElo(elo1);
+        p1.setId(uId1);
 
-    //     User p2=new User();
-    //     p1.setElo(elo2);
-    //     p1.setId(uId2);
+        User p2=new User();
+        p1.setElo(elo2);
+        p1.setId(uId2);
 
-    //     Match result=matchService.createMatch(p1, p2);
+        Match result=matchService.createMatch(p1, p2);
 
-    //     assertEquals(elo1,result.getPlayer1StartingElo());
-    //     assertEquals(elo2,result.getPlayer2StartingElo());
-    //     assertEquals(uId1,result.getPlayer1());
-    //     assertEquals(uId2,result.getPlayer2());
-    // }
+        assertEquals(elo1,result.getPlayer1StartingElo());
+        assertEquals(elo2,result.getPlayer2StartingElo());
+        assertEquals(uId1,result.getPlayer1());
+        assertEquals(uId2,result.getPlayer2());
+    }
 
     @Test
     void getResult_Success() throws Exception{
@@ -80,7 +75,7 @@ public class MatchServiceTest {
     }
 
     @Test
-    void result_Failure() throws Exception{
+    void getResult_Failure() throws Exception{
         long mId=(long)1;
 
         when(matchRepository.findById(mId)).thenReturn(Optional.empty());
@@ -92,9 +87,132 @@ public class MatchServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(matchRepository).findById(mId);
     }
+
+    void updateMatch_Success() throws Exception{
+        Long mId=(long)1432;
+        int result=0;
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(false);
+
+        User player1=new User();
+        testMatch.setPlayer1(mId);
+
+        User player2=new User();
+        testMatch.setPlayer2(mId+1);
+
+        when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
+        when(userRepository.findById(mId)).thenReturn(Optional.of(player1));
+        when(userRepository.findById(mId+1)).thenReturn(Optional.of(player2));
+
+        matchService.updateMatch(mId, result);
+
+        verify(matchRepository).findById(mId);
+        verify(userRepository).findById(mId);
+        verify(userRepository).findById(mId+1);
+    }
+
+    @Test
+    void updateMatch_Failure_MatchNotFound() throws Exception{
+        Long mId=(long)1432;
+        int result=0;
+
+        when(matchRepository.findById(mId)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown=false;
+        try {
+            matchService.updateMatch(mId, result);
+        } catch (Exception e) {
+            assertEquals("Match not found",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertTrue(exceptionThrown);
+        verify(matchRepository).findById(mId);
+    }
+
+    @Test
+    void updateMatch_Failure_MatchIsComplete() throws Exception{
+        Long mId=(long)1432;
+        int result=0;
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(true);
+
+        when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
+
+        boolean exceptionThrown=false;
+        try {
+            matchService.updateMatch(mId, result);
+        } catch (Exception e) {
+            assertEquals("Match already complete, cannot update again",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertTrue(exceptionThrown);
+        verify(matchRepository).findById(mId);
+    }
+
+    @Test
+    void updateMatch_Failure_Player1NotFound() throws Exception{
+        Long mId=(long)1432;
+        int result=0;
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(false);
+
+        testMatch.setPlayer1(mId);
+
+        when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
+        when(userRepository.findById(mId)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown=false;
+        try {
+            matchService.updateMatch(mId, result);
+        } catch (Exception e) {
+            assertEquals("User not found",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertTrue(exceptionThrown);
+        verify(matchRepository).findById(mId);
+        verify(userRepository).findById(mId);
+    }
+
+    @Test
+    void updateMatch_Failure_Player2NotFound() throws Exception{
+        Long mId=(long)1432;
+        int result=0;
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(false);
+
+        User player1=new User();
+        testMatch.setPlayer1(mId);
+        testMatch.setPlayer2(mId+1);
+
+        when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
+        when(userRepository.findById(mId)).thenReturn(Optional.of(player1));
+        when(userRepository.findById(mId+1)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown=false;
+        try {
+            matchService.updateMatch(mId, result);
+        } catch (Exception e) {
+            assertEquals("User not found",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertTrue(exceptionThrown);
+        verify(matchRepository).findById(mId);
+        verify(userRepository).findById(mId);
+        verify(userRepository).findById(mId+1);
+    }
+
+
 
     @Test
     void getEloChange1_Success() throws Exception{
@@ -125,7 +243,7 @@ public class MatchServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(matchRepository).findById(mId);
     }
 
@@ -158,7 +276,7 @@ public class MatchServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(matchRepository).findById(mId);
     }
 }

@@ -74,22 +74,22 @@ public class SSEControllerIntegrationTest {
 
     }
 
-    // @Test
-    // public void testGetUsersStream() throws Exception {
-    //     URI uri = new URI(baseUrl + port +urlPrefix +"/sse/user");
-    //     User testUser = new User();
-    //     testUser.setUsername("testUser");
-    //     testUser.setRole("ROLE_USER");
-    //     testUser.setPassword(passwordEncoder.encode("TestPassword"));
-    //     testUser.setId((long) 110);
-    //     testUser.setEmail("testUser");
-    //     testUser.setElo(1000.0);
-    //     testUser.setCurrentTournaments(new ArrayList<Tournament>());
-    //     userRepository.save(testUser);
+    //@Test
+    public void testGetUsersStream() throws Exception {
+        URI uri = new URI(baseUrl + port +urlPrefix +"/sse/user");
+        User testUser = new User();
+        testUser.setUsername("testUser");
+        testUser.setRole("ROLE_USER");
+        testUser.setPassword(passwordEncoder.encode("TestPassword"));
+        testUser.setId((long) 110);
+        testUser.setEmail("testUser");
+        testUser.setElo(1000.0);
+        testUser.setCurrentTournaments(new ArrayList<Tournament>());
+        userRepository.save(testUser);
 
-    //     webClient.get().uri(uri).exchange().expectStatus().isOk();
+        webClient.get().uri(uri).exchange().expectStatus().isOk();
 
-    // }
+    }
 
     @Test
     public void testGetTournament() throws Exception {

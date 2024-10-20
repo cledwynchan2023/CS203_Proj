@@ -124,50 +124,50 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    // @Test
-    // public void addRound_Success() throws Exception {
-    //     Tournament tournament = new Tournament();
-    //     tournament.setTournament_name("testTournament");
-    //     tournament.setSize(0);
-    //     tournament.setNoOfRounds(0);
-    //     tournament.setDate("10/20/1203");
-    //     tournament.setStatus("active");
-    //     tournament.setRounds(new ArrayList<>());
-    //     Tournament savedTournament = tournamentRepository.save(tournament);
+    //@Test
+    public void addRound_Success() throws Exception {
+        Tournament tournament = new Tournament();
+        tournament.setTournament_name("testTournament");
+        tournament.setSize(0);
+        tournament.setNoOfRounds(0);
+        tournament.setDate("10/20/1203");
+        tournament.setStatus("active");
+        tournament.setRounds(new ArrayList<>());
+        Tournament savedTournament = tournamentRepository.save(tournament);
 
-    //     Round round = new Round();
-    //     round.setRoundNum(1);
-    //     round.setId((long) 134);
+        Round round = new Round();
+        round.setRoundNum(1);
+        round.setId((long) 134);
 
-    //     URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");
 
-    //     ResponseEntity<String> result = restTemplate.postForEntity(url, round, String.class);
+        ResponseEntity<String> result = restTemplate.postForEntity(url, round, String.class);
 
       
-    //     assertEquals("Round added successfully to the tournament", result.getBody());
-    //     assertEquals(HttpStatus.OK, result.getStatusCode());
-    // }
+        assertEquals("Round added successfully to the tournament", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
 
-    // @Test
-    // public void addRound_Failure() {
+    //@Test
+    public void addRound_Failure() {
 
-    //     Round round = new Round();
-    //     round.setRoundNum(1);
-    //     boolean exceptionThrown=false;
+        Round round = new Round();
+        round.setRoundNum(1);
+        boolean exceptionThrown=false;
 
-    //     try {
+        try {
 
-    //         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
+            URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
-    //         restTemplate.postForEntity(url, round, String.class);
-    //     } catch (Exception e) {
-    //         assertEquals("Tournament not found", e.getMessage());
-    //         exceptionThrown=true;
-    //     }
+            restTemplate.postForEntity(url, round, String.class);
+        } catch (Exception e) {
+            assertEquals("Tournament not found", e.getMessage());
+            exceptionThrown=true;
+        }
 
-    //     assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
-    // }
+    }
 
     @Test
     public void getTournamentParticipants_Success() throws Exception {
@@ -275,8 +275,12 @@ public class TournamentControllerIntegrationTest {
         Map<String, Long> params = new HashMap<>();
         params.put("user_id", (long) 600);
 
-        ResponseEntity<TournamentDTO> result = restTemplate.exchange(urlTemplate, HttpMethod.PUT, null,
-                TournamentDTO.class, params);
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+            urlTemplate, 
+            HttpMethod.PUT, 
+            null,
+            TournamentDTO.class, 
+            params);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
@@ -488,19 +492,19 @@ public class TournamentControllerIntegrationTest {
         assertEquals(0,tournamentRepository.count());
     }
 
-    // @Test
-    // public void deleteTournament_Failure() throws Exception {
-    //     URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
+    //@Test
+    public void deleteTournament_Failure() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
 
-    //     ResponseEntity<String> result = restTemplate.exchange(
-    //         url, 
-    //         HttpMethod.DELETE, 
-    //         null, 
-    //         String.class);
+        ResponseEntity<String> result = restTemplate.exchange(
+            url, 
+            HttpMethod.DELETE, 
+            null, 
+            String.class);
 
-    //     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-    //     assertEquals("An error occurred while deleting the tournament.", result.getBody());
-    // }
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("An error occurred while deleting the tournament.", result.getBody());
+    }
 
     @Test
     public void updateTournament_Success() throws Exception {
@@ -542,5 +546,4 @@ public class TournamentControllerIntegrationTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
-
 }

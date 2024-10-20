@@ -259,16 +259,16 @@ public class AdminControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    // @Test
-    // public void deleteTournament_Failure() throws Exception {
-    //     URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
+    //@Test
+    public void deleteTournament_Failure() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
 
-    //     ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-    //             .exchange(uri, HttpMethod.DELETE, null, String.class);
+        ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
+                .exchange(uri, HttpMethod.DELETE, null, String.class);
 
-    //     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-    //     assertEquals("An error occurred while deleting the tournament.", result.getBody());
-    // }
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("An error occurred while deleting the tournament.", result.getBody());
+    }
 
     @Test
     public void updateUser_Success() throws Exception {

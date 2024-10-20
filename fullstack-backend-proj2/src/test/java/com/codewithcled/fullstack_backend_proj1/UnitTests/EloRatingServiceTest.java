@@ -21,7 +21,7 @@ public class EloRatingServiceTest {
 
         boolean result = EloRatingService.isValidElo(elo);
 
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class EloRatingServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class EloRatingServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test

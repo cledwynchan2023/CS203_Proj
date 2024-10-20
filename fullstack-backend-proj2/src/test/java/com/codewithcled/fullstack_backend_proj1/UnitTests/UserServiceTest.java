@@ -3,7 +3,6 @@ package com.codewithcled.fullstack_backend_proj1.UnitTests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -74,14 +73,14 @@ public class UserServiceTest {
         when(userRepository.findByEmail(userName)).thenReturn(null);
 
         try {
-            UserDetails result = userService.loadUserByUsername(userName);
+            userService.loadUserByUsername(userName);
         } catch (UsernameNotFoundException e) {
             assertEquals("User not found with this email"+userName, e.getMessage());
 
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(userRepository).findByEmail(userName);
     }
@@ -104,24 +103,6 @@ public class UserServiceTest {
         verify(userRepository).findAll();
     }
 
-    /*
-     * void findUserProfileByJwt(){
-     * String username = "test";
-     * Long id = (long) 10;
-     * User testUser = new User();
-     * String JWT="";
-     * testUser.setUsername(username);
-     * testUser.setId(id);
-     * 
-     * when(userRepository.findByJWT(JWT)).thenReturn(testUser);
-     * 
-     * User result=userService.findUserProfileByJWT(JWT);
-     * 
-     * assertEquals(testUser,result);
-     * verify(userRepository).findByJWT(JWT);
-     * };
-     */
-
     @Test
     void findUserByEmail_Success_ReturnUser() {
         String username = "test";
@@ -138,23 +119,6 @@ public class UserServiceTest {
         assertEquals(testUser, result);
         verify(userRepository).findByEmail(username);
     }
-
-    /*
-     * void findUserById(String userId){
-     * String username = "test";
-     * Long id = (long) 10;
-     * User testUser = new User();
-     * testUser.setUsername(username);
-     * testUser.setId(id);
-     * 
-     * when(userRepository.findById(id)).thenReturn(testUser);
-     * 
-     * User result=userService.findUserById(id);
-     * 
-     * assertEquals(testUser, result);
-     * verify(userRepository).findById(id);
-     * }
-     */
 
     @Test
     void findAllUsers_Success_ReturnUserList() {
@@ -277,14 +241,14 @@ public class UserServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
         try {
-            AuthResponse result = userService.createUser(signUpRequestDetails);
+            userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Email Is Already Used With Another Account", e.getMessage());
 
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         
         verify(userRepository).findByEmail(email);
     }
@@ -309,13 +273,13 @@ public class UserServiceTest {
         boolean exceptionThrown=false;
 
         try {
-            AuthResponse result = userService.createUser(signUpRequestDetails);
+            userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Username is already being used with another account", e.getMessage());
             exceptionThrown=true;
         }
         
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
     }
@@ -459,7 +423,7 @@ public class UserServiceTest {
         boolean exceptionThrown=false;
 
         try {
-            List<Tournament> result = userService.getUserParticipatingTournaments(uId);
+            userService.getUserParticipatingTournaments(uId);
         } catch (Exception e) {
 
             assertEquals("User not found",e.getMessage());
@@ -467,7 +431,7 @@ public class UserServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(userRepository).findById(uId);
     }
@@ -540,7 +504,6 @@ public class UserServiceTest {
         testMatch.setPlayer1(uId);
         testMatch.setPlayer2(uId);
         testMatch.setRound(testRound);
-        List<Match> returnList=List.of(testMatch);
 
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
@@ -549,12 +512,11 @@ public class UserServiceTest {
         try {
             userService.getUserPastMatches(uId);
         } catch (Exception e) {
-            // TODO: handle exception
             assertEquals("User not found",e.getMessage());
             exceptionThrown=true;
         }
         
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(userRepository).findById(uId);
     }
 }

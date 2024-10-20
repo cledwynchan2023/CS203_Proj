@@ -102,7 +102,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -176,7 +176,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -298,7 +298,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -326,7 +326,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -371,7 +371,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -423,7 +423,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
     }
 
@@ -541,7 +541,7 @@ public class TournamentServiceTest {
             exceptionThrown=true;
 
         }
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -615,7 +615,7 @@ public class TournamentServiceTest {
         }
         
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(tournamentRepository).findById(tId);
     }
@@ -633,7 +633,7 @@ public class TournamentServiceTest {
         }
         
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(tournamentRepository).findById(tId);
     }
@@ -697,7 +697,7 @@ public class TournamentServiceTest {
         
 
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(tournamentRepository).findById(tId);
     }
 
@@ -733,7 +733,7 @@ public class TournamentServiceTest {
         }
         
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(tournamentRepository).findById(tId);
     }
 
