@@ -1,8 +1,9 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +17,11 @@ import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
@@ -31,6 +35,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private MatchRepository matchRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -462,6 +469,92 @@ public class UserServiceTest {
 
         assertEquals(true,exceptionThrown);
 
+        verify(userRepository).findById(uId);
+    }
+
+    @Test
+    public void getUserPastMatches_Success() throws Exception{
+        Long uId=(long)1234;
+        User testUser=new User();
+        testUser.setId(uId);
+        testUser.setUsername("testUser");
+        testUser.setEmail("testUser");
+
+        List<User> userList=List.of(testUser);
+
+        Tournament testTournament=new Tournament();
+        testTournament.setSize(6);
+        testTournament.setCurrentSize(2);
+        testTournament.setTournament_name("tournamentName");
+
+        List<Tournament> tournametList=List.of(testTournament);
+        testTournament.setParticipants(userList);
+        testUser.setCurrentTournaments(tournametList);
+
+        Round testRound=new Round();
+        testRound.setTournament(testTournament);
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(true);
+        testMatch.setPlayer1(uId);
+        testMatch.setPlayer2(uId);
+        testMatch.setRound(testRound);
+        List<Match> returnList=List.of(testMatch);
+
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
+        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser))
+        .thenReturn(returnList);
+
+        List<Match> result=userService.getUserPastMatches(uId);
+
+        assertIterableEquals(returnList, result);
+
+        verify(userRepository).findById(uId);
+        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser);
+    }
+
+    @Test
+    public void getUserPastMatches_Failure() throws Exception{
+        Long uId=(long)1234;
+        User testUser=new User();
+        testUser.setId(uId);
+        testUser.setUsername("testUser");
+        testUser.setEmail("testUser");
+
+        List<User> userList=List.of(testUser);
+
+        Tournament testTournament=new Tournament();
+        testTournament.setSize(6);
+        testTournament.setCurrentSize(2);
+        testTournament.setTournament_name("tournamentName");
+
+        List<Tournament> tournametList=List.of(testTournament);
+        testTournament.setParticipants(userList);
+        testUser.setCurrentTournaments(tournametList);
+
+        Round testRound=new Round();
+        testRound.setTournament(testTournament);
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(true);
+        testMatch.setPlayer1(uId);
+        testMatch.setPlayer2(uId);
+        testMatch.setRound(testRound);
+        List<Match> returnList=List.of(testMatch);
+
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown=false;
+
+        try {
+            userService.getUserPastMatches(uId);
+        } catch (Exception e) {
+            // TODO: handle exception
+            assertEquals("User not found",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertEquals(true,exceptionThrown);
         verify(userRepository).findById(uId);
     }
 }

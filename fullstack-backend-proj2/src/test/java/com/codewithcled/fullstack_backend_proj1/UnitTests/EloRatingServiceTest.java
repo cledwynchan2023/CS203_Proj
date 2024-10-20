@@ -1,4 +1,4 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
