@@ -561,9 +561,43 @@ public class TournamentServiceTest {
 
         assertEquals(tournamentDTOList.get(0).getTournamentName(), result.get(0).getTournamentName());
         verify(tournamentRepository).findAll();
-
     }
 
+    @Test
+    void getActiveTournament_Success(){
+        Tournament testTournament=new Tournament();
+        testTournament.setStatus("active");
+        Tournament testTournament2=new Tournament();
+        testTournament2.setStatus("ongoing");
+        List<Tournament> tournamentList=new ArrayList<Tournament>(List.of(testTournament,testTournament2));
+        
+        when(tournamentRepository.findAll()).thenReturn(tournamentList);
+
+        List<Tournament> result=tournamentService.getActiveTournament();
+
+        assertEquals(1,result.size());
+        assertEquals("active",result.get(0).getStatus());
+        verify(tournamentRepository).findAll();
+    }
+
+    @Test
+    void getInActiveTournament_Success(){
+        Tournament testTournament=new Tournament();
+        testTournament.setStatus("active");
+        Tournament testTournament2=new Tournament();
+        testTournament2.setStatus("ongoing");
+        List<Tournament> tournamentList=new ArrayList<Tournament>(List.of(testTournament,testTournament2));
+        
+        when(tournamentRepository.findAll()).thenReturn(tournamentList);
+
+        List<Tournament> result=tournamentService.getInactiveTournament();
+
+        assertEquals(1,result.size());
+        assertEquals("ongoing",result.get(0).getStatus());
+        verify(tournamentRepository).findAll();
+    }
+
+    @Test
     void startTournament_Success() throws Exception{
         Long tId = (long) 11;
         int roundNo=2;
@@ -579,7 +613,6 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
         when(roundService.createFirstRound(tId)).thenReturn(testRound);
-        when(roundRepository.save(testRound)).thenReturn(testRound);
         when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
         Tournament result=tournamentService.startTournament(tId);
@@ -587,11 +620,11 @@ public class TournamentServiceTest {
         assertEquals(1,result.getRounds().size());
         assertEquals("ongoing",result.getStatus());
         verify(tournamentRepository).findById(tId);
-        verify(roundRepository).save(testRound);
         verify(roundService).createFirstRound(tId);
         verify(tournamentRepository).save(testTournament);
     }
 
+    @Test
     void startTournament_Failure_TournamentNotActive() throws Exception{
         Long tId = (long) 11;
         int roundNo=2;
@@ -620,6 +653,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).findById(tId);
     }
 
+    @Test
     void startTournament_Failure_TournamentNotFound() throws Exception{
         Long tId = (long) 11;
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
@@ -638,6 +672,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).findById(tId);
     }
 
+    @Test
     void checkComplete_Success_RoundsEqualNoOfRounds_EndTournament() throws Exception{
         Long tId = (long) 11;
         int roundNo=1;
@@ -646,7 +681,7 @@ public class TournamentServiceTest {
         testTournament.setId(tId);
         testTournament.setStatus("active");
         testTournament.setNoOfRounds(roundNo);
-        List<Round> rounds=List.of(new Round());
+        List<Round> rounds=new ArrayList<Round>(List.of(new Round()));
         testTournament.setRounds(rounds);
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
@@ -660,6 +695,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).save(testTournament);
     }
 
+    @Test
     void checkComplete_Success_RoundsNotEqualNoOfRounds_AddNewRound() throws Exception{
         Long tId = (long) 11;
         int roundNo=4;
@@ -668,7 +704,7 @@ public class TournamentServiceTest {
         testTournament.setId(tId);
         testTournament.setStatus("active");
         testTournament.setNoOfRounds(roundNo);
-        List<Round> rounds=List.of(new Round());
+        List<Round> rounds=new ArrayList<Round>(List.of(new Round()));
         testTournament.setRounds(rounds);
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
@@ -683,6 +719,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).save(testTournament);
     }
 
+    @Test
     void checkComplete_Failure() throws Exception{
         Long tId = (long) 11;
 
@@ -701,6 +738,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).findById(tId);
     }
 
+    @Test
     void endTournament_Success() throws Exception{
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
@@ -718,6 +756,7 @@ public class TournamentServiceTest {
         verify(tournamentRepository).save(testTournament);
     }
 
+    @Test
     void endTournament_Failure() throws Exception{
         Long tId = (long) 11;
 

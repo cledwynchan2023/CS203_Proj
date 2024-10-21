@@ -26,9 +26,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
+import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
@@ -45,6 +48,10 @@ public class TournamentControllerIntegrationTest {
     private TournamentRepository tournamentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoundRepository roundRepository;
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -58,6 +65,8 @@ public class TournamentControllerIntegrationTest {
     public void tearDown() {
         userRepository.deleteAll();
         tournamentRepository.deleteAll();
+        roundRepository.deleteAll();
+        matchRepository.deleteAll();
     }
 
     @Test
@@ -545,5 +554,142 @@ public class TournamentControllerIntegrationTest {
                 TournamentDTO.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    //@Test
+    void startTournament_Success() throws Exception{
+        Tournament testTournament=new Tournament();
+        User player1=new User();
+        User player2=new User();
+        Double elo=(double) 1000;
+        String userRole="ROLE_USER";
+        String userName="testUser";
+        String tournamentStatus="active";
+        int tournamentSize=2;
+
+        player1.setUsername(userName+1);
+        player1.setRole(userRole);
+        player1.setEmail(userName+1);
+        player1.setElo(elo);
+
+        player2.setUsername(userName+1);
+        player2.setRole(userRole);
+        player2.setEmail(userName+2);
+        player2.setElo(elo);
+
+        testTournament.setTournament_name("testTournament");
+        testTournament.setSize(tournamentSize);
+        testTournament.setCurrentSize(tournamentSize);
+        testTournament.setNoOfRounds(1);
+        testTournament.setStatus(tournamentStatus);
+        testTournament.setDate("10/20/1203");
+
+        List<Tournament> tournamentList = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        tournamentList.add(testTournament);
+        userList.add(player1);
+        userList.add(player2);
+
+        testTournament.setRounds(new ArrayList<Round>());
+        player1.setCurrentTournaments(tournamentList);
+        player2.setCurrentTournaments(tournamentList);
+        testTournament.setParticipants(userList);
+
+        Tournament savedTournament=tournamentRepository.save(testTournament);
+        userRepository.save(player1);
+        userRepository.save(player2);
+
+        URI url=new URI(baseUrl+port+urlPrefix+"/"+savedTournament.getId()+"/start");
+
+        ResponseEntity<TournamentDTO> result=restTemplate.exchange(
+            url,
+            HttpMethod.PUT,
+            null,
+            TournamentDTO.class);
+
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertEquals("ongoing",result.getBody().getStatus());
+    }
+
+    @Test
+    void startTournament_Failure_CannotFindTournament() throws Exception{
+        URI url=new URI(baseUrl+port+urlPrefix+"/404/start");
+
+        ResponseEntity<TournamentDTO> result=restTemplate.exchange(
+            url,
+            HttpMethod.PUT,
+            null,
+            TournamentDTO.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+    }
+
+    @Test
+    void checkTournamentComplete_Success() throws Exception{
+        Tournament testTournament=new Tournament();
+        User player1=new User();
+        User player2=new User();
+        Round testRound=new Round();
+        Match testMatch=new Match();
+        Double elo=(double) 1000;
+        String userRole="ROLE_USER";
+        String userName="testUser";
+        String tournamentStatus="active";
+        int tournamentSize=2;
+
+        player1.setUsername(userName+1);
+        player1.setRole(userRole);
+        player1.setEmail(userName+1);
+        player1.setElo(elo);
+
+        player2.setUsername(userName+1);
+        player2.setRole(userRole);
+        player2.setEmail(userName+2);
+        player2.setElo(elo);
+
+        testTournament.setTournament_name("testTournament");
+        testTournament.setSize(tournamentSize);
+        testTournament.setCurrentSize(tournamentSize);
+        testTournament.setNoOfRounds(1);
+        testTournament.setStatus(tournamentStatus);
+        testTournament.setDate("10/20/1203");
+
+        List<Tournament> tournamentList = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        tournamentList.add(testTournament);
+        userList.add(player1);
+        userList.add(player2);
+
+        player1.setCurrentTournaments(tournamentList);
+        player2.setCurrentTournaments(tournamentList);
+        testTournament.setParticipants(userList);
+
+        Tournament savedTournament=tournamentRepository.save(testTournament);
+        User savedPlayer1=userRepository.save(player1);
+        User savedPlayer2=userRepository.save(player2);
+
+        testRound.setRoundNum(1);
+        testRound.setTournament(savedTournament);
+        testRound.setScoreboard(savedTournament.getScoreboard());
+
+        Round savedRound=roundRepository.save(testRound);
+
+
+        testMatch.setPlayer1(savedPlayer1.getId());
+        testMatch.setPlayer2(savedPlayer2.getId());
+        testMatch.setIsComplete(false);
+        testMatch.setRound(savedRound);
+        savedRound.setMatchList(List.of(testMatch));
+
+        roundRepository.save(savedRound);
+        
+        matchRepository.save(testMatch);
+
+        URI url=new URI(baseUrl+port+urlPrefix+"/tournament/"+savedTournament.getId()+"/tournamentService/checkComplete");
+
+        ResponseEntity<String> result=restTemplate.getForEntity(url, String.class);
+
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertEquals("Successfully checked tournamentService.isComplete",result.getBody());
     }
 }

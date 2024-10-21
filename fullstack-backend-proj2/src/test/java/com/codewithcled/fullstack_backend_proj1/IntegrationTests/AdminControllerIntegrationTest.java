@@ -29,6 +29,7 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
+import com.codewithcled.fullstack_backend_proj1.controller.AdminController;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AdminControllerIntegrationTest {
@@ -84,18 +85,19 @@ public class AdminControllerIntegrationTest {
     @Test
     public void validateAdminToken_Success() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin/validate-admin-token");
-        TokenRequest tokenRequest = new TokenRequest();
+        AdminController.TokenRequest tokenRequest = new AdminController.TokenRequest();
         tokenRequest.setToken(adminToken);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", JWT);
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, tokenRequest, null);
-        // ResponseEntity<?> result = restTemplate.exchange(
-        // uri,
-        // HttpMethod.POST,
-        // new HttpEntity<>(tokenRequest,headers),
-        // null);
+        // ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
+        // .postForEntity(uri, tokenRequest, null);
+        ResponseEntity<?> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(tokenRequest, headers),
+                // new HttpEntity<>(tokenRequest),
+                AdminController.TokenRequest.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
@@ -103,11 +105,18 @@ public class AdminControllerIntegrationTest {
     @Test
     public void validateAdminToken_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin/validate-admin-token");
-        TokenRequest tokenRequest = new TokenRequest();
+        AdminController.TokenRequest tokenRequest = new AdminController.TokenRequest();
         tokenRequest.setToken("fa");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, tokenRequest, null);
+        // ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
+        // .postForEntity(uri, tokenRequest, null);
+        ResponseEntity<?> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(tokenRequest, headers),
+                AdminController.TokenRequest.class);
 
         assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
     }
@@ -122,10 +131,14 @@ public class AdminControllerIntegrationTest {
         createTournamentRequest.setSize(0);
         createTournamentRequest.setStatus("Active");
         createTournamentRequest.setTournament_name("TestTournament");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<TournamentDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, createTournamentRequest,
-                        TournamentDTO.class);
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(createTournamentRequest,headers),
+            TournamentDTO.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
@@ -134,13 +147,40 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void createdTournament_Failure() throws Exception {
+    public void createdTournament_Failure_NoBody() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
 
-        ResponseEntity<TournamentDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, null, TournamentDTO.class);
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(null,headers),
+            TournamentDTO.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void createdTournament_Failure_NoAuthentication() throws Exception {
+        CreateTournamentRequest createTournamentRequest = new CreateTournamentRequest();
+        createTournamentRequest.setCurrentSize(0);
+        createTournamentRequest.setDate("10/10/2023");
+        createTournamentRequest.setNoOfRounds(4);
+        createTournamentRequest.setSize(0);
+        createTournamentRequest.setStatus("Active");
+        createTournamentRequest.setTournament_name("TestTournament");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
+
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(createTournamentRequest,headers),
+            TournamentDTO.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 
     @Test
@@ -152,15 +192,20 @@ public class AdminControllerIntegrationTest {
         signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("TestUser");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<AuthResponse> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, signUpRequest, AuthResponse.class);
+        ResponseEntity<AuthResponse> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(signUpRequest,headers),
+            AuthResponse.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     @Test
-    public void createUser_Failure() throws Exception {
+    public void createUser_Failure_SameUserNames() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
@@ -176,11 +221,45 @@ public class AdminControllerIntegrationTest {
         originalUser.setRole("ROLE_USER");
         originalUser.setUsername("TestUser");
         userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<AuthResponse> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .postForEntity(uri, signUpRequest, AuthResponse.class);
+        ResponseEntity<AuthResponse> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(signUpRequest,headers),
+            AuthResponse.class);
 
         assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+    }
+
+    @Test
+    public void createUser_Failure_NoAuthentication() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("TestUser");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser2");
+        originalUser.setPassword(passwordEncoder.encode("TestUser2"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser2");
+        userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+
+        ResponseEntity<AuthResponse> result = restTemplate.exchange(
+            uri,
+            HttpMethod.POST,
+            new HttpEntity<>(signUpRequest,headers),
+            AuthResponse.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 
     @Test
@@ -192,23 +271,57 @@ public class AdminControllerIntegrationTest {
         originalUser.setRole("ROLE_USER");
         originalUser.setUsername("TestUser");
         User savedUser = userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
         URI uri = new URI(baseUrl + port + urlPrefix + "/" + savedUser.getId());
 
-        ResponseEntity<Void> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                void.class);
 
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
     }
 
     @Test
-    public void deleteUser_Failure() throws Exception {
+    public void deleteUser_Failure_UserNotFound() throws Exception {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/" + (long) 110);
 
-        ResponseEntity<Void> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .exchange(uri, HttpMethod.DELETE, null, void.class);
+        ResponseEntity<Void> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                void.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    public void deleteUser_Failure_NotAuthenticated() throws Exception {
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+
+        User savedUser = userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+        URI uri = new URI(baseUrl + port + urlPrefix + "/" + savedUser.getId());
+
+        ResponseEntity<Void> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                void.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 
     @Test
@@ -220,23 +333,56 @@ public class AdminControllerIntegrationTest {
         originalUser.setRole("ROLE_USER");
         originalUser.setUsername("TestUser");
         userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
         URI uri = new URI(baseUrl + port + urlPrefix + "/TestUser");
 
-        ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .getForEntity(uri, UserDTO.class);
+        ResponseEntity<UserDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                new HttpEntity<>("", headers),
+                UserDTO.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
-    public void getUserByUsername_Failure() throws Exception {
+    public void getUserByUsername_Failure_userNotFound() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/TestUser");
 
-        ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .getForEntity(uri, UserDTO.class);
+        ResponseEntity<UserDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                new HttpEntity<>("", headers),
+                UserDTO.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    public void getUserByUsername_Failure_NotAuthorized() throws Exception {
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+        userRepository.save(originalUser);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+        URI uri = new URI(baseUrl + port + urlPrefix + "/TestUser");
+
+        ResponseEntity<UserDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                new HttpEntity<>("", headers),
+                UserDTO.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 
     @Test
@@ -247,27 +393,52 @@ public class AdminControllerIntegrationTest {
         originalTournament.setDate("20/10/2002");
         originalTournament.setNoOfRounds(1);
         originalTournament.setTournament_name("TestUser");
-        Tournament savedTournament=tournamentRepository.save(originalTournament);
+        Tournament savedTournament = tournamentRepository.save(originalTournament);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId());
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .exchange(uri, HttpMethod.DELETE, null, String.class);
+        ResponseEntity<String> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                String.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("Tournament with ID " + savedTournament.getId() + " has been deleted.", result.getBody());
         assertEquals(0, tournamentRepository.count());
     }
 
-    //@Test
-    public void deleteTournament_Failure() throws Exception {
+    @Test
+    public void deleteTournament_Failure_TournamentNotFound() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .exchange(uri, HttpMethod.DELETE, null, String.class);
+        ResponseEntity<String> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                String.class);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
         assertEquals("An error occurred while deleting the tournament.", result.getBody());
+    }
+
+    @Test
+    public void deleteTournament_Failure_NotAuthorized() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+
+        ResponseEntity<String> result = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                new HttpEntity<>("", headers),
+                String.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 
     @Test
@@ -287,8 +458,10 @@ public class AdminControllerIntegrationTest {
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("updatedUser");
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/user/" + savedUser.getId());
-        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest);
+        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest, headers);
 
         ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
                 .exchange(uri, HttpMethod.PUT, updateUser, UserDTO.class);
@@ -299,7 +472,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void updateUser_Failure() throws Exception {
+    public void updateUser_Failure_UserNotFound() throws Exception {
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
         signUpRequest.setEmail("TestUser");
@@ -307,40 +480,48 @@ public class AdminControllerIntegrationTest {
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("updatedUser");
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/user/9");
-        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest);
+        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest, headers);
 
-        ResponseEntity<UserDTO> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-                .exchange(uri, HttpMethod.PUT, updateUser, UserDTO.class);
+        ResponseEntity<UserDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                updateUser,
+                UserDTO.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    public static class TokenRequest {
-        private String token;
+    @Test
+    public void updateUser_Failure_NotAuthorized() throws Exception {
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+        User savedUser = userRepository.save(originalUser);
 
-        public String getToken() {
-            return token;
-        }
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("updatedUser");
 
-        public void setToken(String token) {
-            this.token = token;
-        }
-    }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
+        URI uri = new URI(baseUrl + port + urlPrefix + "/user/" + savedUser.getId());
+        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest, headers);
 
-    public static class TokenResponse {
-        private boolean valid;
+        ResponseEntity<UserDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                updateUser,
+                UserDTO.class);
 
-        public TokenResponse(boolean valid) {
-            this.valid = valid;
-        }
-
-        public boolean isValid() {
-            return valid;
-        }
-
-        public void setValid(boolean valid) {
-            this.valid = valid;
-        }
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
 }
