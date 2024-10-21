@@ -7,16 +7,10 @@ import Login from './pages/Login.jsx';
 import {BrowserRouter as Router, Route, Routes, useLocation} from "react-router-dom";
 import NavbarLogin from './layout/NavbarLogin.jsx';
 import Register from './pages/Register.jsx';
-import TournamentAdmin from './pages/Admin/TournamentAdmin.jsx';
 import TournamentAdminCreate from './pages/Admin/TournamentAdminCreate.jsx';
-import TournamentUser from './pages/User/TournamentUser.jsx';
 import AdminNavbar from './layout/AdminNavbar.jsx';
 import PlayerListAdmin from './pages/Admin/Playerlist.jsx';
-import PlayerListAdminCreate from './pages/Admin/PlayerListAdminCreate.jsx';
 import TournamentAdminEdit from './pages/Admin/TournamentAdminEdit.jsx';
-import PlayerListAdminEdit from './pages/Admin/PlayerListAdminEdit.jsx';
-import TournamentDetailAdmin from './pages/Admin/TournamentDetailAdmin.jsx';
-import AddParticpant from './pages/Admin/AddParticpant.jsx';
 import RankingAdmin from './pages/Admin/RankingAdmin.jsx';
 import TournamentStartAdmin from './pages/Admin/TournamentStartAdmin.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -28,6 +22,7 @@ import TournamentPage from './pages/User/TournamentPage.jsx';
 import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
 import Ranking from './pages/User/Ranking.jsx';
 import Profile from './pages/User/Profile.jsx';
+import TournamentStart from './pages/Admin/TournamentStart.jsx';
 
 function App() {
 
@@ -100,6 +95,12 @@ function App() {
           <>
           <AdminNavbar></AdminNavbar>
           <RankingAdmin/>
+          </>
+        }></Route>
+        <Route exact path ="/admin/:userId/tournament/:id/start" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentStart/>
           </>
         }></Route>
         

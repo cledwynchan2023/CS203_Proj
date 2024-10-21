@@ -69,19 +69,19 @@ function Login() {
 					<img src={logo} style={{width:"100px", height:"100px", backgroundColor: "transparent", marginRight:"20px"}}></img>
 					<p className="text-center " style={{fontSize:"50px", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>Chess.io</p>
 				</div>
-			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '400px', borderRadius:"30px", padding:"10px", width:"50%"}}> 
-				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px"}}> 
+			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%"}}> 
+				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px", height:"100%"}}> 
 					<p className="text" style={{fontSize:"20px", fontWeight:"bold", marginBottom:"0"}}>Login</p> 
-					<div style={{width:"100%", padding:"30px"}}>
-					<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"50px", width:"400px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
-					<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"50px", width:"400px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> 
-					{error && <p className="text-danger" style={{ fontSize:"1rem"}}>{error}</p>}
+					<div style={{width:"100%", padding:"30px", height:"50%"}}>
+						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> 
+						{error && <p className="text-danger" style={{ fontSize:"1rem"}}>{error}</p>}
 
 					</div>
 					
 					
 					{isLoading ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40%' }}>
 							<div>
 								<Atom size={24} color="white" />
 								<p style={{width:"100%"}}>Login in....</p>
@@ -89,10 +89,10 @@ function Login() {
 
                         </div>
                     ) : (
-                        <button className="button is-link" style={{ height:'50px',width: '400px', borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
+                        <button className="button is-link" style={{ height:'15%',width: '50%', borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
                     )}
 					<div className="text-center" style={{ marginTop: "20px", fontSize: "17px" }}>
-                            <p>Not a member? <a href="/register" style={{ textDecoration: "underline" }}>Register</a></p>
+                            <p style={{color:"white"}}>Not a member? <a href="/register" style={{ textDecoration: "underline" }}>Register</a></p>
                         </div>
 				</div> 
 			</div> 

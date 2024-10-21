@@ -6,7 +6,8 @@ import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
 import "./style/TournamentDetailStyle.css";
-export default function TournamentDetail() {
+import { TiSocialSkypeOutline } from 'react-icons/ti';
+export default function TournamentStart() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
@@ -305,7 +306,7 @@ export default function TournamentDetail() {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/${id}`, {
+                const response = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -339,23 +340,11 @@ export default function TournamentDetail() {
         //loadUsers();
 
     }, []);
-
-    const startTournament = async () => {
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`http://localhost:8080/t/${id}/start`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-         if (isStart === 0) {
-             navigate(`/admin/${userId}/tournament/${id}/start`);
-         }
-     };
-
+    
     if (error) {
         return <div>{error}</div>;
-    }
+    };
+    
 
   return (
     <>
@@ -372,7 +361,7 @@ export default function TournamentDetail() {
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
             <div style={{display:"flex",alignItems:"center", backgroundColor:"black", width:"20%"}}>
-                <button className="button is-primary" onClick={startTournament} style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
+                <button className="button is-primary" style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>
                 <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>

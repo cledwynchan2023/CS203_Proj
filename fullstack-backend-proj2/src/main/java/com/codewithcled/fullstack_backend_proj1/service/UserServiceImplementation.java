@@ -130,6 +130,10 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         String email = user.getEmail();
         String role = user.getRole();
         double elo = user.getElo();
+        if (role.equals("ROLE_USER")){
+            elo = 100;
+        }
+        
 
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {

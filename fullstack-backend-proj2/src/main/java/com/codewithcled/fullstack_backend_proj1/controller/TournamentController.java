@@ -3,6 +3,8 @@ package com.codewithcled.fullstack_backend_proj1.controller;
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
@@ -29,13 +31,10 @@ import java.util.List;
 public class TournamentController {
     @Autowired
     private SSEController sseController;
-
     @Autowired
     private TournamentRepository tournamentRepository;
-
     @Autowired
     private TournamentService tournamentService;
-
     @GetMapping("/tournaments")
     public ResponseEntity<List<TournamentDTO>> getAllTournaments() {
         List<Tournament> tournaments = tournamentRepository.findAll();
@@ -55,7 +54,6 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
-
     //get inactive tournaments
     @GetMapping("/tournaments/inactive")
     public ResponseEntity<List<TournamentDTO>> getInactiveTournaments() {
@@ -66,7 +64,6 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
-
     @GetMapping("/tournaments/ongoing")
     public ResponseEntity<List<TournamentDTO>> getOngoingTournaments() {
         List<Tournament> tournaments = tournamentService.getOngoingTournament();
@@ -76,7 +73,6 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
-
     @GetMapping("/tournaments/name")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByName() throws Exception {
         List<Tournament> tournaments = tournamentService.getFilteredTournamentsByName();
@@ -131,7 +127,6 @@ public class TournamentController {
 
         return ResponseEntity.ok("Round added successfully to the tournament");
     }
-
 
     @GetMapping("/{id}/participant")
     public ResponseEntity<List<UserDTO>> getTournamentParticipants(@PathVariable("id") Long id) {
@@ -231,8 +226,17 @@ public class TournamentController {
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
         }
+    }
+
+    @GetMapping("/tournament/{id}/start")
+    public ResponseEntity<TournamentStartDTO> startTournamentService(@PathVariable("id") Long id) throws Exception{
+        Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        TournamentStartDTO tournamentStartDTO = TournamentStartMapper.toDTO(tournament);
+        return ResponseEntity.ok(tournamentStartDTO);
     }
 
     @GetMapping({"/tournament/{id}/tournamentService/checkComplete"})

@@ -32,13 +32,10 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
-
     @Autowired
     private RoundRepository roundRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoundService roundService;
 
@@ -46,7 +43,6 @@ public class TournamentServiceImplementation implements TournamentService {
     public List<Tournament> getAllTournament() {
         return tournamentRepository.findAll();
     }
-
     @Override
     public Tournament findTournamentByName(String name) {
         return null;
@@ -314,7 +310,7 @@ public class TournamentServiceImplementation implements TournamentService {
         currentTournament.setScoreboard(firstRound.getScoreboard());
         System.out.println("it happened");
         currentTournament.setStatus("ongoing");
-
+        
         return tournamentRepository.save(currentTournament);
     }
 
