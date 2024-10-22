@@ -46,7 +46,7 @@ public class RoundServiceTest {
     @InjectMocks
     private RoundServiceImplementation roundService;
 
-    //@Test
+    @Test
     void createFirstRound_Success() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
@@ -67,7 +67,6 @@ public class RoundServiceTest {
         when(roundRepository.save(testRound)).thenReturn(testRound);
         when(matchService.createMatch(testUser1, testUser2)).thenReturn(testMatch);
         when(matchRepository.save(testMatch)).thenReturn(testMatch);
-        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
         Round result = roundService.createFirstRound(tId);
 
@@ -128,7 +127,9 @@ public class RoundServiceTest {
     @Test
     void checkComplete_Success_NotAllMatchComplete() throws Exception{
         Long rId=(long)24234;
+        Tournament testTournament=new Tournament();
         Round testRound=new Round();
+        testRound.setTournament(testTournament);
         Match testMatch=new Match();
         testMatch.setIsComplete(false);
         testRound.setMatchList(List.of(testMatch));
@@ -140,7 +141,7 @@ public class RoundServiceTest {
         verify(roundRepository).findById(rId);
     }
 
-    //@Test
+    @Test
     void checkComplete_Success_AllMatchComplete() throws Exception{
         //Circular dependency issue
         Long rId=(long)24234;

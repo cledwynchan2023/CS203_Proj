@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,26 +98,41 @@ public class MatchServiceTest {
         verify(matchRepository).findById(mId);
     }
 
-    //@Test
+    @Test
     void updateMatch_Success() throws Exception{
         Long mId=(long)1432;
         int result=0;
         Double elo=(double)1000;
 
+        Tournament testTournament=new Tournament();
+        testTournament.setNoOfRounds(1);
+
+        Round testRound=new Round();
+        testRound.setRoundNum(1);
+        testRound.setTournament(testTournament);
+
         Match testMatch=new Match();
         testMatch.setIsComplete(false);
-        testMatch.setRound(null);
+        testMatch.setRound(testRound);
 
         User player1=new User();
+        player1.setId(mId);
         player1.setElo(elo);
-        testMatch.setPlayer1(mId);
+        testMatch.setPlayer1(player1.getId());
         testMatch.setPlayer1StartingElo(player1.getElo());
 
 
         User player2=new User();
+        player2.setId(mId+1);
         player2.setElo(elo);
-        testMatch.setPlayer2(mId+1);
+        testMatch.setPlayer2(player2.getId());
         testMatch.setPlayer2StartingElo(player2.getElo());
+
+        testTournament.setParticipants(List.of(player1,player2));
+        Map<Long,Double> scoreboard=new HashMap<>();
+        scoreboard.put(player1.getId(),0.0);
+        scoreboard.put(player2.getId(),0.0);
+        testTournament.setScoreboard(scoreboard);
 
         when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
         when(userRepository.findById(mId)).thenReturn(Optional.of(player1));

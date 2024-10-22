@@ -133,7 +133,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    //@Test
+    @Test
     public void addRound_Success() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
@@ -157,7 +157,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
-    //@Test
+    @Test
     public void addRound_Failure() {
 
         Round round = new Round();
@@ -501,7 +501,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(0,tournamentRepository.count());
     }
 
-    //@Test
+    @Test
     public void deleteTournament_Failure() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
 
@@ -556,7 +556,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
-    //@Test
+    @Test
     void startTournament_Success() throws Exception{
         Tournament testTournament=new Tournament();
         User player1=new User();

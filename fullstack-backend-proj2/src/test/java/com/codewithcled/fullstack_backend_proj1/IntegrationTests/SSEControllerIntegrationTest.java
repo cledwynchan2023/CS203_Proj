@@ -74,7 +74,7 @@ public class SSEControllerIntegrationTest {
 
     }
 
-    //@Test
+    @Test
     public void testGetUsersStream() throws Exception {
         URI uri = new URI(baseUrl + port +urlPrefix +"/sse/user");
         User testUser = new User();
@@ -85,6 +85,7 @@ public class SSEControllerIntegrationTest {
         testUser.setEmail("testUser");
         testUser.setElo(1000.0);
         testUser.setCurrentTournaments(new ArrayList<Tournament>());
+        
         userRepository.save(testUser);
 
         webClient.get().uri(uri).exchange().expectStatus().isOk();

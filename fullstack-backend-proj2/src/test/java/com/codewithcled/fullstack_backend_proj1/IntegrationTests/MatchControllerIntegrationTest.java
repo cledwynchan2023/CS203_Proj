@@ -63,7 +63,7 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test
+    @Test
     void updateMatch_Success() throws Exception{
         Match testMatch=new Match();
         Round testRound=new Round();
