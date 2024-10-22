@@ -313,7 +313,7 @@ export default function TournamentStart() {
                 });
                 setData(response.data);
                 setTournament(response.data);
-                
+                setUser(response.data.participants);
                 if (response.data.status == 'active') {
                     alert("Tournament has not started yet");
                     navigate(`/admin/${userId}/tournament/${id}`);
@@ -503,9 +503,9 @@ export default function TournamentStart() {
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>
-                    {/* <li className={activeTab === 'Players' ? 'is-active' : ''}>
+                    <li className={activeTab === 'Players' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Players')}>Players</a>
-                    </li> */}
+                    </li>
                     <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
                     </li>

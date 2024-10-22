@@ -308,7 +308,12 @@ public class TournamentServiceImplementation implements TournamentService {
         rounds.add(firstRound);
         currentTournament.setStatus("ongoing");
         currentTournament.setRounds(rounds);
-        //currentTournament.setScoreboard(firstRound.getScoreboard());
+        // Map<Long, Double> oriScoreboard = firstRound.getScoreboard();
+        // Map<Long, Double> newScoreboard = new HashMap<>();
+        // for (Map.Entry<Long, Double> entry : oriScoreboard.entrySet()) {
+        //     newScoreboard.put(entry.getKey(), entry.getValue());
+        // }
+        // currentTournament.setScoreboard(newScoreboard);
         
         Tournament newTournament = tournamentRepository.save(currentTournament);
         System.out.println("it happened");
