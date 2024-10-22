@@ -44,8 +44,12 @@ export default function TournamentLandingPage() {
         }
     };
 
-    const handleRowClick = (tournamentId) => {
-        navigate(`/admin/${userId}/tournament/${tournamentId}`);
+    const handleRowClick = (tournamentId, tournamentStatus) => {
+        if (tournamentStatus === 'active') {
+            navigate(`/admin/${userId}/tournament/${tournamentId}`);
+        } else if (tournamentStatus === 'ongoing') {
+            navigate(`/admin/${userId}/tournament/${tournamentId}/start`);
+        }
     };
 
     const toggleDropdown = () => {
@@ -236,7 +240,7 @@ export default function TournamentLandingPage() {
                 </thead>
                 <tbody>
                     {tournament.map((tournament, index) =>
-                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id)}>
+                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)}>
                             <td>{tournament.id}</td>
                             <td>{tournament.tournamentName}</td>
                             <td>{tournament.date}</td>

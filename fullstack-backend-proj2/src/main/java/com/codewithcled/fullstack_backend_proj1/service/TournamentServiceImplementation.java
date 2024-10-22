@@ -306,12 +306,13 @@ public class TournamentServiceImplementation implements TournamentService {
 
         List<Round> rounds = currentTournament.getRounds();
         rounds.add(firstRound);
-        currentTournament.setRounds(rounds);
-        currentTournament.setScoreboard(firstRound.getScoreboard());
-        System.out.println("it happened");
         currentTournament.setStatus("ongoing");
+        currentTournament.setRounds(rounds);
+        //currentTournament.setScoreboard(firstRound.getScoreboard());
         
-        return tournamentRepository.save(currentTournament);
+        Tournament newTournament = tournamentRepository.save(currentTournament);
+        System.out.println("it happened");
+        return newTournament;
     }
 
     @Override

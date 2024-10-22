@@ -158,4 +158,11 @@ public class RoundServiceImplementation implements RoundService {
 
         return roundRepository.save(newRound);
     }
+
+    @Override
+    public List<Match> getAllMatches(Long roundId) throws Exception {
+        Round round = roundRepository.findById(roundId)
+            .orElseThrow(() -> new Exception("Round not found"));
+        return round.getMatchList();
+    }
 }

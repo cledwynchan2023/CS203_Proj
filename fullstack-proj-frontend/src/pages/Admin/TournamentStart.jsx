@@ -67,9 +67,9 @@ export default function TournamentStart() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                {/* <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
                         <figure class="image is-4by3">
                         <img
@@ -90,8 +90,8 @@ export default function TournamentStart() {
                         <br />
                         </div>
                     </div>
-                </div>
-                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
+                </div> */}
+                <div style={{height:"100%",width:"100%",backgroundColor:"white",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
                     <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
                         <div class="card-content">
                             <div class="content">
@@ -315,10 +315,14 @@ export default function TournamentStart() {
                 setTournament(response.data);
                 
                 if (response.data.status == 'active') {
-                    setIsStart(0);
+                    alert("Tournament has not started yet");
+                    navigate(`/admin/${userId}/tournament/${id}`);
+
                 } else if (response.data.status == 'ongoing') {
                     setIsStart(1);
                 } else {
+                    alert("Tournament has ended");
+                    navigate(`/admin/${userId}/tournament/${id}`);
                     setIsStart(-1);
                 }
                 console.log(isStart);
@@ -361,11 +365,10 @@ export default function TournamentStart() {
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
             <div style={{display:"flex",alignItems:"center", backgroundColor:"black", width:"20%"}}>
-                <button className="button is-primary" style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
+                <button className="button is-primary" style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold", color:"white"}} disabled={isStart === -1}>
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>
                 <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger" style={{width:"55%", height:"40px", fontWeight:"bold"}}>Delete</button>
             </div>
             
         </section>
@@ -500,15 +503,15 @@ export default function TournamentStart() {
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>
-                    <li className={activeTab === 'Players' ? 'is-active' : ''}>
+                    {/* <li className={activeTab === 'Players' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Players')}>Players</a>
-                    </li>
+                    </li> */}
                     <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0"}}>
                 {renderTabContent()}
                 </div>
           </section>

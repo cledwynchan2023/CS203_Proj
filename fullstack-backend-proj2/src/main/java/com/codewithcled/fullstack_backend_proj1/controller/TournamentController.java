@@ -1,6 +1,8 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.RoundDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.RoundMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
@@ -237,6 +239,15 @@ public class TournamentController {
                 .orElseThrow(() -> new Exception("Tournament not found"));
         TournamentStartDTO tournamentStartDTO = TournamentStartMapper.toDTO(tournament);
         return ResponseEntity.ok(tournamentStartDTO);
+    }
+
+    @GetMapping("/tournament/{id}/start/rounds")
+    public ResponseEntity<List<RoundDTO>> getAllRounds (@PathVariable("id") Long id) throws Exception{
+        Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        List<Round> rounds = tournament.getRounds();
+        List<RoundDTO> newRounds = RoundMapper.toDTOList(rounds);
+        return ResponseEntity.ok(newRounds);
     }
 
     @GetMapping({"/tournament/{id}/tournamentService/checkComplete"})
