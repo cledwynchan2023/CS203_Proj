@@ -26,18 +26,10 @@ export default function TournamentStart() {
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
         
     }
+    const [tournamentRound, setTournamentRound] = useState(1);  
+    const[pairing, setPairing] = useState([]);
+    const[round, setRound] = useState([]);  
 
-    const convertToCreateTournamentRequest = (editedTournament) => {
-        
-        return {
-          tournament_name: editedTournament.tournamentName,
-          date: editedTournament.date,
-          status: editedTournament.status,
-          size: editedTournament.size,
-          noOfRounds: editedTournament.noOfRounds || 0,
-          currentSize: editedTournament.currentSize || 0,
-        };
-      };
     
     const onSubmit= async (e)=>{
         e.preventDefault();
@@ -68,64 +60,35 @@ export default function TournamentStart() {
     switch (activeTab) {
       case 'Overview':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                {/* <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
-                    <div class="card-image">
-                        <figure class="image is-4by3">
-                        <img
-                            src={chessplaying1}
-                            alt="Placeholder image"
-                        />
-                        </figure>
+            <div style={{width:"100%", display:"flex", flexWrap:"wrap", height:"60%"}}>
+                    <div style={{width:"100%", height:"100px"}}>
+                        <p className="title is-2">Round {tournamentRound}</p>
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Game of Chess</p>
-                        </div>
-                        </div>
-
-                        <div class="content">
-                        Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
-                        <br />
-                        </div>
-                    </div>
-                </div> */}
-                <div style={{height:"100%",width:"100%",backgroundColor:"white",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                    {pairing.map((pair, index) =>
+                    <div class="card" style={{width:"100%", minWidth:"400px",height:"120px"}}>
+                        <div class="card-content" style={{display:"flex", justifyContent:"center"}}>
+                            
+                            
+                            <div class="content" style={{width:"30%", textAlign:"center"}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player1}</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Player 1</p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                            <div style={{width:"20%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                            <div class="content" style={{width:"30%", textAlign:"center"}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player2}</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Player 2</p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                            <div class="content" style={{width:"20%", textAlign:"center", display:"flex", alignItems:"center", gap:"5%"}}>
+                                <button className="button is-link">Player 1</button>
+                                <button className="button is-primary">Player 2</button>
                             </div>
+                            
+                            
                         </div>
                     </div>
-                </div>
-                
+                    )}
             </div>
         </section>;
       case 'Players':
@@ -182,7 +145,6 @@ export default function TournamentStart() {
             }
         });
         console.log(result.data);
-        
         const resultName = result.data.tournamentName;
        
         setEditedTournament({
@@ -208,28 +170,10 @@ export default function TournamentStart() {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(response.data);
         setNonParticipatingUser(response.data);
     };
 
-    const deleteTournament = async (id) => {
-        try {
-            if (tournament.currentSize > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
-            }
-            const response = await axios.delete(`http://localhost:8080/t/tournament/${id}`);
-            // Refresh the tournament list after deletion
-            if (response.status === 200){
-                alert("Tournament Deleted Successfully");
-                loadTournaments();
-                Navigate(`/admin/${userId}/tournament`);
-            }
-            
-        } catch (error) {
-            setError('An error occurred while deleting the tournament.');
-        }
-    };
+    
 
     const removePlayer = async (user_id) => {
         try {
@@ -312,6 +256,11 @@ export default function TournamentStart() {
                     }
                 });
                 setData(response.data);
+                
+                setRound(response.data.rounds);
+                setPairing(response.data.rounds[tournamentRound-1].matchList);
+                console.log(pairing[0]);
+
                 setTournament(response.data);
                 setUser(response.data.participants);
                 if (response.data.status == 'active') {
@@ -511,7 +460,7 @@ export default function TournamentStart() {
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>

@@ -313,6 +313,7 @@ export default function TournamentDetail() {
                 setData(response.data);
                 setTournament(response.data);
                 
+                
                 if (response.data.status == 'active') {
                     setIsStart(0);
                 } else if (response.data.status == 'ongoing') {
@@ -335,7 +336,7 @@ export default function TournamentDetail() {
         fetchData();
         
         loadNonParticipatingUsers();
-        
+        loadTournament();
         //loadUsers();
 
     }, []);
