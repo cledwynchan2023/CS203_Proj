@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.codewithcled.fullstack_backend_proj1.model.Round;
-
 public class TournamentStartDTO {
     private Long id;
     private String tournamentName;

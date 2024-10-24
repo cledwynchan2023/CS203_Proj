@@ -2,12 +2,6 @@ package com.codewithcled.fullstack_backend_proj1.DTO;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.codewithcled.fullstack_backend_proj1.model.Match;
-import com.codewithcled.fullstack_backend_proj1.model.Round;
-import com.codewithcled.fullstack_backend_proj1.model.Tournament;
-
 
 public class RoundDTO {
     private Long id;

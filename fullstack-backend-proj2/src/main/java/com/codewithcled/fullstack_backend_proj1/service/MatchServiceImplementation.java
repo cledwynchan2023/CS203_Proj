@@ -2,12 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.client5.http.fluent.Request;
-import org.apache.hc.client5.http.fluent.Form;
-
 import java.util.Map;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;

@@ -6,8 +6,6 @@ import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import java.util.List;
 
-import org.hibernate.internal.ExceptionConverterImpl;
-
 public interface TournamentService {
 
     public List<Tournament> getAllTournament()  ;

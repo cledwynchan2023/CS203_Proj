@@ -7,7 +7,7 @@ import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
+// import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +29,6 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +44,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TournamentRepository tournamentRepository;
+    // @Autowired
+    // private TournamentRepository tournamentRepository;
 
     @Autowired
     private MatchRepository matchRepository;

@@ -3,15 +3,12 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
-import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
+// import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
-import org.hibernate.annotations.DialectOverride.OverridesAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
@@ -20,20 +17,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Map;
 
 @Service
 public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
-    @Autowired
-    private RoundRepository roundRepository;
+    // @Autowired
+    // private RoundRepository roundRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -176,9 +171,7 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Override
     public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception {
-        // TODO Auto-generated method stub
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+
         List<User> userList = userRepository.findAll();
         List<User> nonParticipatingUsers = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
@@ -299,7 +292,7 @@ public class TournamentServiceImplementation implements TournamentService {
             throw new Exception("Tournament is ongoing or completed");
         }
 
-        List<User> participants = currentTournament.getParticipants();
+        // List<User> participants = currentTournament.getParticipants();
 
         Round firstRound = roundService.createFirstRound(id);
         // roundRepository.save(firstRound);

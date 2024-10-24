@@ -32,8 +32,6 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
-import java.util.Optional;
-
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TournamentControllerIntegrationTest {
     @LocalServerPort

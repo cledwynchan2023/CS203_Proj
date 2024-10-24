@@ -80,7 +80,7 @@ public class TournamentServiceTest {
     @Test
     void getTournamentParticipants_failure_returnError() {
         Long id = (long) 500;
-        Tournament testTournament = new Tournament();
+        // Tournament testTournament = new Tournament();
         User testUser = new User();
         testUser.setUsername("testUser");
         testUser.setId(id);
@@ -118,7 +118,7 @@ public class TournamentServiceTest {
         Optional<Tournament> returnTournament = Optional.of(testTournament);
 
         List<User> finalParticipantList = new ArrayList<User>();
-        List<Tournament> finalTournamentList=new ArrayList();
+        List<Tournament> finalTournamentList=new ArrayList<>();
         finalParticipantList.add(firstUser);
         finalParticipantList.add(testUser);
         finalTournamentList.add(testTournament);

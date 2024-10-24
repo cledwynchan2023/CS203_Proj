@@ -10,8 +10,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
-import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
+// import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+// import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
@@ -64,7 +64,7 @@ public class SSEControllerIntegrationTest {
         userRepository.save(testUser);
         List<User> userList=new ArrayList<>();
         userList.add(testUser);
-        List<UserDTO> userDTOs=UserMapper.toDTOList(userList);
+        // List<UserDTO> userDTOs=UserMapper.toDTOList(userList);
 
         webClient
         .get()

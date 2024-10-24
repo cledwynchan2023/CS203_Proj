@@ -2,9 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.controller;
 
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
-import com.codewithcled.fullstack_backend_proj1.service.EloRatingServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
-import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
