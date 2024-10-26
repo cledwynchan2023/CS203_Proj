@@ -23,7 +23,7 @@ public class TournamentStartMapper {
         dto.setRounds(tournament.getRounds().stream()
                 .map(RoundMapper::toDTO)
                 .collect(Collectors.toList()));
-
+        dto.setCurrentRound(tournament.getCurrentRound());
         return dto;
     }
 

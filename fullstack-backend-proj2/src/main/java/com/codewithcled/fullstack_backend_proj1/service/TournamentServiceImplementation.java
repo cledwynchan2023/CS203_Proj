@@ -151,7 +151,7 @@ public class TournamentServiceImplementation implements TournamentService {
         String status = tournament.getStatus();
         Integer size = tournament.getSize();
         Integer noOfRounds = tournament.getNoOfRounds();
-
+        Integer currentRounds = 1;
         // Tournament isEmailExist = tournamentRepository.findBy(email);
         // if (isEmailExist != null) {
         // System.out.println("Email Taken!");
@@ -169,6 +169,7 @@ public class TournamentServiceImplementation implements TournamentService {
         createdTournament.setStatus(status);
         createdTournament.setSize(size);
         createdTournament.setNoOfRounds(noOfRounds);
+        createdTournament.setCurrentRound(currentRounds);
 
         return tournamentRepository.save(createdTournament);
     }
@@ -184,7 +185,9 @@ public class TournamentServiceImplementation implements TournamentService {
             if (user.getRole() != null && !user.getRole().equals("ROLE_ADMIN")) {
                 boolean isValid = true;
                 for (Tournament tour: currentTournaments) {
-                    if (tour.getId() == tournamentId) {
+                    
+                    if (tour.getId() - tournamentId == 0) {
+                        System.out.println("Invalid");
                         isValid=false;
                         break;
                     }
@@ -337,6 +340,7 @@ public class TournamentServiceImplementation implements TournamentService {
         }
         else {
             //create the next round
+            currentTournament.setCurrentRound(currentTournament.getCurrentRound() + 1);
             Round nextRound = roundService.createNextRound(currentTournament.getId());
             currentTournament.getRounds().add(nextRound);
             tournamentRepository.save(currentTournament);

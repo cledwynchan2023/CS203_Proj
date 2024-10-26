@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +22,10 @@ public class MatchController {
     @Autowired
     MatchService matchService;
 
-    @PutMapping({"/match/{id}/update"})
-    public ResponseEntity<String> updateMatch(@RequestBody int result, @PathVariable("id") Long id) throws Exception{
-        matchService.updateMatch(id, result);
-        return ResponseEntity.ok("Match result updated successfully");
-    }
+    @PutMapping("/match/{id}/update")
+public ResponseEntity<String> updateMatch(@RequestBody Map<String, Integer> payload, @PathVariable("id") Long id) throws Exception {
+    int result = payload.get("result");
+    matchService.updateMatch(id, result);
+    return ResponseEntity.ok("Match result updated successfully");
+}
 }

@@ -13,17 +13,17 @@ public class TournamentStartDTO {
     private Integer size;
     private Integer currentSize;
     private Integer noOfRounds;
+    private Integer currentRound;
     private List<UserDTO> participants;
-    private Map<Long, Double> scoreboard = new HashMap<>();
     private List<RoundDTO> rounds = new ArrayList<>();
 
     // Getters and setters
-    public Map<Long, Double> getScoreboard() {
-        return scoreboard;
+   
+    public Integer getCurrentRound() {
+        return currentRound;
     }
-
-    public void setScoreboard(Map<Long, Double> scoreboard) {
-        this.scoreboard = scoreboard;
+    public void setCurrentRound(Integer currentRound) {
+        this.currentRound = currentRound;
     }
 
     public List<RoundDTO> getRounds() {

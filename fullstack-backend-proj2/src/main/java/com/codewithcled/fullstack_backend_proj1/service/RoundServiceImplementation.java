@@ -122,9 +122,12 @@ public class RoundServiceImplementation implements RoundService {
 
         if(complete){
             //call roundService to check if round is complete
+            round.setIsCompleted(true);
+            
             Tournament currentTournament = round.getTournament();
             Long currentTournamentId = currentTournament.getId();
             String relativeUrl = "/t/tournament/" + currentTournamentId + "/checkComplete";
+            roundRepository.save(round);
             restTemplate.getForObject(relativeUrl, String.class);
         }
     }

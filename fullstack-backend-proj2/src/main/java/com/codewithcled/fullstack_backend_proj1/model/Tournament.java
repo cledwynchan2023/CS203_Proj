@@ -29,10 +29,17 @@ public class Tournament {
     private Integer currentSize = participants.size();
 
     private Integer noOfRounds = 0;
+    private Integer currentRound = 1;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Round> rounds = new ArrayList<>();
 
+    public Integer getCurrentRound() {
+        return currentRound;
+    }
+    public void setCurrentRound(Integer currentRound) {
+        this.currentRound = currentRound;
+    }
     public List<Round> getRounds() {
         return rounds;
     }

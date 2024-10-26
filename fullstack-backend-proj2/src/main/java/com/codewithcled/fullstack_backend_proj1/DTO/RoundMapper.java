@@ -13,6 +13,7 @@ public class RoundMapper {
         dto.setId(round.getId());
         dto.setRoundNum(round.getRoundNum());
         dto.setScoreboard(round.getScoreboard());
+        dto.setIsCompleted(round.getIsCompleted());
         List<MatchDTO> matchList = new ArrayList<>();
         for (Match match : round.getMatchList()) {
             matchList.add(MatchDTOMapper.toDTO(match));

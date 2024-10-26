@@ -8,8 +8,15 @@ public class RoundDTO {
     private Integer roundNum;
     private Map<Long, Double> scoreboard;
     private List<MatchDTO> matchList;
-    
+    private Boolean isCompleted = false;
+
     // Getters and setters
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
     public Long getId() {
         return id;
     }

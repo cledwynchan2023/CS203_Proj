@@ -161,7 +161,36 @@ export default function TournamentDetail() {
                
             </section>;
       case 'Scoreboard':
-        return <div>Scoreboard Content</div>;
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+            
+        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+        
+
+            <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
+                <thead>
+                    <tr>
+                    <th>Pos</th>
+                    <th>Username</th>
+                    <th>Elo</th>
+                    <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {   
+                        user.map((user, index) =>
+                            <tr>
+                                <td>{index + 1}</td>
+                                <td>{user.username}</td>
+                                <td>{user.elo}</td>
+                                <td>0</td>
+                                
+                            </tr>
+                         )}
+                    </tbody>
+            </table>
+        </div>
+       
+    </section>;
       default:
         return null;
     }
@@ -221,8 +250,8 @@ export default function TournamentDetail() {
             // Refresh the tournament list after deletion
             if (response.status === 200){
                 alert("Tournament Deleted Successfully");
-                loadTournaments();
-                Navigate(`/admin/${userId}/tournament`);
+                loadTournament();
+                navigate(`/admin/${userId}/tournament`);
             }
             
         } catch (error) {
@@ -317,7 +346,7 @@ export default function TournamentDetail() {
                 if (response.data.status == 'active') {
                     setIsStart(0);
                 } else if (response.data.status == 'ongoing') {
-                    setIsStart(1);
+                    navigate(`/admin/${userId}/tournament/${id}/start`);
                 } else {
                     setIsStart(-1);
                 }
@@ -334,8 +363,6 @@ export default function TournamentDetail() {
         };
 
         fetchData();
-        
-        loadNonParticipatingUsers();
         loadTournament();
         //loadUsers();
 

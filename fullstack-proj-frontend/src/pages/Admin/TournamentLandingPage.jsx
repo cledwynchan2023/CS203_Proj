@@ -51,7 +51,10 @@ export default function TournamentLandingPage() {
             navigate(`/admin/${userId}/tournament/${tournamentId}`);
         } else if (tournamentStatus === 'ongoing') {
             navigate(`/admin/${userId}/tournament/${tournamentId}/start`);
+        } else if (tournamentStatus === 'completed') {
+            navigate(`/admin/${userId}/tournament/${tournamentId}`);
         }
+
     };
 
     const toggleDropdown = () => {

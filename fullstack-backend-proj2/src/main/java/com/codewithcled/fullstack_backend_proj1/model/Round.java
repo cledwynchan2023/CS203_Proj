@@ -23,6 +23,15 @@ public class Round {
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
+    private Boolean isCompleted = false;
+
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
+
+    public void setIsCompleted(Boolean iscompleted) {
+        this.isCompleted = iscompleted;
+    }
     public Tournament getTournament() {
         return tournament;
     }
