@@ -65,7 +65,7 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test Couldn't get it to work
+    @Test
     void updateMatch_Success() throws Exception{
         Match testMatch=new Match();
         Round testRound=new Round();
@@ -107,18 +107,17 @@ public class MatchControllerIntegrationTest {
         savedPlayer1.setCurrentTournaments(tournamentList);
         savedPlayer2.setCurrentTournaments(tournamentList);
         savedTournament.setParticipants(userList);
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(savedPlayer1.getId(),0.0);
-        scoreboard.put(savedPlayer2.getId(),0.0);
-        savedTournament.setScoreboard(scoreboard);
-
         tournamentRepository.save(savedTournament);
         userRepository.save(savedPlayer1);
         userRepository.save(savedPlayer2);
 
+        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
+        scoreboard.put(savedPlayer1.getId(),0.0);
+        scoreboard.put(savedPlayer2.getId(),0.0);
+
         testRound.setTournament(savedTournament);
         testRound.setRoundNum(1);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(scoreboard);
 
         Round savedRound=roundRepository.save(testRound);
 

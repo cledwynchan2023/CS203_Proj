@@ -131,7 +131,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    //@TestIssue with sending the post getting unsupported Media Type Exception
+    @Test//Issue with sending the post getting unsupported Media Type Exception
     public void addRound_Success() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
@@ -169,7 +169,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
-    //@Test Issue with sending the post getting unsupported Media Type
+    @Test
     public void addRound_Failure() {
 
         Round round = new Round();
@@ -183,7 +183,7 @@ public class TournamentControllerIntegrationTest {
 
             URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
-            ResponseEntity<String> result = restTemplate.postForEntity(url, round, String.class);
+            restTemplate.postForEntity(url, round, String.class);
         } catch (Exception e) {
             assertEquals("Tournament not found", e.getMessage());
             exceptionThrown = true;
@@ -515,7 +515,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    // @Test Not giving back an error
+    @Test
     public void deleteTournament_Failure() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
 
@@ -684,7 +684,7 @@ public class TournamentControllerIntegrationTest {
 
         testRound.setRoundNum(1);
         testRound.setTournament(savedTournament);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(new HashMap<>());
 
         Round savedRound = roundRepository.save(testRound);
 
@@ -699,7 +699,7 @@ public class TournamentControllerIntegrationTest {
         matchRepository.save(testMatch);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId()
-                + "/tournamentService/checkComplete");
+                + "/checkComplete");
 
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
 

@@ -270,32 +270,4 @@ public class UserControllerIntegrationTest {
 
         assertEquals(HttpStatus.NOT_FOUND,result.getStatusCode());
     }
-
-    public static class TokenResponse {
-        private boolean valid;
-
-        public TokenResponse(boolean valid) {
-            this.valid = valid;
-        }
-
-        public boolean isValid() {
-            return valid;
-        }
-
-        public void setValid(boolean valid) {
-            this.valid = valid;
-        }
-    }
-
-    public static class TokenRequest {
-        private String token;
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-    }
 }
