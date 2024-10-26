@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import org.apache.hc.client5.http.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
@@ -22,6 +23,9 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
 @Service
 public class RoundServiceImplementation implements RoundService {
+
+    //for debugging purposes
+    private static final Logger logger = Logger.getLogger(MatchServiceImplementation.class.getName());
 
     @Autowired
     private RoundRepository roundRepository;
@@ -38,12 +42,18 @@ public class RoundServiceImplementation implements RoundService {
     @Autowired
     private MatchService matchService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public RoundServiceImplementation(RoundRepository roundRepository){
         this.roundRepository = roundRepository;
     }
 
     @Override
     public Round createFirstRound(Long tournamentId) throws Exception {
+
+        //for debugging purposes
+        logger.info("Create first round called");
 
         Tournament tournament = tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new Exception("Tournament not found"));
@@ -97,6 +107,9 @@ public class RoundServiceImplementation implements RoundService {
 
     @Override
     public void checkComplete(Long roundId) throws Exception {
+        //for debugging purposes
+        logger.info("Round check complete called");
+
         Round round = roundRepository.findById(roundId)
             .orElseThrow(() -> new Exception("Round not found"));
         boolean complete = true;
@@ -111,8 +124,8 @@ public class RoundServiceImplementation implements RoundService {
             //call roundService to check if round is complete
             Tournament currentTournament = round.getTournament();
             Long currentTournamentId = currentTournament.getId();
-            String url = "/tournament/" + currentTournamentId + "/tournamentService/checkComplete";
-            Request.get(url).execute().returnContent().asString();
+            String relativeUrl = "/t/tournament/" + currentTournamentId + "/checkComplete";
+            restTemplate.getForObject(relativeUrl, String.class);
         }
     }
 
@@ -125,7 +138,16 @@ public class RoundServiceImplementation implements RoundService {
         newRound.setRoundNum(tournament.getRounds().size() + 1);
         newRound.setTournament(tournament);
 
-        Map<Long, Double> scoreboard = tournament.getScoreboard();
+        //get scoreboard from previous round to put as this round's scoreboard
+        //and to set up matches
+        Map<Long, Double> prevRoundScoreboard = tournament.getRounds().get(tournament.getRounds().size() - 1).getScoreboard();
+        Map<Long, Double> scoreboard = new HashMap<>();
+        for(Long id : prevRoundScoreboard.keySet()){
+            scoreboard.put(id, prevRoundScoreboard.get(id));
+        }
+        newRound.setScoreboard(scoreboard);
+
+        //sort participants by score
         List<Long> participantsId = new ArrayList<>();
         for(Long id : scoreboard.keySet()){
             participantsId.add(id);
@@ -144,6 +166,8 @@ public class RoundServiceImplementation implements RoundService {
                 }
             }
         });
+
+        //pair up participants by score
         List<Match> matches = new ArrayList<>();
         for(int i = 0; i < participantsId.size(); i += 2){
             User player1 = userRepository.findById(participantsId.get(i))

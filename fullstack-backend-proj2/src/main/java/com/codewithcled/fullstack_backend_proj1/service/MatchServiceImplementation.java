@@ -2,15 +2,14 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.hc.client5.http.fluent.Request;
+import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
+import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
-import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 
 @Service
@@ -19,13 +18,16 @@ public class MatchServiceImplementation implements MatchService{
     private MatchRepository matchRepository;
 
     @Autowired
-    private TournamentRepository tournamentRepository;
+    private RoundRepository roundRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private EloRatingService eloRatingService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public Match createMatch(User player1, User player2){
@@ -79,20 +81,19 @@ public class MatchServiceImplementation implements MatchService{
         player2.setElo(player2NewElo);
         userRepository.save(player2);
         
-        //update tournament scoreboard in database
-        Tournament currentTournament = currentMatch.getRound().getTournament();
-        updateTournamentScoreboard(currentTournament, currentMatch, result);
+        //update round scoreboard in database
+        Round currentRound = currentMatch.getRound();
+        updateRoundScoreboard(currentRound, currentMatch, result);
 
         //call roundService to check if round is complete
-        Round currentRound = currentMatch.getRound();
         Long currentRoundId = currentRound.getId();
-        String url = "/round/" + currentRoundId + "/roundService/checkComplete";
-        Request.get(url).execute().returnContent().asString();
+        String relativeUrl = "/r/round/" + currentRoundId + "/checkComplete";
+        restTemplate.getForObject(relativeUrl, String.class);
         //roundService.checkComplete(currentMatch.getRound().getId());
     }
 
-    public void updateTournamentScoreboard(Tournament currentTournament, Match currentMatch, int result){
-        Map<Long, Double> scoreboard = currentTournament.getScoreboard();
+    public void updateRoundScoreboard(Round currentRound, Match currentMatch, int result){
+        Map<Long, Double> scoreboard = currentRound.getScoreboard();
         Long player1Id = currentMatch.getPlayer1();
         Long player2Id = currentMatch.getPlayer2();
         if (result == 0){
@@ -115,8 +116,8 @@ public class MatchServiceImplementation implements MatchService{
             winnerScore += 1;
             scoreboard.put(winnerId, winnerScore);
         }
-        currentTournament.setScoreboard(scoreboard);
-        tournamentRepository.save(currentTournament);
+        currentRound.setScoreboard(scoreboard);
+        roundRepository.save(currentRound);
     }
 
     @Override
