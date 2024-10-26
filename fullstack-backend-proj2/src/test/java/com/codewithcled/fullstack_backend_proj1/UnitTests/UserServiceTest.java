@@ -1,6 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -518,5 +520,48 @@ public class UserServiceTest {
         
         assertTrue(exceptionThrown);
         verify(userRepository).findById(uId);
+    }
+
+    @Test
+    void updateUserWithoutPassword_Success() {
+        Long uId=(long)123;
+        User testUser = new User();
+        testUser.setId(uId);
+        testUser.setUsername("oldUsername");
+        testUser.setElo((double)1200);
+        testUser.setRole("ROLE_USER");
+
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(testUser)).thenReturn(testUser);
+
+        Optional<User> updatedUser = userService.updateUserWithoutPassword(uId, editUserRequest);
+
+        assertTrue(updatedUser.isPresent());
+        assertEquals("newUsername", updatedUser.get().getUsername());
+        assertEquals(1500, updatedUser.get().getElo());
+        assertEquals("ROLE_ADMIN", updatedUser.get().getRole());
+        verify(userRepository).findById(uId);
+        verify(userRepository).save(testUser);
+    }
+
+    @Test
+    void updateUserWithoutPassword_Failure_UserNotFound() {
+        Long uId=(long)123;
+
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
+
+        Optional<User> updatedUser = userService.updateUserWithoutPassword(uId, editUserRequest);
+
+        assertFalse(updatedUser.isPresent());
+        verify(userRepository, never()).save(any(User.class));  // Ensure save was not called
     }
 }

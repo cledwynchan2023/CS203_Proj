@@ -192,6 +192,7 @@ public class TournamentServiceImplementation implements TournamentService {
        }
        return Optional.ofNullable(nonParticipatingUsers).orElseGet(ArrayList::new);
     }
+    
     @Override
     public List<Tournament> getActiveTournament() {
         List<Tournament> list = getAllTournament();

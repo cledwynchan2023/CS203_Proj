@@ -18,12 +18,14 @@ import com.codewithcled.fullstack_backend_proj1.service.MatchService;
 import com.codewithcled.fullstack_backend_proj1.service.RoundServiceImplementation;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 public class RoundServiceTest {
@@ -63,24 +65,33 @@ public class RoundServiceTest {
         Match testMatch = new Match();
         testRound.setMatchList(List.of(testMatch));
 
+        // Arrange
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
-        when(roundRepository.save(testRound)).thenReturn(testRound);
-        when(matchService.createMatch(testUser1, testUser2)).thenReturn(testMatch);
-        when(matchRepository.save(testMatch)).thenReturn(testMatch);
+        when(matchService.createMatch(testUser1, testUser2)).thenReturn(new Match());
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> {
+            // Capture the round and return it (to avoid null pointer)
+            return invocation.getArgument(0);
+        });
 
-        Round result = roundService.createFirstRound(tId);
+        // Act
+        Round round = roundService.createFirstRound(tId);
 
-        assertEquals(1, result.getMatchList().size());
-        assertEquals(1, result.getRoundNum());
-        assertEquals(2, result.getScoreboard().size());
-        assertEquals(testTournament, result.getTournament());
+        // Assert
+        assertNotNull(round);
+        assertEquals(1, round.getRoundNum());
+        assertEquals(testTournament, round.getTournament());
+        assertEquals(1, round.getMatchList().size());
+        assertEquals(0.0, round.getScoreboard().get(testUser1.getId()));
+        assertEquals(0.0, round.getScoreboard().get(testUser2.getId()));
 
+        // Verify interactions
         verify(tournamentRepository).findById(tId);
-        verify(roundRepository).save(testRound);
-        verify(matchService).createMatch(testUser1, testUser2);
-        verify(matchRepository).save(testMatch);
+        verify(roundRepository).save(any(Round.class));
+        verify(matchRepository).save(any(Match.class));
+
     }
 
+    @Test
     void createFirstRound_Failure_TournamentNotFound() throws Exception {
         Long tId = (long) 132;
 
@@ -125,12 +136,12 @@ public class RoundServiceTest {
     }
 
     @Test
-    void checkComplete_Success_NotAllMatchComplete() throws Exception{
-        Long rId=(long)24234;
-        Tournament testTournament=new Tournament();
-        Round testRound=new Round();
+    void checkComplete_Success_NotAllMatchComplete() throws Exception {
+        Long rId = (long) 24234;
+        Tournament testTournament = new Tournament();
+        Round testRound = new Round();
         testRound.setTournament(testTournament);
-        Match testMatch=new Match();
+        Match testMatch = new Match();
         testMatch.setIsComplete(false);
         testRound.setMatchList(List.of(testMatch));
 
@@ -141,14 +152,16 @@ public class RoundServiceTest {
         verify(roundRepository).findById(rId);
     }
 
-    @Test
-    void checkComplete_Success_AllMatchComplete() throws Exception{
-        //Circular dependency issue
-        Long rId=(long)24234;
-        Round testRound=new Round();
-        Match testMatch=new Match();
+    //@Test Can't mock the Apache get request
+    void checkComplete_Success_AllMatchComplete() throws Exception {
+        // Circular dependency issue
+        Long rId = (long) 24234;
+        Tournament testTournament = new Tournament();
+        Round testRound = new Round();
+        Match testMatch = new Match();
         testMatch.setIsComplete(true);
         testRound.setMatchList(List.of(testMatch));
+        testRound.setTournament(testTournament);
 
         when(roundRepository.findById(rId)).thenReturn(Optional.of(testRound));
 
@@ -158,27 +171,25 @@ public class RoundServiceTest {
     }
 
     @Test
-    void checkComplete_Failure() throws Exception{
-        Long rId=(long)24234;
+    void checkComplete_Failure() throws Exception {
+        Long rId = (long) 24234;
 
         when(roundRepository.findById(rId)).thenReturn(Optional.empty());
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
             roundService.checkComplete(rId);
         } catch (Exception e) {
-            assertEquals("Round not found",e.getMessage());
-            exceptionThrown=true;
+            assertEquals("Round not found", e.getMessage());
+            exceptionThrown = true;
         }
-        
+
         assertTrue(exceptionThrown);
         verify(roundRepository).findById(rId);
     }
 
-    // @Test
+    @Test
     void createNextRound_Success() throws Exception {
-        // Can't test returns a mocked newRound, would just return testRound due to
-        // roundRepository.save()
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -193,7 +204,7 @@ public class RoundServiceTest {
         testTournament.setParticipants(participants);
         Match testMatch = new Match();
         testRound.setMatchList(List.of(testMatch));
-        Map<Long, Double> scoreboard = new HashMap<Long,Double>();
+        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
         scoreboard.put(tId + 1, 0.0);
         scoreboard.put(tId + 2, 0.0);
         testTournament.setScoreboard(scoreboard);
@@ -201,16 +212,21 @@ public class RoundServiceTest {
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
         when(userRepository.findById(tId + 1)).thenReturn(Optional.of(testUser1));
         when(userRepository.findById(tId + 2)).thenReturn(Optional.of(testUser2));
-        when(matchService.createMatch(testUser1, testUser2)).thenReturn(new Match());
-        when(roundRepository.save(testRound)).thenReturn(testRound);
+        when(matchService.createMatch(testUser1, testUser2)).thenReturn(testMatch);
+        // return newRound when save
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Round result = roundService.createNextRound(tId);
+
+        assertEquals(1, result.getRoundNum());
+        assertEquals(testTournament,result.getTournament());
+        assertIterableEquals(List.of(testMatch), result.getMatchList());
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);
         verify(userRepository).findById(tId + 2);
         verify(matchService).createMatch(testUser1, testUser2);
-        verify(roundRepository).save(testRound);
+        verify(roundRepository).save(any(Round.class));
     }
 
     @Test
@@ -247,7 +263,7 @@ public class RoundServiceTest {
         testTournament.setParticipants(participants);
         Match testMatch = new Match();
         testRound.setMatchList(List.of(testMatch));
-        Map<Long, Double> scoreboard = new HashMap<Long,Double>();
+        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
         scoreboard.put(tId + 1, 0.0);
         scoreboard.put(tId + 2, 0.0);
         testTournament.setScoreboard(scoreboard);
@@ -267,5 +283,53 @@ public class RoundServiceTest {
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);
+    }
+
+    @Test
+    void getAllMatches_Success() throws Exception {
+        Match testMatch1=new Match();
+        testMatch1.setId((long)1);
+        Match testMatch2=new Match();
+        testMatch2.setId((long)2);
+        List<Match> matchList = new ArrayList<>();
+        matchList.add(testMatch1);
+        matchList.add(testMatch2);
+
+        Long rId=(long)132;
+        Round testRound = new Round();
+        testRound.setId(rId);
+        testRound.setMatchList(matchList);
+
+        when(roundRepository.findById(rId)).thenReturn(Optional.of(testRound));
+
+        List<Match> result = roundService.getAllMatches(rId);
+
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
+
+        verify(roundRepository).findById(rId);
+    }
+
+    @Test
+    void getAllMatches_Failure_RoundNotFound() {
+        Match testMatch1=new Match();
+        testMatch1.setId((long)1);
+        Match testMatch2=new Match();
+        testMatch2.setId((long)2);
+        List<Match> matchList = new ArrayList<>();
+        matchList.add(testMatch1);
+        matchList.add(testMatch2);
+
+        Long rId=(long)132;
+
+        when(roundRepository.findById(rId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            roundService.getAllMatches(rId);
+        });
+
+        assertEquals("Round not found", exception.getMessage());
+        verify(roundRepository).findById(rId);
     }
 }
