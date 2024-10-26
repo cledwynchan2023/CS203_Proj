@@ -1,6 +1,7 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
+import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
@@ -31,6 +36,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private MatchRepository matchRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -67,14 +75,14 @@ public class UserServiceTest {
         when(userRepository.findByEmail(userName)).thenReturn(null);
 
         try {
-            UserDetails result = userService.loadUserByUsername(userName);
+            userService.loadUserByUsername(userName);
         } catch (UsernameNotFoundException e) {
             assertEquals("User not found with this email"+userName, e.getMessage());
 
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(userRepository).findByEmail(userName);
     }
@@ -97,24 +105,6 @@ public class UserServiceTest {
         verify(userRepository).findAll();
     }
 
-    /*
-     * void findUserProfileByJwt(){
-     * String username = "test";
-     * Long id = (long) 10;
-     * User testUser = new User();
-     * String JWT="";
-     * testUser.setUsername(username);
-     * testUser.setId(id);
-     * 
-     * when(userRepository.findByJWT(JWT)).thenReturn(testUser);
-     * 
-     * User result=userService.findUserProfileByJWT(JWT);
-     * 
-     * assertEquals(testUser,result);
-     * verify(userRepository).findByJWT(JWT);
-     * };
-     */
-
     @Test
     void findUserByEmail_Success_ReturnUser() {
         String username = "test";
@@ -131,23 +121,6 @@ public class UserServiceTest {
         assertEquals(testUser, result);
         verify(userRepository).findByEmail(username);
     }
-
-    /*
-     * void findUserById(String userId){
-     * String username = "test";
-     * Long id = (long) 10;
-     * User testUser = new User();
-     * testUser.setUsername(username);
-     * testUser.setId(id);
-     * 
-     * when(userRepository.findById(id)).thenReturn(testUser);
-     * 
-     * User result=userService.findUserById(id);
-     * 
-     * assertEquals(testUser, result);
-     * verify(userRepository).findById(id);
-     * }
-     */
 
     @Test
     void findAllUsers_Success_ReturnUserList() {
@@ -270,14 +243,14 @@ public class UserServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
         try {
-            AuthResponse result = userService.createUser(signUpRequestDetails);
+            userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Email Is Already Used With Another Account", e.getMessage());
 
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         
         verify(userRepository).findByEmail(email);
     }
@@ -302,13 +275,13 @@ public class UserServiceTest {
         boolean exceptionThrown=false;
 
         try {
-            AuthResponse result = userService.createUser(signUpRequestDetails);
+            userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Username is already being used with another account", e.getMessage());
             exceptionThrown=true;
         }
         
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
     }
@@ -452,7 +425,7 @@ public class UserServiceTest {
         boolean exceptionThrown=false;
 
         try {
-            List<Tournament> result = userService.getUserParticipatingTournaments(uId);
+            userService.getUserParticipatingTournaments(uId);
         } catch (Exception e) {
 
             assertEquals("User not found",e.getMessage());
@@ -460,8 +433,135 @@ public class UserServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
 
         verify(userRepository).findById(uId);
+    }
+
+    @Test
+    public void getUserPastMatches_Success() throws Exception{
+        Long uId=(long)1234;
+        User testUser=new User();
+        testUser.setId(uId);
+        testUser.setUsername("testUser");
+        testUser.setEmail("testUser");
+
+        List<User> userList=List.of(testUser);
+
+        Tournament testTournament=new Tournament();
+        testTournament.setSize(6);
+        testTournament.setCurrentSize(2);
+        testTournament.setTournament_name("tournamentName");
+
+        List<Tournament> tournametList=List.of(testTournament);
+        testTournament.setParticipants(userList);
+        testUser.setCurrentTournaments(tournametList);
+
+        Round testRound=new Round();
+        testRound.setTournament(testTournament);
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(true);
+        testMatch.setPlayer1(uId);
+        testMatch.setPlayer2(uId);
+        testMatch.setRound(testRound);
+        List<Match> returnList=List.of(testMatch);
+
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
+        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser))
+        .thenReturn(returnList);
+
+        List<Match> result=userService.getUserPastMatches(uId);
+
+        assertIterableEquals(returnList, result);
+
+        verify(userRepository).findById(uId);
+        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser);
+    }
+
+    @Test
+    public void getUserPastMatches_Failure() throws Exception{
+        Long uId=(long)1234;
+        User testUser=new User();
+        testUser.setId(uId);
+        testUser.setUsername("testUser");
+        testUser.setEmail("testUser");
+
+        List<User> userList=List.of(testUser);
+
+        Tournament testTournament=new Tournament();
+        testTournament.setSize(6);
+        testTournament.setCurrentSize(2);
+        testTournament.setTournament_name("tournamentName");
+
+        List<Tournament> tournametList=List.of(testTournament);
+        testTournament.setParticipants(userList);
+        testUser.setCurrentTournaments(tournametList);
+
+        Round testRound=new Round();
+        testRound.setTournament(testTournament);
+
+        Match testMatch=new Match();
+        testMatch.setIsComplete(true);
+        testMatch.setPlayer1(uId);
+        testMatch.setPlayer2(uId);
+        testMatch.setRound(testRound);
+
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown=false;
+
+        try {
+            userService.getUserPastMatches(uId);
+        } catch (Exception e) {
+            assertEquals("User not found",e.getMessage());
+            exceptionThrown=true;
+        }
+        
+        assertTrue(exceptionThrown);
+        verify(userRepository).findById(uId);
+    }
+
+    @Test
+    void updateUserWithoutPassword_Success() {
+        Long uId=(long)123;
+        User testUser = new User();
+        testUser.setId(uId);
+        testUser.setUsername("oldUsername");
+        testUser.setElo((double)1200);
+        testUser.setRole("ROLE_USER");
+
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(testUser)).thenReturn(testUser);
+
+        Optional<User> updatedUser = userService.updateUserWithoutPassword(uId, editUserRequest);
+
+        assertTrue(updatedUser.isPresent());
+        assertEquals("newUsername", updatedUser.get().getUsername());
+        assertEquals(1500, updatedUser.get().getElo());
+        assertEquals("ROLE_ADMIN", updatedUser.get().getRole());
+        verify(userRepository).findById(uId);
+        verify(userRepository).save(testUser);
+    }
+
+    @Test
+    void updateUserWithoutPassword_Failure_UserNotFound() {
+        Long uId=(long)123;
+
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
+
+        Optional<User> updatedUser = userService.updateUserWithoutPassword(uId, editUserRequest);
+
+        assertFalse(updatedUser.isPresent());
+        verify(userRepository, never()).save(any(User.class));  // Ensure save was not called
     }
 }

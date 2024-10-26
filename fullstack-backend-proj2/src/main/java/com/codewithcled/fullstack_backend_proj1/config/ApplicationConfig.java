@@ -3,15 +3,17 @@ package com.codewithcled.fullstack_backend_proj1.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +29,7 @@ public class ApplicationConfig {
                         authorize -> authorize
                             .requestMatchers("/login/**").permitAll()
                             .requestMatchers("/update/**").permitAll()
-                            .requestMatchers("/admin/**").permitAll()//hasRole("ADMIN")
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/auth/**").permitAll()
                             .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") 
                                 // .requestMatchers("/api/**").authenticated()
@@ -66,6 +68,16 @@ public class ApplicationConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Value("${rest.base.url}")
+    private String baseUrl;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
+        return restTemplate;
     }
 
 }

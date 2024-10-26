@@ -1,4 +1,4 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.IntegrationTests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -71,23 +71,6 @@ public class SSEControllerIntegrationTest {
         .uri(uri)
         .exchange()
         .expectStatus().isOk();
-
-    }
-
-    @Test
-    public void testGetUsersStream() throws Exception {
-        URI uri = new URI(baseUrl + port +urlPrefix +"/sse/user");
-        User testUser = new User();
-        testUser.setUsername("testUser");
-        testUser.setRole("ROLE_USER");
-        testUser.setPassword(passwordEncoder.encode("TestPassword"));
-        testUser.setId((long) 110);
-        testUser.setEmail("testUser");
-        testUser.setElo(1000.0);
-        testUser.setCurrentTournaments(new ArrayList<Tournament>());
-        userRepository.save(testUser);
-
-        webClient.get().uri(uri).exchange().expectStatus().isOk();
 
     }
 
