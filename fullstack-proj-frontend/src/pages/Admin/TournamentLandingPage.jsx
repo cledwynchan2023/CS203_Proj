@@ -17,6 +17,8 @@ export default function TournamentLandingPage() {
     const [selectedDropdownContent, setSelectedDropdownContent] = useState('Click to filter');
     const [isLoading, setIsLoading] = useState(true);
 
+    
+
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time

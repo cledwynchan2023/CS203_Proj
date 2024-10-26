@@ -124,6 +124,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     @Override
     public AuthResponse createUser(SignUpRequest user) throws Exception {
+        //good practice to check if email is already taken
         String username= user.getUsername();
         String password = user.getPassword();
         String email = user.getEmail();
