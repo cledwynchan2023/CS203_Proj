@@ -21,9 +21,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class TournamentServiceImplementation implements TournamentService {
+
+    //for debugging purposes
+    private static final Logger logger = Logger.getLogger(TournamentServiceImplementation.class.getName());
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -310,12 +314,18 @@ public class TournamentServiceImplementation implements TournamentService {
         // currentTournament.setScoreboard(newScoreboard);
         
         Tournament newTournament = tournamentRepository.save(currentTournament);
-        System.out.println("it happened");
+
+        //debugging purposes
+        logger.info("Tournament started");
+
         return newTournament;
     }
 
     @Override
     public void checkComplete(Long tournamentId) throws Exception {
+        //debugging purposes
+        logger.info("Tournament Check complete called");
+
         Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new Exception("Tournament not found"));
 
@@ -335,6 +345,9 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Override
     public void endTournament(Long tournamentId) throws Exception{
+        //debugging purposes
+        logger.info("End tournament called");
+
         Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new Exception("Tournament not found"));
         

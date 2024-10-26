@@ -20,7 +20,7 @@ public class RoundController {
     @Autowired
     RoundService roundService;
 
-    @GetMapping({"/round/{id}/roundService/checkComplete"})
+    @GetMapping({"/round/{id}/checkComplete"})
     public ResponseEntity<String> checkRoundComplete(@PathVariable("id") Long id) throws Exception{
         roundService.checkComplete(id);
         return ResponseEntity.ok("Successfully checked roundService.isComplete");

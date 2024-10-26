@@ -17,11 +17,11 @@ public class Tournament {
     @JsonManagedReference 
     private List<User> participants = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
-    @MapKeyColumn(name = "user_id")
-    @Column(name = "score")
-    private Map<Long, Double> scoreboard = new HashMap<>();
+    // @ElementCollection
+    // @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
+    // @MapKeyColumn(name = "user_id")
+    // @Column(name = "score")
+    // private Map<Long, Double> scoreboard = new HashMap<>();
     private String date;
     private String status; // the statuses are "active", "ongoing", "completed"
 
@@ -121,13 +121,18 @@ public class Tournament {
     }
 
 
+    // public Map<Long, Double> getScoreboard() {
+    //     return scoreboard;
+    // }
+
+    // latest round's scoreboard is the tournament's scoreboard
     public Map<Long, Double> getScoreboard() {
-        return scoreboard;
+        return getRounds().get(getRounds().size() - 1).getScoreboard();
     }
 
-    public void setScoreboard(Map<Long, Double> scoreboard) {
-        this.scoreboard = scoreboard;
-    }
+    // public void setScoreboard(Map<Long, Double> scoreboard) {
+    //     this.scoreboard = scoreboard;
+    // }
 
 
     @Override

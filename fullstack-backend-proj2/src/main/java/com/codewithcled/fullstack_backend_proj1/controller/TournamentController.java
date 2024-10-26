@@ -250,7 +250,7 @@ public class TournamentController {
         return ResponseEntity.ok(newRounds);
     }
 
-    @GetMapping({"/tournament/{id}/tournamentService/checkComplete"})
+    @GetMapping({"/tournament/{id}/checkComplete"})
     public ResponseEntity<String> checkTournamentComplete(@PathVariable("id") Long id) throws Exception{
         tournamentService.checkComplete(id);
         return ResponseEntity.ok("Successfully checked tournamentService.isComplete");
