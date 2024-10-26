@@ -47,9 +47,6 @@ public class MatchServiceImplementation implements MatchService{
         if (currentMatch.getIsComplete()){
             throw new Exception("Match already complete, cannot update again");
         }
-        
-        currentMatch.setResult(result);
-        currentMatch.setIsComplete(true);
 
         User player1 = userRepository.findById(currentMatch.getPlayer1())
             .orElseThrow(() -> new Exception("User not found"));
@@ -70,6 +67,7 @@ public class MatchServiceImplementation implements MatchService{
         Double eloChange2 = player2NewElo - player2StartingElo;
 
         //save match results to match database
+        currentMatch.setResult(result);
         currentMatch.setEloChange1(eloChange1);
         currentMatch.setEloChange2(eloChange2);
         currentMatch.setIsComplete(true);
