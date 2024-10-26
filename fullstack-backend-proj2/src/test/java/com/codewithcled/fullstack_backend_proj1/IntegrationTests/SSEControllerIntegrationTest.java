@@ -1,4 +1,4 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.IntegrationTests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +85,7 @@ public class SSEControllerIntegrationTest {
         testUser.setEmail("testUser");
         testUser.setElo(1000.0);
         testUser.setCurrentTournaments(new ArrayList<Tournament>());
+        
         userRepository.save(testUser);
 
         webClient.get().uri(uri).exchange().expectStatus().isOk();

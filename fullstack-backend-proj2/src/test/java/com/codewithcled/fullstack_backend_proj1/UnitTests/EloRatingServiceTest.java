@@ -1,4 +1,4 @@
-package com.codewithcled.fullstack_backend_proj1;
+package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +21,7 @@ public class EloRatingServiceTest {
 
         boolean result = EloRatingService.isValidElo(elo);
 
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class EloRatingServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class EloRatingServiceTest {
             exceptionThrown=true;
         }
 
-        assertEquals(true,exceptionThrown);
+        assertTrue(exceptionThrown);
     }
 
     @Test
