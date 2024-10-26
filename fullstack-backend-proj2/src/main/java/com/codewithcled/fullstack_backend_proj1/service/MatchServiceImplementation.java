@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.Map;
+import java.util.List;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
@@ -60,10 +61,10 @@ public class MatchServiceImplementation implements MatchService{
         int player2StartingEloInt = player2StartingElo.intValue();
 
         //elo calculations done here
-        Double player1NewElo = eloRatingService.EloCalculation(player1StartingEloInt, player2StartingEloInt, result);
+        List<Double> newElos = eloRatingService.eloRatingForBoth(player1StartingEloInt, player2StartingEloInt, result);
+        Double player1NewElo = newElos.get(0);
         Double eloChange1 = player1NewElo - player1StartingElo;
-
-        Double player2NewElo = eloRatingService.EloCalculation(player2StartingEloInt, player1StartingEloInt, -1 * result);
+        Double player2NewElo = newElos.get(1);
         Double eloChange2 = player2NewElo - player2StartingElo;
 
         //save match results to match database
