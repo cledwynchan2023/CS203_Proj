@@ -422,8 +422,8 @@ public class AdminControllerIntegrationTest {
                 new HttpEntity<>("", headers),
                 String.class);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        assertEquals("An error occurred while deleting the tournament.", result.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Tournament with ID "+110+" not found.", result.getBody());
     }
 
     @Test

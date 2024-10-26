@@ -544,8 +544,8 @@ public class TournamentServiceTest {
         verify(userRepository).findAll();
     }
 
-    @Test//Not working should return empty list not userList
-    void getNonParticipatingCurrentUser_Success_NoTournamentID_returnEmptyList() throws Exception {
+    @Test
+    void getNonParticipatingCurrentUser_Success_NoTournamentID_returnAll() throws Exception {
         Long tId = (long) 11;
         Long uId1 = (long) 10;
         Long uId2 = (long) 11;
@@ -572,7 +572,7 @@ public class TournamentServiceTest {
 
         List<User> result = tournamentService.getNonParticipatingCurrentUser(tId);
 
-        assertIterableEquals(new ArrayList<>(), result);
+        assertIterableEquals(userList, result);
 
         verify(userRepository).findAll();
     }

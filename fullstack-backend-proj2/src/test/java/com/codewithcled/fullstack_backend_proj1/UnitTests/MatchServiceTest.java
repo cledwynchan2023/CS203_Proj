@@ -262,68 +262,6 @@ public class MatchServiceTest {
         verify(userRepository).findById(mId+1);
     }
 
-    // @Test
-    // void updateTournamentScoreboard_Success_resultDraw() throws Exception{
-    //     int result=0;
-    //     Long uId=(long)1;
-    //     Tournament testTournament=new Tournament();
-    //     Match testMatch=new Match();
-    //     testMatch.setPlayer1(uId);
-    //     testMatch.setPlayer2(uId+1);
-
-    //     when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-        
-    //     matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-    //     assertEquals(0.5,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-    //     assertEquals(0.5,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-    //     verify(tournamentRepository).save(testTournament);
-    // }
-
-    // @Test
-    // void updateTournamentScoreboard_Success_resultPlayer1Win() throws Exception{
-    //     int result=-1;
-    //     Long uId=(long)1;
-    //     Tournament testTournament=new Tournament();
-    //     Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-    //     scoreboard.put(uId,0.0);
-    //     scoreboard.put(uId+1,0.0);
-    //     testTournament.setScoreboard(scoreboard);
-    //     Match testMatch=new Match();
-    //     testMatch.setPlayer1(uId);
-    //     testMatch.setPlayer2(uId+1);
-
-    //     when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-
-    //     matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-    //     assertEquals(1,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-    //     assertEquals(0,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-    //     verify(tournamentRepository).save(testTournament);
-    // }
-
-    // @Test
-    // void updateTournamentScoreboard_Success_resultPlayer2Win() throws Exception{
-    //     int result=1;
-    //     Long uId=(long)1;
-    //     Tournament testTournament=new Tournament();
-    //     Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-    //     scoreboard.put(uId,0.0);
-    //     scoreboard.put(uId+1,0.0);
-    //     testTournament.setScoreboard(scoreboard);
-    //     Match testMatch=new Match();
-    //     testMatch.setPlayer1(uId);
-    //     testMatch.setPlayer2(uId+1);
-
-    //     when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-
-    //     matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-    //     assertEquals(0,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-    //     assertEquals(1,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-    //     verify(tournamentRepository).save(testTournament);
-    // }
-
     @Test
     void getEloChange1_Success() throws Exception{
         Match testMatch=new Match();

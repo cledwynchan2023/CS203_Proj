@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
@@ -270,4 +271,50 @@ public class UserControllerIntegrationTest {
 
         assertEquals(HttpStatus.NOT_FOUND,result.getStatusCode());
     }
+
+    @Test
+    public void updateUserWithoutPassword_Success() throws Exception{
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+
+        User testUser=new User();
+        testUser.setUsername("oldUsername");
+        testUser.setRole("ROLE_USER");
+        testUser.setElo((double)1200);
+        User savedUser=userRepository.save(testUser);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/user/"+savedUser.getId());
+
+        ResponseEntity<UserDTO> result=restTemplate.exchange(
+            url,
+            HttpMethod.PUT,
+            new HttpEntity<>(editUserRequest),
+            UserDTO.class);
+
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertEquals(editUserRequest.getUsername(),result.getBody().getUsername());
+        assertEquals(editUserRequest.getRole(),result.getBody().getRole());
+        assertEquals(editUserRequest.getElo(),result.getBody().getElo());
+    }
+
+    @Test
+    public void updateUserWithoutPassword_Failure_UserNotFound() throws Exception{
+        EditUserRequest editUserRequest = new EditUserRequest();
+        editUserRequest.setUsername("newUsername");
+        editUserRequest.setElo((double)1500);
+        editUserRequest.setRole("ROLE_ADMIN");
+        URI url = new URI(baseUrl + port + urlPrefix + "/user/1380912");
+
+        ResponseEntity<UserDTO> result=restTemplate.exchange(
+            url,
+            HttpMethod.PUT,
+            new HttpEntity<>(editUserRequest),
+            UserDTO.class);
+
+        assertEquals(HttpStatus.NOT_FOUND,result.getStatusCode());
+    }
+
+    
 }
