@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
+import com.codewithcled.fullstack_backend_proj1.controller.LoginRegisterController;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
@@ -54,7 +55,7 @@ public class LoginRegisterControllerIntegrationTest {
     public void validateAdminToken_Success() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
-        TokenRequest tokenRequest = new TokenRequest();
+        LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
         tokenRequest.setToken(adminToken);
 
         ResponseEntity<?> result = restTemplate.postForEntity(uri, tokenRequest, null);
@@ -66,7 +67,7 @@ public class LoginRegisterControllerIntegrationTest {
     public void validateAdminToken_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
-        TokenRequest tokenRequest = new TokenRequest();
+        LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
         tokenRequest.setToken("sfjoewjoj");
 
         ResponseEntity<?> result = restTemplate.postForEntity(uri, tokenRequest, null);
@@ -133,33 +134,5 @@ public class LoginRegisterControllerIntegrationTest {
         ResponseEntity<AuthResponse> result=restTemplate.postForEntity(uri, signInRequest, AuthResponse.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-    }
-
-    public static class TokenRequest {
-        private String token;
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-    }
-
-    public static class TokenResponse {
-        private boolean valid;
-
-        public TokenResponse(boolean valid) {
-            this.valid = valid;
-        }
-
-        public boolean isValid() {
-            return valid;
-        }
-
-        public void setValid(boolean valid) {
-            this.valid = valid;
-        }
     }
 }

@@ -9,12 +9,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestTemplate;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
+import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.EloRatingService;
@@ -38,10 +40,16 @@ public class MatchServiceTest {
     private TournamentRepository tournamentRepository;
 
     @Mock
+    private RoundRepository roundRepository;
+
+    @Mock
     private UserRepository userRepository;
 
     @Mock
     private EloRatingService eloRatingService;
+
+    @Mock
+    private RestTemplate restTemplate;
 
     @InjectMocks
     MatchServiceImplementation matchService;
@@ -103,7 +111,7 @@ public class MatchServiceTest {
         verify(matchRepository).findById(mId);
     }
 
-    //@Test Can't figure out how to mock the Apache get request
+    @Test
     void updateMatch_Success() throws Exception{
 
         Long mId=(long)1432;
@@ -138,11 +146,17 @@ public class MatchServiceTest {
         Map<Long,Double> scoreboard=new HashMap<>();
         scoreboard.put(player1.getId(),0.0);
         scoreboard.put(player2.getId(),0.0);
-        testTournament.setScoreboard(scoreboard);
+        testRound.setScoreboard(scoreboard);
         
         when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
         when(userRepository.findById(mId)).thenReturn(Optional.of(player1));
         when(userRepository.findById(mId+1)).thenReturn(Optional.of(player2));
+        when(eloRatingService.eloRatingForBoth(elo.intValue(), elo.intValue(), result)).thenReturn(List.of(elo,elo));
+        when(restTemplate.getForObject("/r/round/" + testRound.getId() + "/checkComplete", String.class)).thenReturn(null);
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> {
+            // Capture the round and return it (to avoid null pointer)
+            return invocation.getArgument(0);
+        });
 
         matchService.updateMatch(mId, result);
 
@@ -246,72 +260,6 @@ public class MatchServiceTest {
         verify(matchRepository).findById(mId);
         verify(userRepository).findById(mId);
         verify(userRepository).findById(mId+1);
-    }
-
-    @Test
-    void updateTournamentScoreboard_Success_resultDraw() throws Exception{
-        int result=0;
-        Long uId=(long)1;
-        Tournament testTournament=new Tournament();
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(uId,0.0);
-        scoreboard.put(uId+1,0.0);
-        testTournament.setScoreboard(scoreboard);
-        Match testMatch=new Match();
-        testMatch.setPlayer1(uId);
-        testMatch.setPlayer2(uId+1);
-
-        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-        
-        matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-        assertEquals(0.5,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-        assertEquals(0.5,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-        verify(tournamentRepository).save(testTournament);
-    }
-
-    @Test
-    void updateTournamentScoreboard_Success_resultPlayer1Win() throws Exception{
-        int result=-1;
-        Long uId=(long)1;
-        Tournament testTournament=new Tournament();
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(uId,0.0);
-        scoreboard.put(uId+1,0.0);
-        testTournament.setScoreboard(scoreboard);
-        Match testMatch=new Match();
-        testMatch.setPlayer1(uId);
-        testMatch.setPlayer2(uId+1);
-
-        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-
-        matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-        assertEquals(1,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-        assertEquals(0,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-        verify(tournamentRepository).save(testTournament);
-    }
-
-    @Test
-    void updateTournamentScoreboard_Success_resultPlayer2Win() throws Exception{
-        int result=1;
-        Long uId=(long)1;
-        Tournament testTournament=new Tournament();
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(uId,0.0);
-        scoreboard.put(uId+1,0.0);
-        testTournament.setScoreboard(scoreboard);
-        Match testMatch=new Match();
-        testMatch.setPlayer1(uId);
-        testMatch.setPlayer2(uId+1);
-
-        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
-
-        matchService.updateTournamentScoreboard(testTournament,testMatch,result);
-
-        assertEquals(0,testTournament.getScoreboard().get(testMatch.getPlayer1()));
-        assertEquals(1,testTournament.getScoreboard().get(testMatch.getPlayer2()));
-        verify(tournamentRepository).save(testTournament);
     }
 
     @Test

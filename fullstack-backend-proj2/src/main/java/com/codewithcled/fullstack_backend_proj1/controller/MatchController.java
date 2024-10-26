@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.service.MatchService;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
 @RequestMapping("/m")
@@ -22,10 +24,16 @@ public class MatchController {
     @Autowired
     MatchService matchService;
 
-    @PutMapping("/match/{id}/update")
-public ResponseEntity<String> updateMatch(@RequestBody Map<String, Integer> payload, @PathVariable("id") Long id) throws Exception {
-    int result = payload.get("result");
-    matchService.updateMatch(id, result);
-    return ResponseEntity.ok("Match result updated successfully");
-}
+    @PutMapping({"/match/{id}/update"})
+    public ResponseEntity<String> updateMatch(@RequestBody int result, @PathVariable("id") Long id) throws Exception{
+        matchService.updateMatch(id, result);
+        return ResponseEntity.ok("Match result updated successfully");
+    }
+
+    @GetMapping("/match/{id}/getPlayers")
+    public ResponseEntity<String[]> getPlayers(@PathVariable("id") Long id) throws Exception{
+        String[] players = matchService.getPlayers(id);
+        return ResponseEntity.ok(players);
+    }
+    
 }

@@ -65,32 +65,33 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test Couldn't get it to work
+    //@Test Can't get it to work
     void updateMatch_Success() throws Exception{
-        Match testMatch=new Match();
-        Round testRound=new Round();
-        Tournament testTournament=new Tournament();
-        User player1=new User();
-        User player2=new User();
         int outcome=0;
+
+        Match testMatch=new Match();
+
         String role="ROLE_USER";
         String userName="testUser";
         Double elo=(double)1000;
 
+        User player1=new User();
         player1.setUsername(userName+1);
         player1.setRole(role);
         player1.setEmail(userName+1);
         player1.setElo(elo);
 
+        User player2=new User();
         player2.setUsername(userName+2);
         player2.setRole(role);
         player2.setEmail(userName+2);
         player2.setElo(elo);
 
+        Tournament testTournament=new Tournament();
         testTournament.setTournament_name("testTournament");
         testTournament.setSize(2);
         testTournament.setCurrentSize(2);
-        testTournament.setNoOfRounds(1);
+        testTournament.setNoOfRounds(2);
         testTournament.setStatus("active");
         testTournament.setDate("10/20/1203");
 
@@ -107,18 +108,19 @@ public class MatchControllerIntegrationTest {
         savedPlayer1.setCurrentTournaments(tournamentList);
         savedPlayer2.setCurrentTournaments(tournamentList);
         savedTournament.setParticipants(userList);
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(savedPlayer1.getId(),0.0);
-        scoreboard.put(savedPlayer2.getId(),0.0);
-        savedTournament.setScoreboard(scoreboard);
 
         tournamentRepository.save(savedTournament);
         userRepository.save(savedPlayer1);
         userRepository.save(savedPlayer2);
 
+        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
+        scoreboard.put(savedPlayer1.getId(),0.0);
+        scoreboard.put(savedPlayer2.getId(),0.0);
+
+        Round testRound=new Round();
         testRound.setTournament(savedTournament);
         testRound.setRoundNum(1);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(scoreboard);
 
         Round savedRound=roundRepository.save(testRound);
 

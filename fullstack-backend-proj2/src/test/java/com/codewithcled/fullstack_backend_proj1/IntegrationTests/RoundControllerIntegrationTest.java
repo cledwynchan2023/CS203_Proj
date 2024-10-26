@@ -117,7 +117,7 @@ public class RoundControllerIntegrationTest {
 
         testRound.setTournament(savedTournament);
         testRound.setRoundNum(1);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(scoreboard);
 
         Round savedRound=roundRepository.save(testRound);
 
@@ -131,7 +131,7 @@ public class RoundControllerIntegrationTest {
         
         matchRepository.save(testMatch);
 
-        URI url=new URI(baseUrl+port+urlPrefix+"/round/"+savedRound.getId()+"/roundService/checkComplete");
+        URI url=new URI(baseUrl+port+urlPrefix+"/round/"+savedRound.getId()+"/checkComplete");
 
         ResponseEntity<String> result=restTemplate.getForEntity(url, String.class);
 
@@ -192,7 +192,7 @@ public class RoundControllerIntegrationTest {
 
         testRound.setTournament(savedTournament);
         testRound.setRoundNum(1);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(scoreboard);
 
         Round savedRound=roundRepository.save(testRound);
 
@@ -270,7 +270,7 @@ public class RoundControllerIntegrationTest {
 
         testRound.setTournament(savedTournament);
         testRound.setRoundNum(1);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(scoreboard);
 
         Round savedRound=roundRepository.save(testRound);
 

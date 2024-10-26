@@ -131,7 +131,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    //@TestIssue with sending the post getting unsupported Media Type Exception
+    //@Test // Issue with sending the post getting unsupported Media Type Exception
     public void addRound_Success() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
@@ -147,7 +147,7 @@ public class TournamentControllerIntegrationTest {
         // Create a Round object
         Round round = new Round();
         round.setRoundNum(1);
-        round.setId((long)138021); // Ensure this ID is appropriate based on your application's logic
+        round.setId((long) 138021); // Ensure this ID is appropriate based on your application's logic
 
         // Initialize scoreboard and matchList if necessary
         Map<Long, Double> scoreboard = new HashMap<>();
@@ -159,17 +159,17 @@ public class TournamentControllerIntegrationTest {
 
         // Execute the POST request
         ResponseEntity<String> result = restTemplate.exchange(
-            url,
-            HttpMethod.POST, 
-            new HttpEntity<>(round),
-            String.class);
+                url,
+                HttpMethod.POST,
+                new HttpEntity<>(round),
+                String.class);
 
         // Assertions
         assertEquals("Round added successfully to the tournament", result.getBody());
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
-    //@Test Issue with sending the post getting unsupported Media Type
+    //@Test
     public void addRound_Failure() {
 
         Round round = new Round();
@@ -183,7 +183,7 @@ public class TournamentControllerIntegrationTest {
 
             URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
-            ResponseEntity<String> result = restTemplate.postForEntity(url, round, String.class);
+            restTemplate.postForEntity(url, round, String.class);
         } catch (Exception e) {
             assertEquals("Tournament not found", e.getMessage());
             exceptionThrown = true;
@@ -239,8 +239,8 @@ public class TournamentControllerIntegrationTest {
         ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<UserDTO>>() {}
-                );
+                new ParameterizedTypeReference<List<UserDTO>>() {
+                });
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
@@ -515,7 +515,7 @@ public class TournamentControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    // @Test Not giving back an error
+    @Test
     public void deleteTournament_Failure() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
 
@@ -525,8 +525,8 @@ public class TournamentControllerIntegrationTest {
                 null,
                 String.class);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        assertEquals("An error occurred while deleting the tournament.", result.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Tournament with ID " + 1183 + " not found.", result.getBody());
     }
 
     @Test
@@ -684,7 +684,7 @@ public class TournamentControllerIntegrationTest {
 
         testRound.setRoundNum(1);
         testRound.setTournament(savedTournament);
-        testRound.setScoreboard(savedTournament.getScoreboard());
+        testRound.setScoreboard(new HashMap<>());
 
         Round savedRound = roundRepository.save(testRound);
 
@@ -699,7 +699,7 @@ public class TournamentControllerIntegrationTest {
         matchRepository.save(testMatch);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId()
-                + "/tournamentService/checkComplete");
+                + "/checkComplete");
 
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
 

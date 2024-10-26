@@ -142,4 +142,17 @@ public class MatchServiceImplementation implements MatchService{
 
         return currentMatch.getEloChange2();
     }
+
+    @Override
+    public String[] getPlayers(Long matchId) throws Exception{
+        Match currentMatch = matchRepository.findById(matchId)
+        .orElseThrow(() -> new Exception("Match not found"));
+
+        String[] players = new String[2];
+        players[0] = userRepository.findById(currentMatch.getPlayer1())
+            .orElseThrow(() -> new Exception("Player 1 not found")).getUsername();
+        players[1] = userRepository.findById(currentMatch.getPlayer2())
+            .orElseThrow(() -> new Exception("Player 2 not found")).getUsername();
+        return players;
+    }
 }

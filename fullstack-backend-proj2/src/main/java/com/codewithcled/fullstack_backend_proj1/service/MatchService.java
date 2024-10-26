@@ -13,4 +13,6 @@ public interface MatchService {
     Double getEloChange2(Long matchId) throws Exception;
 
     int getResult(Long matchId) throws Exception;
+
+    String[] getPlayers(Long matchId) throws Exception;
 }
