@@ -52,7 +52,7 @@ export default function TournamentLandingPage() {
         } else if (tournamentStatus === 'ongoing') {
             navigate(`/admin/${userId}/tournament/${tournamentId}/start`);
         } else if (tournamentStatus === 'completed') {
-            navigate(`/admin/${userId}/tournament/${tournamentId}`);
+            navigate(`/admin/${userId}/tournament/${tournamentId}/completed`);
         }
 
     };

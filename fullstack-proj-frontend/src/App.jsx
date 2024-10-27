@@ -23,6 +23,9 @@ import TournamentDetailUser from './pages/User/TournamentDetail.jsx';
 import Ranking from './pages/User/Ranking.jsx';
 import Profile from './pages/User/Profile.jsx';
 import TournamentStart from './pages/Admin/TournamentStart.jsx';
+import TournamentCompleted from './pages/Admin/TournamentCompleted.jsx';
+import TournamentStartUser from './pages/User/TournamentStart.jsx';
+import TournamentEnded from './pages/User/TournamentEnded.jsx';
 
 function App() {
 
@@ -103,6 +106,13 @@ function App() {
           <TournamentStart/>
           </>
         }></Route>
+
+        <Route exact path ="/admin/:userId/tournament/:id/completed" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentCompleted/>
+          </>
+        }></Route>
         
         {/* <Route exact path ="/user/:id/tournament" element={
           <>
@@ -115,6 +125,18 @@ function App() {
           <>
           <UserNavbar></UserNavbar>
           <Homepage/>
+          </>
+        }></Route>
+        <Route exact path ="/user/:userId/tournament/:id/start" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentStartUser/>
+          </>
+        }></Route>
+        <Route exact path ="/user/:userId/tournament/:id/ended" element={
+          <>
+          <AdminNavbar></AdminNavbar>
+          <TournamentEnded/>
           </>
         }></Route>
 

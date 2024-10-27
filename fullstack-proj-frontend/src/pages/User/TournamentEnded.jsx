@@ -5,7 +5,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import "./style/TournamentStart.css";
-export default function TournamentStart() {
+import chessplaying1 from '/src/assets/chessplaying.webp';
+export default function TournamentEnded() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
@@ -21,6 +22,7 @@ export default function TournamentStart() {
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [isStart, setIsStart] = useState(1);
     const [scoreboard,setScoreboard]=useState(new Map());
+    const [userPairings, setUserPairings] = useState([]);    
     const onInputChange=(e)=>{
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
         
@@ -62,6 +64,7 @@ export default function TournamentStart() {
         } else if (round <= tournamentRound){
             setCurrentRound(round);
             setPairing(tournament.rounds[round-1].matchList);
+            setUserPairings(findUserPairingFirst(tournament.rounds[round-1].matchList));
             setRound(tournament.rounds[round-1]);
             console.log(tournamentRound);
         }
@@ -104,23 +107,6 @@ export default function TournamentStart() {
         return result.data.rounds[currentRound - 1].isCompleted;
     }
 
-    const handleResult = async (matchId,result) => {
-        setDisabledButtons((prev) => ({ ...prev, [matchId]: true }));
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`http://localhost:8080/m/match/${matchId}/update`, {result}, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-        
-        setNoOfMatches(noOfMatches+1);
-        const isCompleted = await getIsCompleted(tournamentRound);
-        if (isCompleted) {
-            alert("Round completed");
-            setNoOfMatches(1);
-        }
-        loadTournament();
-    };
 
     const getUsername = (selectedId) => {
         for (let i = 0; i < user.length; i++) {
@@ -134,21 +120,22 @@ export default function TournamentStart() {
     const getUser = (selectedId) => {
         
         for (let i = 0; i < user.length; i++) {
-            console.log(user[i].id + " " + selectedId);
+            
             if (user[i].id - selectedId == 0) {
-                console.log(user[i].username);
+
                 return user[i];
             }
         }
         return user ? user : '';
     };
-
+    
 
   const renderTabContent = () => {
     const sortedScoreboard = Array.from(scoreboard.entries()).sort((a, b) => b[1] - a[1]);
     switch (activeTab) {
       case 'Overview':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px"}}>
+            
             <div style={{width:"100%", height:"60%"}}>
                     <div style={{width:"100%", height:"100px"}}>
                         <p className="title is-2">Round {currentRound}</p>
@@ -168,6 +155,28 @@ export default function TournamentStart() {
                             {renderPagination()}
                         </ul>
                     </nav>
+                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid yellow"}}>
+                            <div style={{textAlign:"center"}}> 
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
+                            </div>
+                        <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
+                            
+                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
+                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
+                            </div>
+                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                            </div>
+                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
+                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
+                    </div>
                     {pairing.map((pair, index) => {
                         const backgroundColor = index % 2 === 0 ? '#252525' : '#212121'; // Alternate colors
                         const matchId = round.matchList[index].id; // Assuming each pair has a unique matchId
@@ -184,38 +193,123 @@ export default function TournamentStart() {
                                 return {};
                             }
                         };
-                        
+                        const getStatus = (result) => {
+                            if (result === null) {
+                                return 'Ongoing';
+                            } else if (result === -1) {
+                                return 'Player 1 Won';
+                            } else if (result === 1) {
+                                return 'Player 2 Won';
+                            } else if (result === 0) {
+                                return 'Draw';
+                            } else {
+                                return 'Unknown Status';
+                            }
+                        };
                         return (
-                    <div class="card" style={{width:"100%", minWidth:"400px",height:"120px", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
-                        <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%"}}>
-                            <div class="content" style={{width:"25%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                            
+                    <div class="card" style={{width:"100%",height:"120px", display:"flex", alignItems:"center", overflowX:"scroll", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                       
+                        <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%", gap:"5%"}}>
+                            <div class="content" style={{width:"200px", textAlign:"center",height:"100%", ...getBorderStyle(1), whiteSpace:"nowrap",overflow: "hidden"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player1}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
                             </div>
-                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center",whiteSpace:"nowrap"}}>
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                             </div>
-                            <div class="content" style={{width:"25%", textAlign:"center", height:"100%", marginRight:"3%", ...getBorderStyle(2)}}>
+                            <div class="content" style={{width:"200px",textAlign:"center", height:"100%", marginRight:"3%",...getBorderStyle(2), whiteSpace:"nowrap",overflow: "hidden"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player2}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
                             </div>
-                            <div class="content" style={{width:"30%", textAlign:"center", display:"flex", alignItems:"center", gap:"3%"}}>
-                                <button className="button is-link" onClick={()=> {handleResult(matchId, -1)}} disabled={isDisabled}>Player 1 win</button>
-                                <button className="button is-primary" onClick={()=> {handleResult(matchId, 1)}} disabled={isDisabled}>Player 2 win</button>
-                                <button className="button is-warning" onClick={()=> {handleResult(matchId, 0)}} disabled={isDisabled}>Draw</button>
+                            <div style={{height:"100%", margin:"0", width:"200px" }}>
+                                <p class="subtitle">Status: {getStatus(matchResult)}</p>
                             </div>
                         </div>
                     </div>
                 )})}
             </div>
         </section>;
+    case 'Details':
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
+                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                        <img
+                            src={chessplaying1}
+                            alt="Placeholder image"
+                        />
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Game of Chess</p>
+                        </div>
+                        </div>
+
+                        <div class="content">
+                        Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
+                        <br />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"95%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Winner</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{user.length > 0 && scoreboard.size > 0 ? (() => {
+                                        const winnerId = Array.from(scoreboard.keys())[0];
+                                        const winner = getUser(winnerId);
+                                        console.log(winner);
+                                        return winner.username;
+                                    })() : 'Unknown'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </section>;
       case 'Players':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
                 
                 <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
-                <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px"}}>
-                    <button className="button is-link" style={{width:"80px", height:"30px"}} onClick={() => setIsModalOpen(true)}>Add</button>
-                </div>
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -230,11 +324,6 @@ export default function TournamentStart() {
                                     <tr>
                                         <td>{user.username}</td>
                                         <td>{user.elo}</td>
-                                        <td style={{display:"flex", justifyContent:"flex-end"}}>
-                                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {removePlayer(user.id);
-                                            event.stopPropagation();
-                                            }}>Remove</button>
-                                        </td>
                                     </tr>
                                  )}
                             </tbody>
@@ -287,6 +376,23 @@ export default function TournamentStart() {
         localStorage.removeItem('tokenExpiry'); 
        
     };
+    const findUserPairing = () => {
+        for (let i =0; i < pairing.length; i++){
+            if (pairing[i].player1 == userId || pairing[i].player2 == userId){
+                return pairing[i];
+            }
+        }
+        return null;
+    };
+
+    const findUserPairingFirst = (pairings) => {
+        for (let i =0; i < pairings.length; i++){
+            if (pairings[i].player1 - userId == 0 || pairings[i].player2 - userId == 0){
+                return pairings[i];
+            }
+        }
+        return null;
+    };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
         const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
@@ -307,12 +413,13 @@ export default function TournamentStart() {
         setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
         console.log(tournamentRound);
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
+        setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
         loadNonParticipatingUsers();
         setUser(result.data.participants);
 
         if (result.data.status == 'completed') {
             alert("Tournament has ended");
-            navigate(`/admin/${userId}/tournament/${id}/completed`);
+            navigate(`/user/${userId}/tournament/${id}/completed`);
 
         }
         
@@ -327,9 +434,6 @@ const loadTournamentForDelete= async()=>{
             }
         });
         console.log(result.data);
-        const resultName = result.data.tournamentName;
-       
-    
         setTournament(result.data);
         loadNonParticipatingUsers();
         setUser(result.data.participants);
@@ -348,51 +452,6 @@ const loadTournamentForDelete= async()=>{
         setNonParticipatingUser(response.data);
     };
 
-    
-
-    const removePlayer = async (user_id) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${user_id}`,
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response1.status === 200){
-                alert("Player Removed Successfully");
-                loadTournamentForDelete();
-            }
-            
-        } catch (error) {
-            
-            setError('An error occurred while deleting the tournament.');
-        }
-    };
-    const addPlayer = async (user_id) => {
-        try {
-            console.log(user_id);
-            const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${user_id}`,
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response1.status === 200){
-                //setIsModalOpen(false);
-                alert("Player added Successfully");
-                loadTournament();
-               
-            }
-            
-        } catch (error) {
-            alert("Tournament Full");
-            
-        }
-    };
 
 
     const isTokenExpired = () => {
@@ -406,7 +465,11 @@ const loadTournamentForDelete= async()=>{
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
+            if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
+                return true;
+            } else {
+                return false;
+            }
         } catch (error) {
             return false;
         }
@@ -435,6 +498,8 @@ const loadTournamentForDelete= async()=>{
                 setRound(response.data.rounds[response.data.currentRound-1]);
                 
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
+                setUserPairings(findUserPairingFirst(response.data.rounds[response.data.currentRound-1].matchList));
+                
                 setTournament(response.data);
                 setScoreboard(new Map(Object.entries(response.data.rounds[response.data.currentRound - 1].scoreboard)));
                 console.log(scoreboard);
@@ -445,13 +510,12 @@ const loadTournamentForDelete= async()=>{
                 
                 if (response.data.status == 'active') {
                     alert("Tournament has not started yet");
-                    navigate(`/admin/${userId}/tournament/${id}`);
+                    navigate(`/user/${userId}/tournament/${id}`);
 
                 } else if (response.data.status == 'ongoing') {
-                    setIsStart(1);
+                    alert("Tournament still ongoing!");
+                    navigate(`/user/${userId}/tournament/${id}/start`);
                 } else {
-                    alert("Tournament has ended");
-                    navigate(`/admin/${userId}/tournament/${id}/completed`);
                     setIsStart(-1);
                 }
                 console.log(isStart);
@@ -489,146 +553,20 @@ const loadTournamentForDelete= async()=>{
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
-            <div style={{width:"80%", alignContent:"center"}}>
-                <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
+            <div style={{width:"100%", alignContent:"center"}}>
+                <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
-            <div style={{display:"flex",alignItems:"center", backgroundColor:"black", width:"20%"}}>
-                <button className="button is-danger" style={{width:"100%", height:"40px",marginRight:"5%", fontWeight:"bold", color:"white"}} disabled={isStart === -1}>
-                    {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
-                </button>
-                {/* <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button> */}
-            </div>
+            
             
         </section>
-        {isModalOpen && (
-              <div className="modal is-active fade-in">
-              <div className="modal-background"></div>
-              <div className="modal-card animate__animated animate__fadeInUpBig">
-                <header class="modal-card-head">
-                  <p className="modal-card-title">Add Player</p>
-                  <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section className="modal-card-body" style={{height:"400px"}}>
-                <table className="table is-hoverable" >
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Elo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {nonParticpatingUser.map((user, index) =>
-                        <tr key={user.id} onClick={() => addPlayer(user.id)}>
-                            <td>{user.username}</td>
-                            <td>{user.elo}</td>
-                        </tr>   
-                    )}
-                </tbody>
-            </table>
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
-        {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Tournament</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-               
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="floatingInput"
-                            placeholder="name@example.com"
-                            value={tournament_name}
-                            onChange={(e) =>onInputChange(e)}
-                            name="tournament_name"
-                        ></input>
-                        <label htmlFor="tournament_name">Tournament Name</label>
-                        </div>
-                        
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="floatingUsername"
-                            placeholder="Date"
-                            value={date}
-                            onChange={(e) =>onInputChange(e)}
-                            name="date"
-                        />
-                        <label htmlFor="Date">Date</label>
-
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <select
-                                className="form-control"
-                                id="floatingRole"
-                                value={status}
-                                onChange={(e) => onInputChange(e)}
-                                name="status"
-                            >
-                                <option value="active">Active</option>
-                                <option value="completer">Not Active</option>
-                                <option value="ongoing">Ongoing</option>
-                            </select>
-                            <label htmlFor="Status">Status</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="size"
-                            value={size}
-                            onChange={(e) =>onInputChange(e)}
-                            name="size"
-                        />
-                        <label htmlFor="size">Number of participants</label>
-                        </div>
-                        <div className="form-floating">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="noOfRounds"
-                            value={noOfRounds}
-                            onChange={(e) =>onInputChange(e)}
-                            name="noOfRounds"
-                        />
-                        <label htmlFor="noOfRounds">Number of rounds</label>
-                        </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Edit Tournament</button>
-                        </div>
-
-                    </form>
-            
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
         <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
                 <div className="tabs is-left" style={{ height:"70px"}}>
                 <ul>
+                <li className={activeTab === 'Details' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Details')}>Details</a>
+                    </li>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>

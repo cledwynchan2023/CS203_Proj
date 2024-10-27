@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
@@ -14,6 +14,7 @@ import swissPic from '/src/assets/swiss.png';
 import {Atom} from "react-loading-indicators"
 
 export default function TournamentDetail() {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const[user,setUser]=useState(null);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
@@ -204,21 +205,29 @@ export default function TournamentDetail() {
             }
         });
         console.log(result.data);
-        
-        const resultName = result.data.tournamentName;
-       
-        setEditedTournament({
-            tournament_name: resultName,
-            date: result.data.date,                      
-            status: result.data.status || "active",      
-            size: result.data.size || "",                
-            noOfRounds: result.data.noOfRounds || 0     
-        });
-    
         setTournament(result.data);
-
-       
+        setUser(result.data.participants);
+        setHasJoined(checkJoinedTournamentFirst(result.data.participants));
     };
+
+    const checkJoinedTournament = () => {
+        for (let i = 0; i < user.length; i++){
+            if (user[i].id == userId){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const checkJoinedTournamentFirst = (users) => {
+        for (let i = 0; i < users.length; i++){
+            if (users[i].id == userId){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
  
 
@@ -238,9 +247,6 @@ export default function TournamentDetail() {
                 alert("Left Tournament Successfully");
                 const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
                 delete joinedTournaments[id];
-                localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
-    
-                setHasJoined(false);
                 loadUsers();
                 loadTournament();
             }
@@ -265,13 +271,8 @@ export default function TournamentDetail() {
                     }
                 });
                 if (response1.status === 200){
-                    localStorage.setItem('joinedTournament', 'true');
                     loadUsers();
                     alert("Joined Tournament Successfully");
-                    setHasJoined(true);
-                    const joinedTournaments = JSON.parse(localStorage.getItem('joinedTournaments')) || {};
-                    joinedTournaments[id] = true;
-                    localStorage.setItem('joinedTournaments', JSON.stringify(joinedTournaments));
                     loadTournament();
                     
                 }
@@ -346,9 +347,22 @@ export default function TournamentDetail() {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setData(response.data);
-                setUser(response.data.participants);
-                setIsLoading(false);
+                console.log(response.data.status);
+                if (response.data.status == 'active') {
+                    setData(response.data);
+                    setIsLoading(false);
+                    setTournament(response.data);
+                    setUser(response.data.participants);
+                    setHasJoined(checkJoinedTournamentFirst(response.data.participants));
+                } else if (response.data.status == 'ongoing') {
+                    alert("Tournament has started");
+                    navigate(`/user/${userId}/tournament/${id}/start`);
+                } else {
+                    alert("Tournament has ended");
+                    navigate(`/user/${userId}/tournament/${id}/ended`);
+                }
+                
+                
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     console.log("Invalid TOken")
@@ -365,27 +379,13 @@ export default function TournamentDetail() {
 
         setTimeout(() => {
             fetchData();
-            loadTournament();
-            
-            console.log()
-            const join = checkJoined();
-            if (join) {
-                setHasJoined(true);
-            }
         },1000);
           
        
 
     }, []);
 
-    const checkJoined = () => {
-        const joinedTournaments = JSON.parse(localStorage.getItem('joinendTournaments')) || {};
-            return joinedTournaments[id] === true;
-    };
-
-    if (error) {
-        return <div>{error}</div>;
-    }
+    
 
   return (
     <>

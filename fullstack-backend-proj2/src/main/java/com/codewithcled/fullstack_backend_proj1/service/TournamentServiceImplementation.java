@@ -187,7 +187,7 @@ public class TournamentServiceImplementation implements TournamentService {
                 for (Tournament tour: currentTournaments) {
                     
                     if (tour.getId() - tournamentId == 0) {
-                        System.out.println("Invalid");
+                        
                         isValid=false;
                         break;
                     }

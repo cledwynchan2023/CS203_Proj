@@ -5,7 +5,9 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import "./style/TournamentStart.css";
-export default function TournamentStart() {
+import chessplaying1 from '/src/assets/chessplaying.webp';
+
+export default function TournamentCompleted() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
@@ -184,7 +186,7 @@ export default function TournamentStart() {
                                 return {};
                             }
                         };
-                        
+                        console.log(matchResult);
                         return (
                     <div class="card" style={{width:"100%", minWidth:"400px",height:"120px", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
                         <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%"}}>
@@ -213,9 +215,7 @@ export default function TournamentStart() {
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
                 
                 <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
-                <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px"}}>
-                    <button className="button is-link" style={{width:"80px", height:"30px"}} onClick={() => setIsModalOpen(true)}>Add</button>
-                </div>
+                
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -230,11 +230,7 @@ export default function TournamentStart() {
                                     <tr>
                                         <td>{user.username}</td>
                                         <td>{user.elo}</td>
-                                        <td style={{display:"flex", justifyContent:"flex-end"}}>
-                                            <button className="button is-text" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginBottom:"25px" }} onClick={(event) => {removePlayer(user.id);
-                                            event.stopPropagation();
-                                            }}>Remove</button>
-                                        </td>
+                                        
                                     </tr>
                                  )}
                             </tbody>
@@ -242,6 +238,82 @@ export default function TournamentStart() {
                 </div>
                
             </section>;
+    case 'Details':
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
+                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                        <img
+                            src={chessplaying1}
+                            alt="Placeholder image"
+                        />
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Game of Chess</p>
+                        </div>
+                        </div>
+
+                        <div class="content">
+                        Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
+                        <br />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style={{width:"95%",height:"100px", minWidth:"250px"}}>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="subtitle" style={{fontSize:"1rem"}}>Winner</p>
+                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{user.length > 0 && scoreboard.size > 0 ? (() => {
+                                        const winnerId = Array.from(scoreboard.keys())[0];
+                                        const winner = getUser(winnerId);
+                                        console.log(winner);
+                                        return winner.username;
+                                    })() : 'Unknown'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </section>;
       case 'Scoreboard':
         return <>
         <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
@@ -261,8 +333,16 @@ export default function TournamentStart() {
                 <tbody>
                 {Array.from(scoreboard.entries()).map(([id, score], index) => {
                     const user = getUser(id); // Assuming you have a users array with user details
+                    let rowStyle = {};
+                    if (index === 0) {
+                        rowStyle = {backgroundColor: '#d4af20' };
+                    } else if (index === 1) {
+                        rowStyle = { backgroundColor: '#c0c0c5' };
+                    } else if (index === 2) {
+                        rowStyle = { backgroundColor: '#CD7F32' };
+                    }
                     return (
-                <tr key={id}>
+                <tr key={id} style={rowStyle}>
                     <td>{index + 1}</td>
                     <td>{user ? user.username : 'Unknown'}</td>
                     <td>{user ? user.elo : 'Unknown'}</td>
@@ -310,9 +390,9 @@ export default function TournamentStart() {
         loadNonParticipatingUsers();
         setUser(result.data.participants);
 
-        if (result.data.status == 'completed') {
+        if (status == 'completed') {
             alert("Tournament has ended");
-            navigate(`/admin/${userId}/tournament/${id}/completed`);
+            navigate(`/admin/${userId}/tournament/${id}`);
 
         }
         
@@ -448,10 +528,8 @@ const loadTournamentForDelete= async()=>{
                     navigate(`/admin/${userId}/tournament/${id}`);
 
                 } else if (response.data.status == 'ongoing') {
-                    setIsStart(1);
+                    navigate(`/admin/${userId}/tournament/${id}/start`);
                 } else {
-                    alert("Tournament has ended");
-                    navigate(`/admin/${userId}/tournament/${id}/completed`);
                     setIsStart(-1);
                 }
                 console.log(isStart);
@@ -501,134 +579,14 @@ const loadTournamentForDelete= async()=>{
             </div>
             
         </section>
-        {isModalOpen && (
-              <div className="modal is-active fade-in">
-              <div className="modal-background"></div>
-              <div className="modal-card animate__animated animate__fadeInUpBig">
-                <header class="modal-card-head">
-                  <p className="modal-card-title">Add Player</p>
-                  <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section className="modal-card-body" style={{height:"400px"}}>
-                <table className="table is-hoverable" >
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Elo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {nonParticpatingUser.map((user, index) =>
-                        <tr key={user.id} onClick={() => addPlayer(user.id)}>
-                            <td>{user.username}</td>
-                            <td>{user.elo}</td>
-                        </tr>   
-                    )}
-                </tbody>
-            </table>
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
-        {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Tournament</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-               
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="floatingInput"
-                            placeholder="name@example.com"
-                            value={tournament_name}
-                            onChange={(e) =>onInputChange(e)}
-                            name="tournament_name"
-                        ></input>
-                        <label htmlFor="tournament_name">Tournament Name</label>
-                        </div>
-                        
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="floatingUsername"
-                            placeholder="Date"
-                            value={date}
-                            onChange={(e) =>onInputChange(e)}
-                            name="date"
-                        />
-                        <label htmlFor="Date">Date</label>
-
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <select
-                                className="form-control"
-                                id="floatingRole"
-                                value={status}
-                                onChange={(e) => onInputChange(e)}
-                                name="status"
-                            >
-                                <option value="active">Active</option>
-                                <option value="completer">Not Active</option>
-                                <option value="ongoing">Ongoing</option>
-                            </select>
-                            <label htmlFor="Status">Status</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="size"
-                            value={size}
-                            onChange={(e) =>onInputChange(e)}
-                            name="size"
-                        />
-                        <label htmlFor="size">Number of participants</label>
-                        </div>
-                        <div className="form-floating">
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="noOfRounds"
-                            value={noOfRounds}
-                            onChange={(e) =>onInputChange(e)}
-                            name="noOfRounds"
-                        />
-                        <label htmlFor="noOfRounds">Number of rounds</label>
-                        </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Edit Tournament</button>
-                        </div>
-
-                    </form>
-            
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
+        
         <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
                 <div className="tabs is-left" style={{ height:"70px"}}>
                 <ul>
+                    <li className={activeTab === 'Details' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Details')}>Details</a>
+                    </li>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>
@@ -638,6 +596,7 @@ const loadTournamentForDelete= async()=>{
                     <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
                     </li>
+                   
                 </ul>
                 </div>
                 <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
