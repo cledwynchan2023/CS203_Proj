@@ -18,11 +18,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
@@ -135,10 +139,10 @@ public class AdminControllerIntegrationTest {
         headers.add("Authorization", "Bearer " + JWT);
 
         ResponseEntity<TournamentDTO> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(createTournamentRequest,headers),
-            TournamentDTO.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(createTournamentRequest, headers),
+                TournamentDTO.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
@@ -153,10 +157,10 @@ public class AdminControllerIntegrationTest {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
 
         ResponseEntity<TournamentDTO> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(null,headers),
-            TournamentDTO.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(null, headers),
+                TournamentDTO.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
@@ -175,10 +179,10 @@ public class AdminControllerIntegrationTest {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
 
         ResponseEntity<TournamentDTO> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(createTournamentRequest,headers),
-            TournamentDTO.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(createTournamentRequest, headers),
+                TournamentDTO.class);
 
         assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
@@ -196,10 +200,10 @@ public class AdminControllerIntegrationTest {
         headers.add("Authorization", "Bearer " + JWT);
 
         ResponseEntity<AuthResponse> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(signUpRequest,headers),
-            AuthResponse.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(signUpRequest, headers),
+                AuthResponse.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
@@ -225,10 +229,10 @@ public class AdminControllerIntegrationTest {
         headers.add("Authorization", "Bearer " + JWT);
 
         ResponseEntity<AuthResponse> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(signUpRequest,headers),
-            AuthResponse.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(signUpRequest, headers),
+                AuthResponse.class);
 
         assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
     }
@@ -254,10 +258,10 @@ public class AdminControllerIntegrationTest {
         headers.add("Authorization", "Bearer ");
 
         ResponseEntity<AuthResponse> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            new HttpEntity<>(signUpRequest,headers),
-            AuthResponse.class);
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(signUpRequest, headers),
+                AuthResponse.class);
 
         assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }
@@ -287,7 +291,7 @@ public class AdminControllerIntegrationTest {
 
     @Test
     public void deleteUser_Failure_UserNotFound() throws Exception {
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/" + (long) 110);
@@ -410,7 +414,7 @@ public class AdminControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    @Test// returns OK instead of throwing exception
+    @Test // returns OK instead of throwing exception
     public void deleteTournament_Failure_TournamentNotFound() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
         HttpHeaders headers = new HttpHeaders();
@@ -423,7 +427,7 @@ public class AdminControllerIntegrationTest {
                 String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals("Tournament with ID "+110+" not found.", result.getBody());
+        assertEquals("Tournament with ID " + 110 + " not found.", result.getBody());
     }
 
     @Test
@@ -452,11 +456,11 @@ public class AdminControllerIntegrationTest {
         User savedUser = userRepository.save(originalUser);
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setElo((double) 100);
-        signUpRequest.setEmail("TestUser");
-        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
-        signUpRequest.setRole("ROLE_USER");
-        signUpRequest.setUsername("updatedUser");
+        signUpRequest.setElo((double) 110);
+        signUpRequest.setEmail("UpdatedUser");
+        signUpRequest.setPassword(passwordEncoder.encode("UpdateUser"));
+        signUpRequest.setRole("ROLE_Admin");
+        signUpRequest.setUsername("UpdatedUser");
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + JWT);
@@ -468,7 +472,12 @@ public class AdminControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertEquals("updatedUser", result.getBody().getUsername());
+
+        UserDTO resultingDTO = result.getBody();
+        assertEquals(signUpRequest.getUsername(), resultingDTO.getUsername());
+        assertEquals(signUpRequest.getElo(), resultingDTO.getElo());
+        assertEquals(signUpRequest.getEmail(), resultingDTO.getEmail());
+        assertEquals(signUpRequest.getRole(), resultingDTO.getRole());
     }
 
     @Test
@@ -511,16 +520,112 @@ public class AdminControllerIntegrationTest {
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("updatedUser");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer ");
         URI uri = new URI(baseUrl + port + urlPrefix + "/user/" + savedUser.getId());
-        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest, headers);
+        HttpEntity<SignUpRequest> updateUser = new HttpEntity<>(signUpRequest);
 
         ResponseEntity<UserDTO> result = restTemplate.exchange(
                 uri,
                 HttpMethod.PUT,
                 updateUser,
                 UserDTO.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
+    }
+
+    @Test
+    public void updateTournament_Success() throws Exception {
+        CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
+        tournamentUpdateData.setTournament_name("newName");
+        tournamentUpdateData.setDate("10/22/2011");
+        tournamentUpdateData.setSize(5);
+        tournamentUpdateData.setStatus("completed");
+        tournamentUpdateData.setCurrentSize(1);
+        tournamentUpdateData.setNoOfRounds(4);
+
+        Tournament originalTournament = new Tournament();
+        originalTournament.setTournament_name("oldName");
+        originalTournament.setDate("11/22/2011");
+        originalTournament.setSize(4);
+        originalTournament.setStatus("active");
+        originalTournament.setNoOfRounds(3);
+        Tournament savedTournament = tournamentRepository.save(originalTournament);
+
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
+
+        HttpEntity<CreateTournamentRequest> updateTournament = new HttpEntity<>(tournamentUpdateData, headers);
+
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                updateTournament,
+                TournamentDTO.class);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+
+        TournamentDTO resultingDTO = result.getBody();
+        assertEquals(tournamentUpdateData.getTournament_name(),resultingDTO.getTournamentName());
+        assertEquals(tournamentUpdateData.getDate(),resultingDTO.getDate());
+        assertEquals(tournamentUpdateData.getSize(),resultingDTO.getSize());
+        assertEquals(tournamentUpdateData.getStatus(),resultingDTO.getStatus());
+        assertEquals(tournamentUpdateData.getCurrentSize(),resultingDTO.getCurrentSize());
+        assertEquals(tournamentUpdateData.getNoOfRounds(),resultingDTO.getNoOfRounds());
+    }
+
+    @Test
+    public void updateTournament_Failure_TournamentNotFound() throws Exception {
+        CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
+        tournamentUpdateData.setTournament_name("newName");
+        tournamentUpdateData.setDate("10/22/2011");
+        tournamentUpdateData.setSize(5);
+        tournamentUpdateData.setStatus("completed");
+        tournamentUpdateData.setCurrentSize(1);
+        tournamentUpdateData.setNoOfRounds(4);
+
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/132");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
+
+        HttpEntity<CreateTournamentRequest> updateTournament = new HttpEntity<>(tournamentUpdateData, headers);
+
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                updateTournament,
+                TournamentDTO.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void updateTournament_Failure_NoAuthentication() throws Exception {
+        CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
+        tournamentUpdateData.setTournament_name("newName");
+        tournamentUpdateData.setDate("10/22/2011");
+        tournamentUpdateData.setSize(5);
+        tournamentUpdateData.setStatus("completed");
+        tournamentUpdateData.setCurrentSize(1);
+        tournamentUpdateData.setNoOfRounds(4);
+
+        Tournament originalTournament = new Tournament();
+        originalTournament.setTournament_name("oldName");
+        originalTournament.setDate("11/22/2011");
+        originalTournament.setSize(4);
+        originalTournament.setStatus("active");
+        originalTournament.setNoOfRounds(3);
+        Tournament savedTournament = tournamentRepository.save(originalTournament);
+
+        URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId());
+
+        HttpEntity<CreateTournamentRequest> updateTournament = new HttpEntity<>(tournamentUpdateData);
+
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                updateTournament,
+                TournamentDTO.class);
 
         assertEquals(HttpStatus.FOUND, result.getStatusCode());
     }

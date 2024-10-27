@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.RoundDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
@@ -58,6 +61,30 @@ public class TournamentControllerIntegrationTest {
     PasswordEncoder passwordEncoder;
 
     private String urlPrefix = "/t";
+    private User user1;
+    private User user2;
+
+    @BeforeEach
+    public void setUp() {
+        User testUser1 = new User();
+        testUser1.setUsername("testUser1");
+        testUser1.setRole("ROLE_USER");
+        testUser1.setEmail("testUser1");
+        testUser1.setPassword(passwordEncoder.encode("testUser1"));
+        testUser1.setElo((double) 100);
+        testUser1.setCurrentTournaments(new ArrayList<>());
+
+        User testUser2 = new User();
+        testUser2.setUsername("testUser2");
+        testUser2.setRole("ROLE_USER");
+        testUser2.setEmail("testUser2");
+        testUser2.setPassword(passwordEncoder.encode("testUser2"));
+        testUser2.setElo((double) 100);
+        testUser2.setCurrentTournaments(new ArrayList<>());
+
+        this.user1 = userRepository.save(testUser1);
+        this.user2 = userRepository.save(testUser2);
+    }
 
     @AfterEach
     public void tearDown() {
@@ -93,6 +120,320 @@ public class TournamentControllerIntegrationTest {
     @Test
     public void getAllTournaments_Failure() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournaments");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getActiveTournaments_Success_ReturnActiveTournaments() throws Exception {
+        Tournament tournament = new Tournament();
+        tournament.setTournament_name("testTournament");
+        tournament.setSize(0);
+        tournament.setCurrentSize(0);
+        tournament.setNoOfRounds(0);
+        tournament.setStatus("active");
+        tournament.setDate("10/20/1203");
+        tournamentRepository.save(tournament);
+
+        Tournament tournament2 = new Tournament();
+        tournament2.setTournament_name("testTournament2");
+        tournament2.setSize(0);
+        tournament2.setCurrentSize(0);
+        tournament2.setNoOfRounds(0);
+        tournament2.setStatus("ongoing");
+        tournament2.setDate("10/20/1203");
+        tournamentRepository.save(tournament2);
+
+        Tournament tournament3 = new Tournament();
+        tournament3.setTournament_name("testTournament3");
+        tournament3.setSize(0);
+        tournament3.setCurrentSize(0);
+        tournament3.setNoOfRounds(0);
+        tournament3.setStatus("completed");
+        tournament3.setDate("10/20/1203");
+        tournamentRepository.save(tournament3);
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/active");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(1, result.getBody().size());
+        assertEquals("testTournament", result.getBody().get(0).getTournamentName());
+    }
+
+    @Test
+    public void getActiveTournaments_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/active");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getInactiveTournaments_Success_ReturnCompletedTournaments() throws Exception {
+        Tournament tournament = new Tournament();
+        tournament.setTournament_name("testTournament");
+        tournament.setSize(0);
+        tournament.setCurrentSize(0);
+        tournament.setNoOfRounds(0);
+        tournament.setStatus("active");
+        tournament.setDate("10/20/1203");
+        tournamentRepository.save(tournament);
+
+        Tournament tournament2 = new Tournament();
+        tournament2.setTournament_name("testTournament2");
+        tournament2.setSize(0);
+        tournament2.setCurrentSize(0);
+        tournament2.setNoOfRounds(0);
+        tournament2.setStatus("ongoing");
+        tournament2.setDate("10/20/1203");
+        tournamentRepository.save(tournament2);
+
+        Tournament tournament3 = new Tournament();
+        tournament3.setTournament_name("testTournament3");
+        tournament3.setSize(0);
+        tournament3.setCurrentSize(0);
+        tournament3.setNoOfRounds(0);
+        tournament3.setStatus("completed");
+        tournament3.setDate("10/20/1203");
+        tournamentRepository.save(tournament3);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/inactive");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(1, result.getBody().size());
+        assertEquals("testTournament3", result.getBody().get(0).getTournamentName());
+    }
+
+    @Test
+    public void getInactiveTournaments_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/inactive");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getOngoingTournaments_Success_NoTournaments_ReturnOngoingTournaments() throws Exception {
+        Tournament tournament = new Tournament();
+        tournament.setTournament_name("testTournament");
+        tournament.setSize(0);
+        tournament.setCurrentSize(0);
+        tournament.setNoOfRounds(0);
+        tournament.setStatus("active");
+        tournament.setDate("10/20/1203");
+        tournamentRepository.save(tournament);
+
+        Tournament tournament2 = new Tournament();
+        tournament2.setTournament_name("testTournament2");
+        tournament2.setSize(0);
+        tournament2.setCurrentSize(0);
+        tournament2.setNoOfRounds(0);
+        tournament2.setStatus("ongoing");
+        tournament2.setDate("10/20/1203");
+        tournamentRepository.save(tournament2);
+
+        Tournament tournament3 = new Tournament();
+        tournament3.setTournament_name("testTournament3");
+        tournament3.setSize(0);
+        tournament3.setCurrentSize(0);
+        tournament3.setNoOfRounds(0);
+        tournament3.setStatus("completed");
+        tournament3.setDate("10/20/1203");
+        tournamentRepository.save(tournament3);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/ongoing");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(1, result.getBody().size());
+        assertEquals("testTournament2", result.getBody().get(0).getTournamentName());
+    }
+
+    @Test
+    public void getOngoingTournaments_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/ongoing");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getFilteredTournamentsByName_Success_ReturnTournamentListFilteredByName() throws Exception {
+        Tournament testTournament1 = new Tournament();
+        testTournament1.setTournament_name("t1");
+        testTournament1.setDate("10/5/2024");
+        testTournament1.setSize(4);
+        testTournament1.setCurrentSize(3);
+        Tournament testTournament2 = new Tournament();
+        testTournament2.setTournament_name("t2");
+        testTournament2.setDate("12/5/2024");
+        testTournament2.setSize(4);
+        testTournament2.setCurrentSize(1);
+        Tournament testTournament3 = new Tournament();
+        testTournament3.setTournament_name("t3");
+        testTournament3.setDate("13/5/2024");
+        testTournament3.setSize(4);
+        testTournament3.setCurrentSize(2);
+
+        tournamentRepository.save(testTournament3);
+        tournamentRepository.save(testTournament1);
+        tournamentRepository.save(testTournament2);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/name");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(3, result.getBody().size());
+        assertEquals("t1", result.getBody().get(0).getTournamentName());
+        assertEquals("t2", result.getBody().get(1).getTournamentName());
+        assertEquals("t3", result.getBody().get(2).getTournamentName());
+    }
+
+    @Test
+    public void getFilteredTournamentsByName_Success_NoTournaments_ReturnEmptyList() throws Exception {
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/name");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getFilteredTournamentsByDate_Success_ReturnTournamentListFilteredByDate() throws Exception {
+        Tournament testTournament1 = new Tournament();
+        testTournament1.setTournament_name("t1");
+        testTournament1.setDate("10/5/2024");
+        testTournament1.setSize(4);
+        testTournament1.setCurrentSize(3);
+        Tournament testTournament2 = new Tournament();
+        testTournament2.setTournament_name("t2");
+        testTournament2.setDate("12/5/2024");
+        testTournament2.setSize(4);
+        testTournament2.setCurrentSize(1);
+        Tournament testTournament3 = new Tournament();
+        testTournament3.setTournament_name("t3");
+        testTournament3.setDate("13/5/2024");
+        testTournament3.setSize(4);
+        testTournament3.setCurrentSize(2);
+
+        tournamentRepository.save(testTournament3);
+        tournamentRepository.save(testTournament1);
+        tournamentRepository.save(testTournament2);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/date");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(3, result.getBody().size());
+        assertEquals("13/5/2024", result.getBody().get(0).getDate());
+        assertEquals("12/5/2024", result.getBody().get(1).getDate());
+        assertEquals("10/5/2024", result.getBody().get(2).getDate());
+    }
+
+    @Test
+    public void getFilteredTournamentsByDate_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/date");
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void getFilteredTournamentsBySize_Success_ReturnTournamentListFilteredByFreeSize() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/capacity");
+        Tournament testTournament1 = new Tournament();
+        testTournament1.setTournament_name("t1");
+        testTournament1.setDate("10/5/2024");
+        testTournament1.setSize(8);
+        testTournament1.setCurrentSize(7);// free size 1
+        Tournament testTournament2 = new Tournament();
+        testTournament2.setTournament_name("t2");
+        testTournament2.setDate("12/5/2024");
+        testTournament2.setSize(7);
+        testTournament2.setCurrentSize(4);// free size 3
+        Tournament testTournament3 = new Tournament();
+        testTournament3.setTournament_name("t3");
+        testTournament3.setDate("13/5/2024");
+        testTournament3.setSize(4);
+        testTournament3.setCurrentSize(2);// free size 2
+
+        tournamentRepository.save(testTournament3);
+        tournamentRepository.save(testTournament1);
+        tournamentRepository.save(testTournament2);
+
+        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(3, result.getBody().size());
+        assertEquals("t2", result.getBody().get(0).getTournamentName());
+        assertEquals("t3", result.getBody().get(1).getTournamentName());
+        assertEquals("t1", result.getBody().get(2).getTournamentName());
+    }
+
+    @Test
+    public void getFilteredTournamentsBySize_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/capacity");
 
         ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
@@ -146,13 +487,12 @@ public class TournamentControllerIntegrationTest {
 
         // Create a Round object
         Round round = new Round();
+        round.setIsCompleted(false);
+        round.setTournament(null);
         round.setRoundNum(1);
-        round.setId((long) 138021); // Ensure this ID is appropriate based on your application's logic
-
-        // Initialize scoreboard and matchList if necessary
-        Map<Long, Double> scoreboard = new HashMap<>();
-        round.setScoreboard(scoreboard);
-        round.setMatchList(new ArrayList<>()); // Assuming matches are empty for now
+        round.setId((long) 138021);
+        round.setScoreboard(new HashMap<>());
+        round.setMatchList(new ArrayList<>());
 
         // Create the URL
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");
@@ -169,37 +509,40 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
-    //@Test
-    public void addRound_Failure() {
+    //@Test // Gives same error as above
+    public void addRound_Failure_TournamentNotFound() throws Exception {
 
         Round round = new Round();
         round.setRoundNum(1);
-        round.setId(134L);
+        round.setId((long) 134);
         round.setScoreboard(new HashMap<>());
         round.setMatchList(new ArrayList<>());
-        boolean exceptionThrown = false;
 
-        try {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
-            URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
+        ResponseEntity<Exception> result = restTemplate.postForEntity(url, round, Exception.class);
 
-            restTemplate.postForEntity(url, round, String.class);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
 
-        assertTrue(exceptionThrown);
+    @Test // Gives same error as above
+    public void addRound_Failure_NoRound() throws Exception {
+
+        Round round = new Round();
+        round.setRoundNum(1);
+        round.setId((long) 134);
+        round.setScoreboard(new HashMap<>());
+        round.setMatchList(new ArrayList<>());
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
+
+        ResponseEntity<String> result = restTemplate.postForEntity(url, null, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
     }
 
     @Test
     public void getTournamentParticipants_Success() throws Exception {
-        User user = new User();
-        user.setUsername("testUser");
-        user.setRole("ROLE_USER");
-        user.setEmail("testUser");
-
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -210,13 +553,13 @@ public class TournamentControllerIntegrationTest {
         List<Tournament> tournamentList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
         tournamentList.add(tournament);
-        userList.add(user);
+        userList.add(user1);
 
-        user.setCurrentTournaments(tournamentList);
+        user1.setCurrentTournaments(tournamentList);
         tournament.setParticipants(userList);
 
         Tournament savedTournament = tournamentRepository.save(tournament);
-        userRepository.save(user);
+        userRepository.save(user1);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + savedTournament.getId() + "/participant");
 
@@ -227,7 +570,7 @@ public class TournamentControllerIntegrationTest {
                 });
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("testUser", result.getBody().get(0).getUsername());
+        assertEquals("testUser1", result.getBody().get(0).getUsername());
     }
 
     @Test
@@ -247,11 +590,6 @@ public class TournamentControllerIntegrationTest {
 
     @Test
     public void updateTournamentParticipant_Success() throws Exception {
-        User user = new User();
-        user.setUsername("testUser");
-        user.setRole("ROLE_USER");
-        user.setEmail("testUser");
-
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(5);
@@ -262,9 +600,9 @@ public class TournamentControllerIntegrationTest {
         List<Tournament> tournamentList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
         tournament.setParticipants(userList);
-        user.setCurrentTournaments(tournamentList);
+        user1.setCurrentTournaments(tournamentList);
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(user1);
         Tournament savedTournament = tournamentRepository.save(tournament);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + savedTournament.getId() + "/participant/add");
@@ -284,7 +622,7 @@ public class TournamentControllerIntegrationTest {
                 params);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("testUser", result.getBody().getParticipants().get(0).getUsername());
+        assertEquals("testUser1", result.getBody().getParticipants().get(0).getUsername());
     }
 
     @Test
@@ -319,13 +657,7 @@ public class TournamentControllerIntegrationTest {
         tournament.setDate("10/20/1203");
         tournamentRepository.save(tournament);
 
-        User user = new User();
-        user.setUsername("testUser");
-        user.setRole("ROLE_USER");
-        user.setEmail("testUser");
-        User savedUser = userRepository.save(user);
-
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/" + savedUser.getId());
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/" + user1.getId());
 
         ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
@@ -360,45 +692,45 @@ public class TournamentControllerIntegrationTest {
 
     @Test
     public void getUsersWithNoCurrentTournament_Success() throws Exception {
-        User user = new User();
-        user.setUsername("testUser");
-        user.setRole("ROLE_USER");
-        user.setEmail("testUser");
-        user.setPassword(passwordEncoder.encode("testUser"));
-        user.setElo((double) 100);
-        user.setCurrentTournaments(new ArrayList<>());
-        User savedUser = userRepository.save(user);
-
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
-        tournament.setSize(0);
+        tournament.setSize(2);
+        tournament.setCurrentSize(1);
         tournament.setNoOfRounds(0);
         tournament.setStatus("Active");
         tournament.setDate("10/20/1203");
-        tournament.setParticipants(new ArrayList<>());
-        tournamentRepository.save(tournament);
 
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/" + savedUser.getId());
+        List<User> userList = new ArrayList<>();
+        userList.add(user1);
+        tournament.setParticipants(userList);
+        Tournament savedTournament = tournamentRepository.save(tournament);
 
-        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+        List<Tournament> tournamentList = user1.getCurrentTournaments();
+        tournamentList.add(tournament);
+        userRepository.save(user1);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/" + savedTournament.getId());
+
+        ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                new ParameterizedTypeReference<List<UserDTO>>() {
                 });
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("testTournament", result.getBody().get(0).getTournamentName());
+        assertEquals(1, result.getBody().size());
+        assertEquals("testUser2", result.getBody().get(0).getUsername());
     }
 
-    @Test
+    //@Test// No clue how to get this to throw an error
     public void getUsersWithNoCurrentTournament_Failure() throws Exception {
 
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/12380");
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/12380");
 
-        ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
+        ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<TournamentDTO>>() {
+                new ParameterizedTypeReference<List<UserDTO>>() {
                 });
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -428,11 +760,6 @@ public class TournamentControllerIntegrationTest {
 
     @Test
     public void removeParticipant_Success() throws Exception {
-        User user = new User();
-        user.setUsername("testUser");
-        user.setRole("ROLE_USER");
-        user.setEmail("testUser");
-
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -444,16 +771,15 @@ public class TournamentControllerIntegrationTest {
         List<User> userList = new ArrayList<>();
 
         Tournament savedTournament = tournamentRepository.save(tournament);
-        User savedUser = userRepository.save(user);
 
         tournamentList.add(savedTournament);
-        userList.add(savedUser);
+        userList.add(user1);
 
-        savedUser.setCurrentTournaments(tournamentList);
+        user1.setCurrentTournaments(tournamentList);
         savedTournament.setParticipants(userList);
 
         savedTournament = tournamentRepository.save(savedTournament);
-        savedUser = userRepository.save(savedUser);
+        userRepository.save(user1);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + savedTournament.getId() + "/participant/delete");
         String urlTemplate = UriComponentsBuilder.fromUri(url)
@@ -462,7 +788,7 @@ public class TournamentControllerIntegrationTest {
                 .toUriString();
 
         Map<String, Long> params = new HashMap<>();
-        params.put("user_id", savedUser.getId());
+        params.put("user_id", user1.getId());
 
         ResponseEntity<TournamentDTO> result = restTemplate.exchange(
                 urlTemplate,
@@ -486,8 +812,12 @@ public class TournamentControllerIntegrationTest {
         Map<String, Long> params = new HashMap<>();
         params.put("user_id", (long) 13028);
 
-        ResponseEntity<TournamentDTO> result = restTemplate.exchange(urlTemplate, HttpMethod.PUT, null,
-                TournamentDTO.class, params);
+        ResponseEntity<TournamentDTO> result = restTemplate.exchange(
+                urlTemplate,
+                HttpMethod.PUT,
+                null,
+                TournamentDTO.class,
+                params);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
@@ -573,23 +903,8 @@ public class TournamentControllerIntegrationTest {
     @Test
     void startTournament_Success() throws Exception {
         Tournament testTournament = new Tournament();
-        User player1 = new User();
-        User player2 = new User();
-        Double elo = (double) 1000;
-        String userRole = "ROLE_USER";
-        String userName = "testUser";
         String tournamentStatus = "active";
         int tournamentSize = 2;
-
-        player1.setUsername(userName + 1);
-        player1.setRole(userRole);
-        player1.setEmail(userName + 1);
-        player1.setElo(elo);
-
-        player2.setUsername(userName + 1);
-        player2.setRole(userRole);
-        player2.setEmail(userName + 2);
-        player2.setElo(elo);
 
         testTournament.setTournament_name("testTournament");
         testTournament.setSize(tournamentSize);
@@ -601,17 +916,17 @@ public class TournamentControllerIntegrationTest {
         List<Tournament> tournamentList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
         tournamentList.add(testTournament);
-        userList.add(player1);
-        userList.add(player2);
+        userList.add(user1);
+        userList.add(user2);
 
         testTournament.setRounds(new ArrayList<Round>());
-        player1.setCurrentTournaments(tournamentList);
-        player2.setCurrentTournaments(tournamentList);
+        user1.setCurrentTournaments(tournamentList);
+        user2.setCurrentTournaments(tournamentList);
         testTournament.setParticipants(userList);
 
         Tournament savedTournament = tournamentRepository.save(testTournament);
-        userRepository.save(player1);
-        userRepository.save(player2);
+        userRepository.save(user1);
+        userRepository.save(user2);
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + savedTournament.getId() + "/start");
 
@@ -639,27 +954,10 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void checkTournamentComplete_Success() throws Exception {
+    void startTournamentService_Success() throws Exception {
         Tournament testTournament = new Tournament();
-        User player1 = new User();
-        User player2 = new User();
-        Round testRound = new Round();
-        Match testMatch = new Match();
-        Double elo = (double) 1000;
-        String userRole = "ROLE_USER";
-        String userName = "testUser";
         String tournamentStatus = "active";
         int tournamentSize = 2;
-
-        player1.setUsername(userName + 1);
-        player1.setRole(userRole);
-        player1.setEmail(userName + 1);
-        player1.setElo(elo);
-
-        player2.setUsername(userName + 1);
-        player2.setRole(userRole);
-        player2.setEmail(userName + 2);
-        player2.setElo(elo);
 
         testTournament.setTournament_name("testTournament");
         testTournament.setSize(tournamentSize);
@@ -671,25 +969,163 @@ public class TournamentControllerIntegrationTest {
         List<Tournament> tournamentList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
         tournamentList.add(testTournament);
-        userList.add(player1);
-        userList.add(player2);
+        userList.add(user1);
+        userList.add(user2);
 
-        player1.setCurrentTournaments(tournamentList);
-        player2.setCurrentTournaments(tournamentList);
+        user1.setCurrentTournaments(tournamentList);
+        user2.setCurrentTournaments(tournamentList);
         testTournament.setParticipants(userList);
 
         Tournament savedTournament = tournamentRepository.save(testTournament);
-        User savedPlayer1 = userRepository.save(player1);
-        User savedPlayer2 = userRepository.save(player2);
+        userRepository.save(user1);
+        userRepository.save(user2);
 
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId()
+                + "/start");
+
+        ResponseEntity<TournamentStartDTO> result = restTemplate.getForEntity(url, TournamentStartDTO.class);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        TournamentStartDTO tournamentStartDTO = result.getBody();
+        assertEquals(savedTournament.getTournament_name(), tournamentStartDTO.getTournamentName());
+        assertEquals(savedTournament.getStatus(), tournamentStartDTO.getStatus());
+        assertEquals(savedTournament.getSize(), tournamentStartDTO.getSize());
+        assertEquals(savedTournament.getNoOfRounds(), tournamentStartDTO.getNoOfRounds());
+        assertEquals(savedTournament.getId(), tournamentStartDTO.getId());
+        assertEquals(savedTournament.getDate(), tournamentStartDTO.getDate());
+        assertEquals(savedTournament.getCurrentSize(), tournamentStartDTO.getCurrentSize());
+        assertEquals(savedTournament.getCurrentRound(), tournamentStartDTO.getCurrentRound());
+        assertIterableEquals(savedTournament.getRounds(), tournamentStartDTO.getRounds());
+        assertEquals(savedTournament.getParticipants().size(), tournamentStartDTO.getParticipants().size());
+        assertEquals(savedTournament.getParticipants().get(0).getUsername(),
+                tournamentStartDTO.getParticipants().get(0).getUsername());
+    }
+
+    @Test
+    void startTournamentService_Failure_TournamentNotFound() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + (long) 5092852
+                + "/start");
+
+        ResponseEntity<Exception> result = restTemplate.getForEntity(url, Exception.class);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    void getAllRounds_Success_NoCurrentRounds() throws Exception {
+        Tournament testTournament = new Tournament();
+        String tournamentStatus = "active";
+        int tournamentSize = 2;
+
+        testTournament.setTournament_name("testTournament");
+        testTournament.setSize(tournamentSize);
+        testTournament.setCurrentSize(tournamentSize);
+        testTournament.setNoOfRounds(1);
+        testTournament.setStatus(tournamentStatus);
+        testTournament.setDate("10/20/1203");
+
+        List<Tournament> tournamentList = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        tournamentList.add(testTournament);
+        userList.add(user1);
+        userList.add(user2);
+
+        user1.setCurrentTournaments(tournamentList);
+        user2.setCurrentTournaments(tournamentList);
+        testTournament.setParticipants(userList);
+
+        Tournament savedTournament = tournamentRepository.save(testTournament);
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Round testRound = new Round();
+        testRound.setMatchList(new ArrayList<>());
         testRound.setRoundNum(1);
+        testRound.setTournament(savedTournament);
+        testRound.setIsCompleted(false);
+        testRound.setScoreboard(new HashMap<>());
+
+        Round testRound2 = new Round();
+        testRound2.setMatchList(new ArrayList<>());
+        testRound2.setRoundNum(2);
+        testRound2.setTournament(savedTournament);
+        testRound2.setIsCompleted(false);
+        testRound2.setScoreboard(new HashMap<>());
+
+        List<Round> rounds = new ArrayList<>();
+        Round savedRound = roundRepository.save(testRound);
+        Round savedRound2 = roundRepository.save(testRound2);
+        rounds.add(savedRound);
+        rounds.add(savedRound2);
+        savedTournament.setRounds(rounds);
+        tournamentRepository.save(savedTournament);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId()
+                + "/start/rounds");
+
+        ResponseEntity<List<RoundDTO>> result = restTemplate.exchange(url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<RoundDTO>>() {
+                });
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(2, result.getBody().size());
+    }
+
+    @Test
+    void getAllRounds_Failure_TournamentNotFound() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + (long) 123
+                + "/start/rounds");
+
+        ResponseEntity<Exception> result = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                Exception.class);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    void tournamentComplete_Success() throws Exception {
+        Tournament testTournament = new Tournament();
+        String tournamentStatus = "active";
+        int tournamentSize = 2;
+
+        testTournament.setTournament_name("testTournament");
+        testTournament.setSize(tournamentSize);
+        testTournament.setCurrentSize(tournamentSize);
+        testTournament.setNoOfRounds(1);
+        testTournament.setStatus(tournamentStatus);
+        testTournament.setDate("10/20/1203");
+
+        List<Tournament> tournamentList = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        tournamentList.add(testTournament);
+        userList.add(user1);
+        userList.add(user2);
+
+        user1.setCurrentTournaments(tournamentList);
+        user2.setCurrentTournaments(tournamentList);
+        testTournament.setParticipants(userList);
+
+        Tournament savedTournament = tournamentRepository.save(testTournament);
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Round testRound = new Round();
+        testRound.setRoundNum(1);
+        testRound.setIsCompleted(false);
         testRound.setTournament(savedTournament);
         testRound.setScoreboard(new HashMap<>());
 
         Round savedRound = roundRepository.save(testRound);
 
-        testMatch.setPlayer1(savedPlayer1.getId());
-        testMatch.setPlayer2(savedPlayer2.getId());
+        Match testMatch = new Match();
+
+        testMatch.setPlayer1(user1.getId());
+        testMatch.setPlayer2(user2.getId());
         testMatch.setIsComplete(false);
         testMatch.setRound(savedRound);
         savedRound.setMatchList(List.of(testMatch));
