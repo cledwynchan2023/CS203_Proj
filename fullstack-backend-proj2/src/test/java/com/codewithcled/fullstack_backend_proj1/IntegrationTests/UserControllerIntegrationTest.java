@@ -55,6 +55,7 @@ public class UserControllerIntegrationTest {
         tournamentRepository.deleteAll();
     }
 
+    @SuppressWarnings("null")
     @Test
     public void getAllUsers_Success() throws Exception{
         User user = new User();

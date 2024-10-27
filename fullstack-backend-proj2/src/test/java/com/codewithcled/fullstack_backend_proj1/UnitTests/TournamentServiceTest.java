@@ -54,19 +54,6 @@ public class TournamentServiceTest {
         verify(tournamentRepository).findAll();
     }
 
-    /*
-     * public void findTournamentByName(){
-     * String name="test";
-     * when(tournamentRepository.findByTournamentName(name)).thenReturn(new
-     * Tournament());
-     * 
-     * Tournament result = tournamentService.findTournamentByName(name);
-     * 
-     * assertNotNull(result);
-     * verify(tournamentRepository).findByTournamentName(name);
-     * }
-     */
-
     @Test
     void getTournamentParticipants_Success_returnListUser() throws Exception {
         Long id = (long) 500;
@@ -428,18 +415,21 @@ public class TournamentServiceTest {
         Long tId = (long) 11;
         User testUser = new User();
         testUser.setId(uId);
-        List<Tournament> resultList = new ArrayList<Tournament>();
+        List<Tournament> tournamentList = new ArrayList<Tournament>();
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
         testTournament.setTournament_name("testTournament");
-        resultList.add(testTournament);
+        Tournament notInTournament=new Tournament();
+        notInTournament.setId(tId+1);
+        notInTournament.setTournament_name("NotInTournament");
+        tournamentList.add(testTournament);
 
-        when(tournamentRepository.findAll()).thenReturn(resultList);
+        when(tournamentRepository.findAll()).thenReturn(tournamentList);
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
         List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
 
-        assertIterableEquals(resultList, result);
+        assertIterableEquals(List.of(testTournament), result);
         verify(tournamentRepository).findAll();
 
     }
@@ -455,11 +445,10 @@ public class TournamentServiceTest {
         testTournament.setId(tId);
         testTournament.setTournament_name("testTournament");
         resultList.add(testTournament);
-        Optional<User> returnUser = Optional.empty();
         boolean exceptionThrown = false;
 
         when(tournamentRepository.findAll()).thenReturn(resultList);
-        when(userRepository.findById(uId)).thenReturn(returnUser);
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
         try {
             tournamentService.getTournamentsWithNoCurrentUser(uId);
@@ -680,6 +669,8 @@ public class TournamentServiceTest {
         assertEquals("t1", result.get(0).getTournament_name());
         assertEquals("t2", result.get(1).getTournament_name());
         assertEquals("t3", result.get(2).getTournament_name());
+
+        verify(tournamentRepository).findAll();
     }
 
     @Test
@@ -715,6 +706,48 @@ public class TournamentServiceTest {
         assertEquals("t3", result.get(0).getTournament_name()); // Most recent date
         assertEquals("t2", result.get(1).getTournament_name());
         assertEquals("t1", result.get(2).getTournament_name()); // Oldest date
+
+        verify(tournamentRepository).findAll();
+    }
+
+    @Test
+    void getFilteredTournamentsByDate_Failure_OneTournamentHasIncorrectDateFormat() throws Exception {
+        Tournament testTournament1 = new Tournament();
+        testTournament1.setTournament_name("t1");
+        testTournament1.setDate("10/5/2024");
+        testTournament1.setSize(4);
+        testTournament1.setCurrentSize(3);
+
+        Tournament testTournament2 = new Tournament();
+        testTournament2.setTournament_name("t2");
+        testTournament2.setDate("1252024");//Wrong Date Format input
+        testTournament2.setSize(4);
+        testTournament2.setCurrentSize(1);
+
+        Tournament testTournament3 = new Tournament();
+        testTournament3.setTournament_name("t3");
+        testTournament3.setDate("13/5/2024");
+        testTournament3.setSize(4);
+        testTournament3.setCurrentSize(2);
+
+        List<Tournament> tournamentList = new ArrayList<>();
+        tournamentList.add(testTournament3);
+        tournamentList.add(testTournament1);
+        tournamentList.add(testTournament2);
+
+        when(tournamentRepository.findAll()).thenReturn(tournamentList);
+
+        boolean exceptionThrown=false;
+        try {
+            tournamentService.getFilteredTournamentsByDate();
+        } catch (RuntimeException e) {
+            // TODO: handle exception
+            assertEquals("java.text.ParseException: Unparseable date: \"1252024\"",e.getMessage());
+            exceptionThrown=true;
+        }
+        assertTrue(exceptionThrown);
+
+        verify(tournamentRepository).findAll();
     }
 
     @Test
@@ -751,6 +784,7 @@ public class TournamentServiceTest {
         assertEquals("t2", result.get(0).getTournament_name());
         assertEquals("t3", result.get(1).getTournament_name());
         assertEquals("t1", result.get(2).getTournament_name());
+        verify(tournamentRepository).findAll();
     }
 
     @Test
