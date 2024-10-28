@@ -133,6 +133,41 @@ public class TournamentServiceTest {
     }
 
     @Test
+    void updateUserParticipating_Success_ParticipantAlreadyInside() throws Exception {
+        Long uIdT = (long) 11;
+        Long tId = (long) 11;
+        Tournament testTournament = new Tournament();
+        testTournament.setSize(5);
+        testTournament.setCurrentSize(1);
+    
+        User testUser = new User();
+        testUser.setId(uIdT);
+        testUser.setUsername("TestUser");
+        testTournament.addParticipant(testUser);
+        testUser.setCurrentTournaments(List.of(testTournament));
+
+        List<User> finalParticipantList = new ArrayList<User>();
+        List<Tournament> finalTournamentList = new ArrayList<Tournament>();
+        finalParticipantList.add(testUser);
+        finalTournamentList.add(testTournament);
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(uIdT)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
+
+        Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
+
+        assertIterableEquals(finalParticipantList, result.getParticipants());
+        assertIterableEquals(finalTournamentList, testUser.getCurrentTournaments());
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uIdT);
+        verify(userRepository).save(testUser);
+        verify(tournamentRepository).save(testTournament);
+
+    }
+
+    @Test
     void updateUserParticipating_Failure_NoTournament_returnError() {
         Long uIdF = (long) 10;
         Long uIdT = (long) 11;
@@ -385,6 +420,36 @@ public class TournamentServiceTest {
     }
 
     @Test
+    void updateTournament_Success_AllNull() throws Exception {
+        Long tId = (long) 11;
+        CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
+        tournamentUpdateData.setCurrentSize(null);
+        tournamentUpdateData.setNoOfRounds(null);
+
+        Tournament originalTournament = new Tournament();
+        originalTournament.setTournament_name("oldName");
+        originalTournament.setDate("11/22/2011");
+        originalTournament.setSize(4);
+        originalTournament.setStatus("active");
+        originalTournament.setNoOfRounds(3);
+        Optional<Tournament> returnTournament = Optional.of(originalTournament);
+
+        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+        when(tournamentRepository.save(originalTournament)).thenReturn(originalTournament);
+
+        Tournament result = tournamentService.updateTournament(tId, tournamentUpdateData);
+
+        assertEquals(originalTournament.getTournament_name(), result.getTournament_name());
+        assertEquals(originalTournament.getDate(), result.getDate());
+        assertEquals(originalTournament.getSize(), result.getSize());
+        assertEquals(originalTournament.getStatus(), result.getStatus());
+        assertEquals(originalTournament.getNoOfRounds(), result.getNoOfRounds());
+        verify(tournamentRepository).findById(tId);
+        verify(tournamentRepository).save(originalTournament);
+
+    }
+
+    @Test
     void updateTournament_Failure_TournamentNotFound_ReturnError() {
         Long tId = (long) 11;
         CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
@@ -423,13 +488,42 @@ public class TournamentServiceTest {
         notInTournament.setId(tId+1);
         notInTournament.setTournament_name("NotInTournament");
         tournamentList.add(testTournament);
+        tournamentList.add(notInTournament);
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
         List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
 
-        assertIterableEquals(List.of(testTournament), result);
+        assertIterableEquals(List.of(testTournament,notInTournament), result);
+        verify(tournamentRepository).findAll();
+
+    }
+
+    @Test
+    void getTournamentsWithNoCurrentUser_Success_DoNotReturnIfUserIsAlreadyParticipant() throws Exception {
+        Long uId = (long) 10;
+        Long tId = (long) 11;
+        User testUser = new User();
+        testUser.setId(uId);
+        List<Tournament> tournamentList = new ArrayList<Tournament>();
+        Tournament testTournament = new Tournament();
+        testTournament.setId(tId);
+        testTournament.setTournament_name("testTournament");
+        testTournament.addParticipant(testUser);
+
+        Tournament notInTournament=new Tournament();
+        notInTournament.setId(tId+1);
+        notInTournament.setTournament_name("NotInTournament");
+        tournamentList.add(testTournament);
+        tournamentList.add(notInTournament);
+
+        when(tournamentRepository.findAll()).thenReturn(tournamentList);
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
+
+        List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
+
+        assertIterableEquals(List.of(notInTournament), result);
         verify(tournamentRepository).findAll();
 
     }
@@ -506,6 +600,8 @@ public class TournamentServiceTest {
 
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
+        Tournament testTournament2=new Tournament();
+        testTournament2.setId(tId+1);
         List<Tournament> tournamentList = new ArrayList<Tournament>();
         tournamentList.add(testTournament);
 
@@ -517,12 +613,26 @@ public class TournamentServiceTest {
 
         User tUser2 = new User();
         tUser2.setRole("ROLE_USER");
+        tUser2.setCurrentTournaments(List.of(testTournament2));
         tUser2.setUsername("tUser2");
         tUser2.setId(uId2);
+
+        User tUser3 = new User();
+        tUser3.setRole("ROLE_ADMIN");
+        tUser3.setUsername("tADMIN");
+        tUser3.setCurrentTournaments(tournamentList);
+        tUser3.setId(uId2);
+
+        User tUser4 = new User();
+        tUser4.setUsername("tNULL");
+        tUser4.setId(uId2);
+        tUser4.setCurrentTournaments(tournamentList);
 
         List<User> userList = new ArrayList<User>();
         userList.add(tUser1);
         userList.add(tUser2);
+        userList.add(tUser3);
+        userList.add(tUser4);
 
         when(userRepository.findAll()).thenReturn(userList);
 
@@ -741,7 +851,6 @@ public class TournamentServiceTest {
         try {
             tournamentService.getFilteredTournamentsByDate();
         } catch (RuntimeException e) {
-            // TODO: handle exception
             assertEquals("java.text.ParseException: Unparseable date: \"1252024\"",e.getMessage());
             exceptionThrown=true;
         }

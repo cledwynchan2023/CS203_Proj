@@ -107,9 +107,29 @@ public class EloRatingServiceTest {
     }
 
     @Test
-    void EloCalculation_InvalidElo_ReturnIllegalArgumentException() {
+    void EloCalculation_InvalidElo1_ReturnIllegalArgumentException() {
         int elo1 = -1;
         int elo2 = 1000;
+        int outcome = 1;
+        boolean exceptionThrown=false;
+
+        try {
+
+            EloRatingService.EloCalculation(elo1, elo2, outcome);
+
+        } catch (IllegalArgumentException e) {
+
+            assertEquals("Invalid elo values", e.getMessage());
+            exceptionThrown=true;
+        }
+
+        assertTrue(exceptionThrown);
+    }
+
+    @Test
+    void EloCalculation_InvalidElo2_ReturnIllegalArgumentException() {
+        int elo1 = 1000;
+        int elo2 = -1;
         int outcome = 1;
         boolean exceptionThrown=false;
 

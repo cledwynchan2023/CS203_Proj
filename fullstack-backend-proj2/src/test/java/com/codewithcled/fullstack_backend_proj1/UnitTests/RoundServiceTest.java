@@ -96,6 +96,49 @@ public class RoundServiceTest {
     }
 
     @Test
+    void createFirstRound_Success_EloSwapped() throws Exception {
+        Long tId = (long) 132;
+        Tournament testTournament = new Tournament();
+        testTournament.setId(tId);
+        Round testRound = new Round();
+        User testUser1 = new User();
+        testUser1.setId(tId + 1);
+        testUser1.setElo((double) 13252);
+        User testUser2 = new User();
+        testUser2.setId(tId + 2);
+        testUser2.setElo((double) 13232);
+        List<User> participants = List.of(testUser1, testUser2);
+        testTournament.setParticipants(participants);
+        Match testMatch = new Match();
+        testRound.setMatchList(List.of(testMatch));
+
+        // Arrange
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(matchService.createMatch(testUser2, testUser1)).thenReturn(new Match());//Users swap
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> {
+            // Capture the round and return it (to avoid null pointer)
+            return invocation.getArgument(0);
+        });
+
+        // Act
+        Round round = roundService.createFirstRound(tId);
+
+        // Assert
+        assertNotNull(round);
+        assertEquals(1, round.getRoundNum());
+        assertEquals(testTournament, round.getTournament());
+        assertEquals(1, round.getMatchList().size());
+        assertEquals(0.0, round.getScoreboard().get(testUser1.getId()));
+        assertEquals(0.0, round.getScoreboard().get(testUser2.getId()));
+
+        // Verify interactions
+        verify(tournamentRepository).findById(tId);
+        verify(roundRepository).save(any(Round.class));
+        verify(matchRepository).save(any(Match.class));
+
+    }
+
+    @Test
     void createFirstRound_Failure_TournamentNotFound() throws Exception {
         Long tId = (long) 132;
 
@@ -238,6 +281,96 @@ public class RoundServiceTest {
     }
 
     @Test
+    void createNextRound_Success_ScoreboardSort() throws Exception {
+        Long tId = (long) 132;
+        Tournament testTournament = new Tournament();
+        testTournament.setId(tId);
+        Round testRound = new Round();
+        Round prevRound = new Round();
+        User testUser1 = new User();
+        testUser1.setId(tId + 1);
+        testUser1.setElo((double) 13232);
+        User testUser2 = new User();
+        testUser2.setId(tId + 2);
+        testUser2.setElo((double) 13232);
+        List<User> participants = List.of(testUser1, testUser2);
+        testTournament.setParticipants(participants);
+        Match testMatch = new Match();
+        testRound.setMatchList(List.of(testMatch));
+        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
+        scoreboard.put(tId + 1, 1.0);
+        scoreboard.put(tId + 2, 2.0);
+        prevRound.setScoreboard(scoreboard);
+        List<Round> roundList=new ArrayList<>();
+        roundList.add(prevRound);
+        testTournament.setRounds(roundList);
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(tId + 1)).thenReturn(Optional.of(testUser1));
+        when(userRepository.findById(tId + 2)).thenReturn(Optional.of(testUser2));
+        when(matchService.createMatch(testUser1, testUser2)).thenReturn(testMatch);
+        // return newRound when save
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Round result = roundService.createNextRound(tId);
+
+        assertEquals(2, result.getRoundNum());
+        assertEquals(testTournament, result.getTournament());
+        assertIterableEquals(List.of(testMatch), result.getMatchList());
+
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(tId + 1);
+        verify(userRepository).findById(tId + 2);
+        verify(matchService).createMatch(testUser1, testUser2);
+        verify(roundRepository).save(any(Round.class));
+    }
+
+    @Test
+    void createNextRound_Success_ScoreboardSort2() throws Exception {
+        Long tId = (long) 132;
+        Tournament testTournament = new Tournament();
+        testTournament.setId(tId);
+        Round testRound = new Round();
+        Round prevRound = new Round();
+        User testUser1 = new User();
+        testUser1.setId(tId + 1);
+        testUser1.setElo((double) 13232);
+        User testUser2 = new User();
+        testUser2.setId(tId + 2);
+        testUser2.setElo((double) 13232);
+        List<User> participants = List.of(testUser1, testUser2);
+        testTournament.setParticipants(participants);
+        Match testMatch = new Match();
+        testRound.setMatchList(List.of(testMatch));
+        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
+        scoreboard.put(tId + 1, 2.0);
+        scoreboard.put(tId + 2, 1.0);
+        prevRound.setScoreboard(scoreboard);
+        List<Round> roundList=new ArrayList<>();
+        roundList.add(prevRound);
+        testTournament.setRounds(roundList);
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(tId + 1)).thenReturn(Optional.of(testUser1));
+        when(userRepository.findById(tId + 2)).thenReturn(Optional.of(testUser2));
+        when(matchService.createMatch(testUser2, testUser1)).thenReturn(testMatch);//Swapped Users
+        // return newRound when save
+        when(roundRepository.save(any(Round.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Round result = roundService.createNextRound(tId);
+
+        assertEquals(2, result.getRoundNum());
+        assertEquals(testTournament, result.getTournament());
+        assertIterableEquals(List.of(testMatch), result.getMatchList());
+
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(tId + 1);
+        verify(userRepository).findById(tId + 2);
+        verify(matchService).createMatch(testUser2, testUser1);
+        verify(roundRepository).save(any(Round.class));
+    }
+
+    @Test
     void createNextRound_Failure_TournamentNotFound() throws Exception {
         Long tId = (long) 132;
 
@@ -256,7 +389,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    void createNextRound_Failure_UserNotFound() throws Exception {
+    void createNextRound_Failure_Player1NotFound() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -295,6 +428,50 @@ public class RoundServiceTest {
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);
+    }
+
+    @Test
+    void createNextRound_Failure_Player2NotFound() throws Exception {
+        Long tId = (long) 132;
+        Tournament testTournament = new Tournament();
+        testTournament.setId(tId);
+        Round testRound = new Round();
+        Round prevRound = new Round();
+        User testUser1 = new User();
+        testUser1.setId(tId + 1);
+        testUser1.setElo((double) 13232);
+        User testUser2 = new User();
+        testUser2.setId(tId + 2);
+        testUser2.setElo((double) 13232);
+        List<User> participants = List.of(testUser1, testUser2);
+        testTournament.setParticipants(participants);
+        Match testMatch = new Match();
+        testRound.setMatchList(List.of(testMatch));
+        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
+        scoreboard.put(tId + 1, 0.0);
+        scoreboard.put(tId + 2, 0.0);
+        prevRound.setScoreboard(scoreboard);
+        List<Round> roundList = new ArrayList<>();
+        roundList.add(prevRound);
+        testTournament.setRounds(roundList);
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(tId + 1)).thenReturn(Optional.of(testUser1));
+        when(userRepository.findById(tId + 2)).thenReturn(Optional.empty());
+
+        boolean exceptionThrown = false;
+        try {
+            roundService.createNextRound(tId);
+        } catch (Exception e) {
+            assertEquals("User not found", e.getMessage());
+            exceptionThrown = true;
+        }
+
+        assertTrue(exceptionThrown);
+
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(tId + 1);
+        verify(userRepository).findById(tId + 2);
     }
 
     @Test

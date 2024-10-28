@@ -135,4 +135,36 @@ public class LoginRegisterControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
+
+    @Test
+    public void signin_Failure_NoUser() throws Exception{//Will throw exception at loadUserByUsername
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signin");
+
+        SignInRequest signInRequest=new SignInRequest();
+
+        ResponseEntity<AuthResponse> result=restTemplate.postForEntity(uri, signInRequest, AuthResponse.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
+    }
+
+    @Test
+    public void signin_Failure_WrongPassword() throws Exception{
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signin");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+        userRepository.save(originalUser);
+
+        SignInRequest signInRequest=new SignInRequest();
+        signInRequest.setUsername("TestUser");
+        signInRequest.setPassword("");
+
+        ResponseEntity<AuthResponse> result=restTemplate.postForEntity(uri, signInRequest, AuthResponse.class);
+
+        assertEquals(HttpStatus.FOUND, result.getStatusCode());
+    }
 }

@@ -43,7 +43,6 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-
     @InjectMocks
     private UserServiceImplementation userService;
 
@@ -70,16 +69,16 @@ public class UserServiceTest {
         testUser.setPassword(userName);
         testUser.setEmail(userName);
         testUser.setId((long) 11);
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         when(userRepository.findByEmail(userName)).thenReturn(null);
 
         try {
             userService.loadUserByUsername(userName);
         } catch (UsernameNotFoundException e) {
-            assertEquals("User not found with this email"+userName, e.getMessage());
+            assertEquals("User not found with this email" + userName, e.getMessage());
 
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
@@ -149,9 +148,17 @@ public class UserServiceTest {
         testUser.setUsername(username);
         testUser.setId(id);
         testUser.setRole(role);
+        testUser.setElo(1000.0);
+
+        User testUser2 = new User();
+        testUser2.setUsername(username+2);
+        testUser2.setId(id+2);
+        testUser2.setRole(role);
+        testUser2.setElo(2000.0);
 
         List<User> testList = new ArrayList<User>();
         testList.add(testUser);
+        testList.add(testUser2);
 
         List<UserDTO> DTOList = UserMapper.toDTOList(testList);
 
@@ -159,7 +166,8 @@ public class UserServiceTest {
 
         List<UserDTO> result = userService.findAllUsersDTO();
 
-        assertEquals(DTOList.get(0).getUsername(), result.get(0).getUsername());
+        assertEquals(2,result.size());
+        assertEquals(DTOList.get(1).getUsername(), result.get(0).getUsername());
         verify(userRepository).findByRole("ROLE_USER");
     }
 
@@ -186,25 +194,18 @@ public class UserServiceTest {
         String password = "password";
         String email = "email";
         String role = "ROLE_USER";
-        double elo = 100;
 
         SignUpRequest signUpRequestDetails = new SignUpRequest();
         signUpRequestDetails.setUsername(username);
         signUpRequestDetails.setPassword(password);
         signUpRequestDetails.setEmail(email);
         signUpRequestDetails.setRole(role);
-        signUpRequestDetails.setElo(elo);
-
-        User testUser = new User();
-        testUser.setUsername(username);
-        testUser.setPassword(password);
-        testUser.setEmail(email);
-        testUser.setRole(role);
-        testUser.setElo(elo);
 
         when(userRepository.findByEmail(email)).thenReturn(null);
         when(userRepository.existsByUsername(username)).thenReturn(false);
-        when(userRepository.save(testUser)).thenReturn(testUser);
+        when(userRepository.save(any())).thenAnswer(invocation -> {
+            return invocation.getArgument(0);
+        });
         when(passwordEncoder.encode(password)).thenReturn(password);
 
         AuthResponse result = userService.createUser(signUpRequestDetails);
@@ -212,7 +213,37 @@ public class UserServiceTest {
         assertEquals("Register Success", result.getMessage());
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
-        verify(userRepository, times(2)).save(testUser);
+        verify(userRepository, times(2)).save(any());
+        verify(passwordEncoder).encode(password);
+
+    }
+
+    @Test
+    void createUser_Success_createAdmin() throws Exception {
+        String username = "test";
+        String password = "password";
+        String email = "email";
+        String role = "ROLE_ADMIN";
+
+        SignUpRequest signUpRequestDetails = new SignUpRequest();
+        signUpRequestDetails.setUsername(username);
+        signUpRequestDetails.setPassword(password);
+        signUpRequestDetails.setEmail(email);
+        signUpRequestDetails.setRole(role);
+
+        when(userRepository.findByEmail(email)).thenReturn(null);
+        when(userRepository.existsByUsername(username)).thenReturn(false);
+        when(userRepository.save(any())).thenAnswer(invocation -> {
+            return invocation.getArgument(0);
+        });
+        when(passwordEncoder.encode(password)).thenReturn(password);
+
+        AuthResponse result = userService.createUser(signUpRequestDetails);
+
+        assertEquals("Register Success", result.getMessage());
+        verify(userRepository).findByEmail(email);
+        verify(userRepository).existsByUsername(username);
+        verify(userRepository, times(2)).save(any());
         verify(passwordEncoder).encode(password);
 
     }
@@ -238,7 +269,7 @@ public class UserServiceTest {
         testUser.setEmail(email);
         testUser.setRole(role);
         testUser.setElo(elo);
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
@@ -247,11 +278,11 @@ public class UserServiceTest {
         } catch (Exception e) {
             assertEquals("Email Is Already Used With Another Account", e.getMessage());
 
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
-        
+
         verify(userRepository).findByEmail(email);
     }
 
@@ -272,15 +303,15 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(null);
         when(userRepository.existsByUsername(username)).thenReturn(true);
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
             userService.createUser(signUpRequestDetails);
         } catch (Exception e) {
             assertEquals("Username is already being used with another account", e.getMessage());
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
-        
+
         assertTrue(exceptionThrown);
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
@@ -381,7 +412,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserParticipatingTournaments_Success() throws Exception{
+    void getUserParticipatingTournaments_Success() throws Exception {
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -405,7 +436,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserParticipatingTournaments_Failure() throws Exception{
+    void getUserParticipatingTournaments_Failure() throws Exception {
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -422,15 +453,15 @@ public class UserServiceTest {
         Optional<User> returnUser = Optional.empty();
         when(userRepository.findById(uId)).thenReturn(returnUser);
 
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
             userService.getUserParticipatingTournaments(uId);
         } catch (Exception e) {
 
-            assertEquals("User not found",e.getMessage());
+            assertEquals("User not found", e.getMessage());
 
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
@@ -439,69 +470,69 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserPastMatches_Success() throws Exception{
-        Long uId=(long)1234;
-        User testUser=new User();
+    public void getUserPastMatches_Success() throws Exception {
+        Long uId = (long) 1234;
+        User testUser = new User();
         testUser.setId(uId);
         testUser.setUsername("testUser");
         testUser.setEmail("testUser");
 
-        List<User> userList=List.of(testUser);
+        List<User> userList = List.of(testUser);
 
-        Tournament testTournament=new Tournament();
+        Tournament testTournament = new Tournament();
         testTournament.setSize(6);
         testTournament.setCurrentSize(2);
         testTournament.setTournament_name("tournamentName");
 
-        List<Tournament> tournametList=List.of(testTournament);
+        List<Tournament> tournametList = List.of(testTournament);
         testTournament.setParticipants(userList);
         testUser.setCurrentTournaments(tournametList);
 
-        Round testRound=new Round();
+        Round testRound = new Round();
         testRound.setTournament(testTournament);
 
-        Match testMatch=new Match();
+        Match testMatch = new Match();
         testMatch.setIsComplete(true);
         testMatch.setPlayer1(uId);
         testMatch.setPlayer2(uId);
         testMatch.setRound(testRound);
-        List<Match> returnList=List.of(testMatch);
+        List<Match> returnList = List.of(testMatch);
 
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
-        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser))
-        .thenReturn(returnList);
+        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser, true, testUser))
+                .thenReturn(returnList);
 
-        List<Match> result=userService.getUserPastMatches(uId);
+        List<Match> result = userService.getUserPastMatches(uId);
 
         assertIterableEquals(returnList, result);
 
         verify(userRepository).findById(uId);
-        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true,testUser,true,testUser);
+        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser, true, testUser);
     }
 
     @Test
-    public void getUserPastMatches_Failure() throws Exception{
-        Long uId=(long)1234;
-        User testUser=new User();
+    public void getUserPastMatches_Failure() throws Exception {
+        Long uId = (long) 1234;
+        User testUser = new User();
         testUser.setId(uId);
         testUser.setUsername("testUser");
         testUser.setEmail("testUser");
 
-        List<User> userList=List.of(testUser);
+        List<User> userList = List.of(testUser);
 
-        Tournament testTournament=new Tournament();
+        Tournament testTournament = new Tournament();
         testTournament.setSize(6);
         testTournament.setCurrentSize(2);
         testTournament.setTournament_name("tournamentName");
 
-        List<Tournament> tournametList=List.of(testTournament);
+        List<Tournament> tournametList = List.of(testTournament);
         testTournament.setParticipants(userList);
         testUser.setCurrentTournaments(tournametList);
 
-        Round testRound=new Round();
+        Round testRound = new Round();
         testRound.setTournament(testTournament);
 
-        Match testMatch=new Match();
+        Match testMatch = new Match();
         testMatch.setIsComplete(true);
         testMatch.setPlayer1(uId);
         testMatch.setPlayer2(uId);
@@ -509,31 +540,31 @@ public class UserServiceTest {
 
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
             userService.getUserPastMatches(uId);
         } catch (Exception e) {
-            assertEquals("User not found",e.getMessage());
-            exceptionThrown=true;
+            assertEquals("User not found", e.getMessage());
+            exceptionThrown = true;
         }
-        
+
         assertTrue(exceptionThrown);
         verify(userRepository).findById(uId);
     }
 
     @Test
     void updateUserWithoutPassword_Success() {
-        Long uId=(long)123;
+        Long uId = (long) 123;
         User testUser = new User();
         testUser.setId(uId);
         testUser.setUsername("oldUsername");
-        testUser.setElo((double)1200);
+        testUser.setElo((double) 1200);
         testUser.setRole("ROLE_USER");
 
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setUsername("newUsername");
-        editUserRequest.setElo((double)1500);
+        editUserRequest.setElo((double) 1500);
         editUserRequest.setRole("ROLE_ADMIN");
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
         when(userRepository.save(testUser)).thenReturn(testUser);
@@ -550,11 +581,11 @@ public class UserServiceTest {
 
     @Test
     void updateUserWithoutPassword_Failure_UserNotFound() {
-        Long uId=(long)123;
+        Long uId = (long) 123;
 
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setUsername("newUsername");
-        editUserRequest.setElo((double)1500);
+        editUserRequest.setElo((double) 1500);
         editUserRequest.setRole("ROLE_ADMIN");
 
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
@@ -562,6 +593,6 @@ public class UserServiceTest {
         Optional<User> updatedUser = userService.updateUserWithoutPassword(uId, editUserRequest);
 
         assertFalse(updatedUser.isPresent());
-        verify(userRepository, never()).save(any(User.class));  // Ensure save was not called
+        verify(userRepository, never()).save(any(User.class)); // Ensure save was not called
     }
 }
