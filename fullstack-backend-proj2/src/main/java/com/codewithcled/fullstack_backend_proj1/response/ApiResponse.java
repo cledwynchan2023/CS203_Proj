@@ -1,15 +1,12 @@
 package com.codewithcled.fullstack_backend_proj1.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ApiResponse {
     private String message;
     private boolean status;
     public ApiResponse(String string, boolean b) {
-        // TODO Auto-generated constructor stub
     }
     public String getMessage() {
         return message;

@@ -3,49 +3,37 @@ package com.codewithcled.fullstack_backend_proj1.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.security.oauth2.jwt.*;
-
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 public class ApplicationConfig {
-//    @Bean
-//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeRequests(
-//                        authorize -> authorize
-//                                .requestMatchers("/api/**").authenticated()
-//                                .requestMatchers("/admin/**").authenticated()
-//
-//                                .requestMatchers("/user/**").authenticated()
-//                                .anyRequest().permitAll())
-//                .addFilterBefore(new JwtTokenValidator(), UsernamePasswordAuthenticationFilter.class)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Custom entry point
-//                );
-//        //.httpBasic(Customizer.withDefaults())
-//        //.formLogin(Customizer.withDefaults());
-//        return http.build();
-//    @SuppressWarnings("deprecation")
+
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(
-                        authorize -> authorize.requestMatchers("/admin/**").authenticated()  // Restrict access to ADMIN role
-                                .requestMatchers("/api/**").authenticated()
+                        authorize -> authorize
+                            .requestMatchers("/login/**").permitAll()
+                            .requestMatchers("/update/**").permitAll()
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers("/auth/**").permitAll()
+                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") 
+                                // .requestMatchers("/api/**").authenticated()
+                                
                                 .anyRequest().permitAll())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -80,6 +68,16 @@ public class ApplicationConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Value("${rest.base.url}")
+    private String baseUrl;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
+        return restTemplate;
     }
 
 }

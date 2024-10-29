@@ -1,11 +1,33 @@
-import React from 'react'
+import {React,useState} from 'react';
+import {useLocation, useParams } from 'react-router-dom';
+import './navbar.css';
 
-export default function NavbarLogin() {
-  return (
-    <nav className="navbar bg-body-tertiary">
-    <div className="container-fluid">
-      <a className="navbar-brand" href="#">ChessComp.io</a>
-    </div>
-  </nav>
-  )
-}
+const NavbarLogin = () => {
+    const location = useLocation();
+    const { userId } = useParams();
+    const [isActive, setIsActive] = useState(false);
+    const toggleBurgerMenu = () => {
+        setIsActive(!isActive);
+    };
+    return (
+        <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation" style={{paddingLeft:"20px", paddingRight:"20px", backgroundColor:"rgba(0,0,0,0.2)"}}>
+            <div className="navbar-brand">
+                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={`/admin/${userId}/tournament`}>Chess.io</a>
+
+                
+            </div>
+
+            <div id="navbarExampleTransparentExample" className={`navbar-menu ${isActive ? "is-active" : ""}`}>
+                <div class="navbar-end">
+            
+      
+               
+            </div>
+            
+
+  </div>
+</nav>
+    );
+};
+
+export default NavbarLogin;

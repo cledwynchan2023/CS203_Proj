@@ -11,6 +11,7 @@ export default function TournamentAdminEdit() {
 
     const [tournament,setTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const{tournament_name, date, status, size, noOfRounds} = tournament;
+    const{userId} = useParams();
     const {id} = useParams();
 
 
@@ -36,7 +37,7 @@ export default function TournamentAdminEdit() {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -71,7 +72,7 @@ export default function TournamentAdminEdit() {
             const response = await axios.put(`http://localhost:8080/auth/tournament/${id}`, tournamentData);
             if (response.status === 200){
                 alert("Tournament Edited Successfully");
-                navigate("/admin/tournament");
+                navigate(`/admin/${userId}/tournament`);
             }
             
         } catch (error) {
@@ -171,7 +172,7 @@ export default function TournamentAdminEdit() {
                 
             <button type="submit" className='btn btn-outline-primary mt-3'>Edit Tournament</button>
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/admin/tournament' id="returnrBtn">Cancel</Link>
+            <Link type="cancel" className='btn btn-outline-danger' to={`/admin/${userId}/tournament`} id="returnrBtn">Cancel</Link>
           </div>
         </div>
       );

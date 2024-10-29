@@ -24,7 +24,11 @@ const AddParticpant = () => {
     const deleteUser = async (id) => {
         try {
             
-            await axios.delete(`http://localhost:8080/auth/user/${id}`);
+            await axios.delete(`http://localhost:8080/admin/user/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             // Refresh the tournament list after deletion
             loadUsers();
         } catch (error) {
@@ -43,7 +47,7 @@ const AddParticpant = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -61,13 +65,13 @@ const AddParticpant = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/auth/users', {
+                const response = await axios.get('http://localhost:8080/admin/users', {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 const filteredUsers = response.data.filter(user => 
-                    user.role === 'user' 
+                    user.role === 'ROLE_USER' 
                     &&  !user.tournamentsParticipating.includes(Number(currentTournament.id))
                 );
                 console.log(filteredUsers + " HIII");
@@ -85,7 +89,7 @@ const AddParticpant = () => {
         };
 
         fetchData();
-        loadUsers();
+        //loadUsers();
         loadTournaments();
     
 
@@ -101,9 +105,14 @@ const AddParticpant = () => {
     }
     
     const loadUsers= async()=>{
-        const result = await axios.get("http://localhost:8080/auth/users");
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:8080/admin/users', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         const filteredUsers = result.data.filter(user => 
-            user.role === 'user' 
+            user.role === 'ROLE_USER' 
             &&  !user.tournamentsParticipating.includes(Number(currentTournament.id))
         );
         console.log(filteredUsers);
@@ -112,9 +121,18 @@ const AddParticpant = () => {
     };
 
     const addUser= async (user_id) => {
+        
         try {
+            const token = localStorage.getItem('token');
+            
             await axios.put(`http://localhost:8080/auth/tournament/${id}/participant/add?user_id=${user_id}`);
-            await axios.put(`http://localhost:8080/auth/user/${user_id}/participating_tournament/add?tournament_id=${id}`);
+            await axios.put(`http://localhost:8080/admin/user/${user_id}/participating_tournament/add?tournament_id=${id}`, {},
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
             loadUsers();
             alert("User added to the tournament!");
             

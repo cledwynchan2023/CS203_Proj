@@ -18,11 +18,38 @@ const PlayerListAdmin = () => {
         //     localStorage.removeItem(key);
         // });
     };
+    const initSSE = () => {
+        const eventSource = new EventSource('http://localhost:8080/update/sse/users');
 
-    const deleteUser = async (id) => {
+        eventSource.onmessage = (event) => {
+            const users = JSON.parse(event.data);
+            console.log(users);
+            const filteredUsers = users
+                .filter(user => user.role === 'ROLE_USER')
+                .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
+            setUser(filteredUsers);
+            setData(filteredUsers);
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("SSE failure:", error);
+            setError("Loading...");
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    };
+
+    const deleteUser = async (user_id) => {
         try {
-            
-            const response = await axios.delete(`http://localhost:8080/auth/user/${id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8080/admin/user/${user_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (response.status === 204){
                 alert("User Deleted Successfully");
                 loadUsers();
@@ -42,9 +69,9 @@ const PlayerListAdmin = () => {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            console.log("decoded token" + decodedToken);
+            console.log(decodedToken.authorities);
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -62,12 +89,7 @@ const PlayerListAdmin = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/auth/users', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setData(response.data);
+                initSSE();
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -78,10 +100,7 @@ const PlayerListAdmin = () => {
                 }
             }
         };
-
         fetchData();
-        
-        loadUsers();
 
     }, []);
 
@@ -90,7 +109,12 @@ const PlayerListAdmin = () => {
     }
 
     const loadUsers= async()=>{
-        const result = await axios.get("http://localhost:8080/auth/users");
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:8080/admin/users', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
       
         
         setUser(result.data);
@@ -103,7 +127,7 @@ const PlayerListAdmin = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>Player List</h1>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to="/admin/playerlist/create">Create</Link>
+                            <Link className="btn mb-4 btn-outline-primary" style={{ height:'40px',width: '100px',borderRadius: '20px', maxWidth:'150px' }} to={`/admin/${id}/playerlist/create`}>Create</Link>
                         </div>
                     </div>
                     <div className="container">
@@ -130,7 +154,7 @@ const PlayerListAdmin = () => {
                                         {/* <td>{tournament.status}</td>
                                         <td>{tournament.size}</td> */}
                                         <td style={{display:"flex", justifyContent:"flex-end"}}>
-                                            <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/user/edit/${user.id}`}>Edit</Link>
+                                            <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center', marginRight:"20px" }} to={`/admin/${id}/edit/${user.id}`}>Edit</Link>
                                             <button className="btn btn-outline-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={() => deleteUser(user.id)}>Delete</button>
                                         </td>
                                     </tr>
@@ -140,7 +164,7 @@ const PlayerListAdmin = () => {
                     </div>
                 </div>
             ) : (
-                <div>Loading...</div>
+                <div style={{display:"flex", justifyContent:"center", alignItems:"center", fontSize:"2rem", height:"80vh"}}>Loading...</div>
             )}
         </div>
     );

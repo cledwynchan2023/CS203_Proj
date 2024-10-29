@@ -1,6 +1,5 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
-
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -9,15 +8,14 @@ import java.util.Map;
 @Entity
 public class Round {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Id
     private Long id;
 
     private Integer roundNum;
 
     @ElementCollection
-    private Map<Long, Integer> scoreboard;
-
+    private Map<Long, Double> scoreboard;
 
     @OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Match> matchList;
@@ -25,6 +23,15 @@ public class Round {
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
+    private Boolean isCompleted = false;
+
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
+
+    public void setIsCompleted(Boolean iscompleted) {
+        this.isCompleted = iscompleted;
+    }
     public Tournament getTournament() {
         return tournament;
     }
@@ -47,5 +54,21 @@ public class Round {
 
     public Long getId() {
         return id;
+    }
+
+    public Map<Long, Double> getScoreboard() {
+        return scoreboard;
+    }
+
+    public void setScoreboard(Map<Long, Double> scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
+    public Integer getRoundNum() {
+        return roundNum;
+    }
+
+    public void setRoundNum(Integer roundNum) {
+        this.roundNum = roundNum;
     }
 }

@@ -1,8 +1,13 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
+// import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,12 +21,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
 
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +44,24 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // @Autowired
+    // private TournamentRepository tournamentRepository;
+
     @Autowired
-    private TournamentRepository tournamentRepository;
+    private MatchRepository matchRepository;
 
-    public UserServiceImplementation(UserRepository userRepository) {
-        this.userRepository=userRepository;
-    }
+    // public UserServiceImplementation(UserRepository userRepository) {
+    //     this.userRepository=userRepository;
+    // }
 
+    // @Override
+    // public List<UserDTO> getUserChanges() {
+    //    List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
+    //     lastChangeTimestamp = LocalDateTime.now(); // Update the timestamp
+    //     return changes.stream()
+    //             .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
+    //             .collect(Collectors.toList());
+    // }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -88,6 +108,14 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDTO> findAllUsersDTO() {
+        List<User> users = userRepository.findByRole("ROLE_USER");
+        Collections.sort(users,(u1,u2) -> u2.getElo().compareTo(u1.getElo()));
+        return UserMapper.toDTOList(users);
+    }
 
     @Override
     public User loadByUsername(String username) {
@@ -95,11 +123,17 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     @Override
-    public AuthResponse createUser(User user) throws Exception {
+    public AuthResponse createUser(SignUpRequest user) throws Exception {
+        //good practice to check if email is already taken
         String username= user.getUsername();
         String password = user.getPassword();
         String email = user.getEmail();
         String role = user.getRole();
+        double elo = user.getElo();
+        if (role.equals("ROLE_USER")){
+            elo = 100;
+        }
+        
 
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {
@@ -117,7 +151,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(email);
         createdUser.setRole(role);
         createdUser.setPassword(passwordEncoder.encode(password));
-
+        createdUser.setElo(elo);
+        
         User savedUser = userRepository.save(createdUser);
         userRepository.save(savedUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(email,password);
@@ -133,7 +168,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         }
 
     @Override
-    public AuthResponse signInUser(User loginRequest) {
+    public AuthResponse signInUser(SignInRequest loginRequest) {
 
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
@@ -153,33 +188,26 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     @Override
-    public Optional<User> updateUser(Long id, User newUser) {
+    public Optional<User> updateUser(Long id, SignUpRequest newUser) {
+        
         return userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setElo(newUser.getElo());
-                    user.setTournamentsParticipating(newUser.getTournamentsParticipating());
+                    user.setEmail(newUser.getEmail());
+                    user.setRole(newUser.getRole());
+                    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
                     return userRepository.save(user);  // Save and return updated user
                 });
     }
 
+   
     @Override
-    public User removeUserParticipatingTournament(Long userId, Long tournamentId) throws Exception {
-        Tournament currentTournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new Exception("Tournament not found"));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
-
-        user.removeParticipatingTournament(currentTournament);  // Remove the tournament from the user
-        return userRepository.save(user);  // Save and return the updated user
-    }
-    @Override
-    public List<Long> getUserParticipatingTournaments(Long userId) throws Exception {
+    public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        return currentUser.getTournamentsParticipating();  // Return the list of tournaments the user is participating in
+        return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
     private Authentication authenticate(String username, String password) {
@@ -207,21 +235,27 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     }
 
+    @Override
+    public List<Match> getUserPastMatches(Long userId) throws Exception {
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+
+        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser, true, currentUser);  // Return the list of tournaments the user is participating in
+    }
 
     @Override
-    public List<Tournament> getUserCurrentParticipatingTournament(Long id) {
-        List<Long> tournamentIds = userRepository.findById(id)
-                .map(User::getTournamentsParticipating)
-                .orElse(new ArrayList<>());
-        List<Tournament> tournaments = new ArrayList<>();
-        for (Long tournamentId : tournamentIds) {
-            Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
-            if (tournament != null) {
-                tournaments.add(tournament);
-            }
-        }
-        return tournaments;
+    public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setUsername(newUser.getUsername());
+                    user.setElo(newUser.getElo());
+                    user.setRole(newUser.getRole());
+                    return userRepository.save(user);  // Save and return updated user
+                });
     }
+
+    
+
 }
 
 

@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../admin/Register.css';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
+import backgroundImage from '/src/assets/image1.webp'; 
+import './style/TournamentPageStyle.css';
 export default function TournamentAdminCreate() {
-    let navigate=useNavigate();
 
+    let navigate=useNavigate();
+    const { userId } = useParams();
     const [tournament,setTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const{tournament_name, date, status, size, noOfRounds} = tournament;
     
@@ -47,7 +49,7 @@ export default function TournamentAdminCreate() {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -61,7 +63,7 @@ export default function TournamentAdminCreate() {
             alert("Invalid date! Please enter in the format MM/DD/YYYY");
             return;
         }
-
+        console.log(status);
         const tournamentData = {
             tournament_name,
             date,
@@ -71,10 +73,15 @@ export default function TournamentAdminCreate() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/tournament", tournamentData);
+          const token = localStorage.getItem('token');
+          const response = await axios.post("http://localhost:8080/admin/tournament", tournamentData, {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          });
             if (response.status === 201){
                 alert("Tournament Created Successfully");
-                navigate("/admin/tournament");
+                navigate(`/admin/${userId}/tournament`);
             }
         } catch (error) {
             console.error("There was an error registering the tournament!", error);
@@ -99,8 +106,21 @@ export default function TournamentAdminCreate() {
     }, []);
 
     return (
-        <div className="register-container">
-          <div className="form-container">
+        <div className="background-container" style={{ 
+          backgroundImage: `url(${backgroundImage})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          flexWrap: 'wrap',
+          height: "100vh",
+          justifyContent: 'center',
+          alignContent: 'center',
+          
+      }}>
+        <div className="content fade-in" style={{width:"100%", height:"100%", backgroundColor:"rgba(0,0,0,0.8)",}}>
+        <div className="container animate__animated animate__fadeInUpBig" style={{ width:"100%", height:"70%", paddingLeft:"20%", paddingRight:"20%", paddingTop:"5%"}}>
+          <p style={{fontSize:"20px"}}>Create Tournament</p>
             <form onSubmit={(e) => onSubmit(e)}>
             <div className="form-floating mb-3">
               <input
@@ -137,7 +157,8 @@ export default function TournamentAdminCreate() {
                     name="status"
                 >
                     <option value="active">Active</option>
-                    <option value="inactive">Not Active</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Inactive</option>
                 </select>
                 <label htmlFor="Status">Status</label>
             </div>
@@ -163,11 +184,15 @@ export default function TournamentAdminCreate() {
               />
               <label htmlFor="noOfRounds">Number of rounds</label>
             </div>
-                
-            <button type="submit" className='btn btn-outline-primary mt-3'>Create Tournament</button>
+            <div style={{marginTop:"5%"}}>
+            <button type="submit" className='button is-link is-fullwidth'>Create Tournament</button>
+            </div>
+
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/admin/tournament' id="returnrBtn">Cancel</Link>
+            <Link className='button is-text is-fullwidth' to={`/admin/${userId}/tournament`} id="returnrBtn">Cancel</Link>
           </div>
+        </div>
+          
         </div>
       );
 }

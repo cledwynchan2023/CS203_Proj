@@ -9,6 +9,7 @@ const TournamentDetailAdmin = () => {
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
+    const{userId} = useParams()
     const { id } = useParams();
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
@@ -19,7 +20,10 @@ const TournamentDetailAdmin = () => {
         //     localStorage.removeItem(key);
         // });
     };
-
+    const loadTournaments= async()=>{
+        const result = await axios.get(`http://localhost:8080/auth/tournament/${id}`);
+        setTournament(result.data);
+    };
     const deleteTournament = async (id) => {
         try {
             if (user.length > 0) {
@@ -31,6 +35,7 @@ const TournamentDetailAdmin = () => {
             if (response.status === 200){
                 alert("Tournament Deleted Successfully");
                 loadTournaments();
+                Navigate(`/admin/${userId}/tournament`);
             }
             
         } catch (error) {
@@ -40,9 +45,15 @@ const TournamentDetailAdmin = () => {
 
     const removePlayer = async (user_id) => {
         try {
-            
+            const token = localStorage.getItem('token');
             const response1= await axios.put(`http://localhost:8080/auth/tournament/${id}/participant/delete?user_id=${user_id}`);
-            const response2 = await axios.put(`http://localhost:8080/auth/user/${user_id}/participating_tournament/remove?tournament_id=${id}`);
+            const response2 = await axios.put(`http://localhost:8080/admin/user/${user_id}/participating_tournament/remove?tournament_id=${id}`, {},
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
             // Refresh the tournament list after deletion
             if (response1.status === 200 && response2.status === 200){
                 alert("Player Removed Successfully");
@@ -51,6 +62,7 @@ const TournamentDetailAdmin = () => {
             }
             
         } catch (error) {
+            
             setError('An error occurred while deleting the tournament.');
         }
     };
@@ -67,7 +79,7 @@ const TournamentDetailAdmin = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -116,34 +128,31 @@ const TournamentDetailAdmin = () => {
         return <div>{error}</div>;
     }
 
-    const loadTournaments= async()=>{
-        const result = await axios.get(`http://localhost:8080/auth/tournament/${id}`);
-        setTournament(result.data);
-    };
+   
     const loadUsers= async()=>{
-        
+        const token = localStorage.getItem('token');
         try {
             // Fetch the list of user IDs
             const userIds = await axios.get(`http://localhost:8080/auth/tournament/${id}/participant`);
             
-
+            
             // Fetch details for each user ID
-            const userDetailsPromises = userIds.data.map(userId => 
-                axios.get(`http://localhost:8080/auth/user/${userId}`)
+            const userDetailsPromises = userIds.data.map(userid => 
+                axios.get(`http://localhost:8080/admin/user/id/${userid}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             );
             console.log(userDetailsPromises);
             const userDetailsResponses = await Promise.all(userDetailsPromises);
             const userDetails = userDetailsResponses.map(response => response.data);
-
+            console.log(userDetails);
             // Filter users based on role and participation in the current tournament
-            const filteredUsers = userDetails.filter(user => user.role === 'user')
+            const filteredUsers = userDetails.filter(user => user.role === 'ROLE_USER')
             .sort((a, b) => b.elo - a.elo); // Sort by highest Elo first
             setUser(filteredUsers);
-           
-                
-
-
-            setUser(filteredUsers);
+        
         } catch (error) {
             setError("Error loading users");
             console.error("Error loading users:", error);
@@ -159,7 +168,7 @@ const TournamentDetailAdmin = () => {
                             <h5 style={{color:'gray'}}>Tournament ID: {tournament.id}</h5>
                         </div>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                        <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} to={`/admin/tournament/edit/${tournament.id}`}>Edit</Link>
+                        <Link className="btn btn-outline-primary" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} to={`/admin/${userId}/tournament/edit/${tournament.id}`}>Edit</Link>
                         <button className="btn btn-outline-danger" style={{ height:'40px',width: '80px',borderRadius: '20px', maxWidth:'100px', textAlign: 'center' }} onClick={() => deleteTournament(tournament.id)}>Delete</button>
                         </div>
                     </div>

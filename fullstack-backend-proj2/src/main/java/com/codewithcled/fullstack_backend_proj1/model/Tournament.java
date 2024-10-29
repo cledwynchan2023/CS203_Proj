@@ -1,6 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -13,25 +13,33 @@ public class Tournament {
     @GeneratedValue
     private Long id;
     private String tournament_name;
-   @ElementCollection
-    private List<Long> participants = new ArrayList<>();
+    @ManyToMany(mappedBy = "currentTournament")
+    @JsonManagedReference 
+    private List<User> participants = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
-    @MapKeyColumn(name = "user_id")
-    @Column(name = "score")
-    private Map<Long, Integer> scoreboard;
+    // @ElementCollection
+    // @CollectionTable(name = "tournament_scoreboard", joinColumns = @JoinColumn(name = "tournament_id"))
+    // @MapKeyColumn(name = "user_id")
+    // @Column(name = "score")
+    // private Map<Long, Double> scoreboard = new HashMap<>();
     private String date;
-    private String status;
+    private String status; // the statuses are "active", "ongoing", "completed"
 
     private Integer size ;
-    private Integer currentSize = 0;
+    private Integer currentSize = participants.size();
 
     private Integer noOfRounds = 0;
+    private Integer currentRound = 1;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Round> rounds = new ArrayList<>();
 
+    public Integer getCurrentRound() {
+        return currentRound;
+    }
+    public void setCurrentRound(Integer currentRound) {
+        this.currentRound = currentRound;
+    }
     public List<Round> getRounds() {
         return rounds;
     }
@@ -67,7 +75,7 @@ public class Tournament {
         return status;
     }
 
-    public void setActive(String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -79,14 +87,14 @@ public class Tournament {
         this.date = date;
     }
 
-    public void addParticipant(Long user_id){
-        participants.add(user_id);
+    public void addParticipant(User user){
+        participants.add(user);
     }
 
     public void removeParticipant(User user){
-        for (Long current: participants){
+        for (User current: participants){
 
-            if (Objects.equals(current, user.getId())){
+            if (Objects.equals(current, user)){
                 participants.remove(current);
                 System.out.println(user.getId() + " deleted!");
                 break;
@@ -111,22 +119,27 @@ public class Tournament {
         this.tournament_name = tournament_name;
     }
 
-    public List<Long> getParticipants() {
+    public List<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<Long> participants) {
+    public void setParticipants(List<User> participants) {
         this.participants = participants;
     }
 
 
-    public Map<Long, Integer> getScoreboard() {
-        return scoreboard;
+    // public Map<Long, Double> getScoreboard() {
+    //     return scoreboard;
+    // }
+
+    // latest round's scoreboard is the tournament's scoreboard
+    public Map<Long, Double> getScoreboard() {
+        return getRounds().get(getRounds().size() - 1).getScoreboard();
     }
 
-    public void setScoreboard(Map<Long, Integer> scoreboard) {
-        this.scoreboard = scoreboard;
-    }
+    // public void setScoreboard(Map<Long, Double> scoreboard) {
+    //     this.scoreboard = scoreboard;
+    // }
 
 
     @Override

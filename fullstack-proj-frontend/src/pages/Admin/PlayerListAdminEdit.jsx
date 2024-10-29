@@ -8,6 +8,8 @@ import { jwtDecode } from 'jwt-decode';
 
 export default function PlayerListAdminEdit() {
     let navigate=useNavigate();
+
+    const{userId} = useParams();
     const {id} = useParams();
     const [user,setUser] = useState({id:"", username:"", elo:0});
     const{username, elo} = user;
@@ -48,7 +50,7 @@ export default function PlayerListAdminEdit() {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -65,10 +67,15 @@ export default function PlayerListAdminEdit() {
         };
 
         try {
-            const response = await axios.put(`http://localhost:8080/auth/user/${id}`, userData);
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:8080/admin/user/${id}`, userData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (response.status === 200){
                 alert("User Edited Successfully");
-                navigate("/admin/playerlist");
+                navigate(`/admin/${userId}/playerlist`);
             }
             
         } catch (error) {
@@ -130,7 +137,7 @@ export default function PlayerListAdminEdit() {
                 
             <button type="submit" className='btn btn-outline-primary mt-3'>Edit User</button>
             </form>
-            <Link type="cancel" className='btn btn-outline-danger' to='/admin/tournament' id="returnrBtn">Cancel</Link>
+            <Link type="cancel" className='btn btn-outline-danger' to={`/admin/${userId}/playerlist`} id="returnrBtn">Cancel</Link>
           </div>
         </div>
       );

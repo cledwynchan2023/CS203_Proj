@@ -17,6 +17,7 @@ public class JwtProvider {
 
     public static String generateToken(Authentication auth, Long userId) {
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+        System.out.println("Authorities: " + authorities);
         String roles = populateAuthorities(authorities);
 
         String jwt = Jwts.builder()
@@ -41,7 +42,7 @@ public class JwtProvider {
     }
 
 
-    @SuppressWarnings("deprecation")
+    
     public static String getEmailFromJwtToken(String jwt) {
         jwt = jwt.substring(7); // Assuming "Bearer " is removed from the token
         try {

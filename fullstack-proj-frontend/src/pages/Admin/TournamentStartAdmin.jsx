@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
 import { Link, useParams, useLocation } from 'react-router-dom';
 
 const TournamentStartAdmin = () => {
+
     const location = useLocation();
     const { user } = location.state || { user: [] };
     const [group, setGroup] = useState([]); 
@@ -31,7 +31,7 @@ const TournamentStartAdmin = () => {
             const decodedToken = jwtDecode(token);
             console.log(decodedToken)
             console.log(decodedToken.authorities)
-            return decodedToken.authorities === 'admin'; // Adjust this based on your token's structure
+            return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }

@@ -1,15 +1,14 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
 
 @Entity
-
 public class User {
     @Id
     @GeneratedValue
@@ -18,55 +17,45 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String email;
-    private String role = "user";
-    private Integer elo;
+    private String role = "ROLE_USER";
+    private Double elo = 0.0;
 
-//    public List<Tournament> getTournamentsParticipated() {
-//        return tournamentsParticipated;
-//    }
-//
-//
-//    public void setTournamentsParticipated(List<Tournament> tournamentsParticipated) {
-//        this.tournamentsParticipated = tournamentsParticipated;
-//    }
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "user_tournament", // Join table name
-//            joinColumns = @JoinColumn(name = "user_id"), // Column for user
-//            inverseJoinColumns = @JoinColumn(name = "tournament_id") // Column for tournament
-//    )
-//    private List<Tournament> tournamentsParticipated = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_tournament",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tournament_id"))
+    @JsonBackReference
+    private List<Tournament> currentTournament = new ArrayList<>();
 
-    @ElementCollection
-    private List<Long> tournamentsParticipating = new ArrayList();
-
-    public List<Long> getTournamentsParticipating() {
-        return tournamentsParticipating;
+    
+    public List<Tournament> getCurrentTournaments() {
+        return currentTournament;
     }
 
-    public void addParticipatingTournament(Long tournament_id){
-        tournamentsParticipating.add(tournament_id);
+    public void addCurrentTournament(Tournament newTournament){
+        currentTournament.add(newTournament);
     }
 
-    public void removeParticipatingTournament(Tournament tournament){
-        for (Long current: tournamentsParticipating){
-            if (Objects.equals(current, tournament.getId())){
-                tournamentsParticipating.remove(current);
+    public void removeCurrentTournament(Tournament tournament){
+        for (Tournament current: currentTournament){
+            if (Objects.equals(current, tournament)){
+                currentTournament.remove(current);
                 break;
             }
         }
     }
 
-    public void setTournamentsParticipating(List<Long> tournamentsParticipated) {
-        this.tournamentsParticipating = tournamentsParticipated;
+    public void setCurrentTournaments (List<Tournament> currentTournaments) {
+        this.currentTournament = currentTournaments;
     }
 
-    public Integer getElo() {
+    public Double getElo() {
         return elo;
     }
 
-    public void setElo(Integer elo) {
+    public void setElo(Double elo) {
         this.elo = elo;
     }
 
@@ -121,6 +110,8 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, username);
     }
+
+
 
    
 }
