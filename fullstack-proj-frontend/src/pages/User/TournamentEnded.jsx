@@ -578,7 +578,7 @@ const loadTournamentForDelete= async()=>{
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", margin:"0", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>

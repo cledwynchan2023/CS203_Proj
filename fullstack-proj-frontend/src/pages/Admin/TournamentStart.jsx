@@ -96,6 +96,7 @@ export default function TournamentStart() {
 
     const getIsCompleted = async (currentRound) => {
         const token = localStorage.getItem('token');
+
         const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -107,6 +108,7 @@ export default function TournamentStart() {
     const handleResult = async (matchId,result) => {
         setDisabledButtons((prev) => ({ ...prev, [matchId]: true }));
         const token = localStorage.getItem('token');
+        console.log("pressed");
         const response = await axios.put(`http://localhost:8080/m/match/${matchId}/update`, {result}, {
         headers: {
             'Authorization': `Bearer ${token}`
