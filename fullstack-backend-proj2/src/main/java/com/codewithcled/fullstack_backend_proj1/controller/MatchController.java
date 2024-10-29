@@ -2,7 +2,7 @@ package com.codewithcled.fullstack_backend_proj1.controller;
 
 import java.util.Map;
 
-
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +28,15 @@ public class MatchController {
     @Autowired
     MatchService matchService;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @PutMapping("/match/{id}/update")
     public ResponseEntity<String> updateMatch(@RequestBody ResultRequest result, @PathVariable("id") Long id) throws Exception{
         Integer resultId = result.getResult();
-        System.out.println(resultId);
         matchService.updateMatch(id, resultId);
+        System.out.println(resultId);
+        messagingTemplate.convertAndSend("/topic/matchUpdates", "Match " + id + " updated");
         return ResponseEntity.ok("Match result updated successfully");
     }
 

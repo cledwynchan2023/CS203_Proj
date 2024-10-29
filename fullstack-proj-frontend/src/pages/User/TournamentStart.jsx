@@ -1,3 +1,4 @@
+import 'fullstack-proj-frontend/src/Global.js';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -5,6 +6,10 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import "./style/TournamentStart.css";
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
+
 export default function TournamentStart() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
@@ -22,6 +27,7 @@ export default function TournamentStart() {
     const [isStart, setIsStart] = useState(1);
     const [scoreboard,setScoreboard]=useState(new Map());
     const [userPairings, setUserPairings] = useState([]);    
+    const [connectionStatus, setConnectionStatus] = useState("Connecting...");
     const onInputChange=(e)=>{
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
         
@@ -455,8 +461,30 @@ const loadTournamentForDelete= async()=>{
         };
 
         fetchData();
-        
         loadNonParticipatingUsers();
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log("WebSocket connection successful");
+            setConnectionStatus("Connected");
+            stompClient.subscribe('/topic/matchUpdates', () => {
+                // Reload tournament data on match update
+                console.log("Received match update");
+                loadTournament();
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                setConnectionStatus("Disconnected");
+            });
+        };
         
         //loadUsers();
 
