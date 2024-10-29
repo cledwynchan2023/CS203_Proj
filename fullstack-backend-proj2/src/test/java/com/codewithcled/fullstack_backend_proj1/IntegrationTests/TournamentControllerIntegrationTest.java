@@ -477,10 +477,13 @@ public class TournamentControllerIntegrationTest {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(2);
+        tournament.setCurrentSize(2);
         tournament.setNoOfRounds(3);
         tournament.setDate("10/20/1203");
         tournament.setStatus("active");
         tournament.setRounds(new ArrayList<>());
+        tournament.addParticipant(user1);
+        tournament.addParticipant(user2);
 
         // Save the tournament to the repository
         Tournament savedTournament = tournamentRepository.save(tournament);
@@ -491,8 +494,6 @@ public class TournamentControllerIntegrationTest {
         round.setTournament(null);
         round.setRoundNum(1);
         round.setId((long) 138021);
-        round.setScoreboard(new HashMap<>());
-        round.setMatchList(new ArrayList<>());
 
         // Create the URL
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");

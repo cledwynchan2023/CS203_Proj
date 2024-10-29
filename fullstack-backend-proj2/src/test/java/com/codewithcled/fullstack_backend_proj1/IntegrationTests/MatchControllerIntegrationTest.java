@@ -75,12 +75,14 @@ public class MatchControllerIntegrationTest {
         user1.setRole(role);
         user1.setEmail(userName+1);
         user1.setElo(elo);
+        user1.setPassword(userName);
 
         User user2=new User();
         user2.setUsername(userName+2);
         user2.setRole(role);
         user2.setEmail(userName+2);
         user2.setElo(elo);
+        user1.setPassword(userName);
 
         Tournament tournament=new Tournament();
         tournament.setTournament_name("testTournament");
@@ -90,23 +92,20 @@ public class MatchControllerIntegrationTest {
         tournament.setStatus("active");
         tournament.setDate("10/20/1203");
 
-        Tournament savedTournament=tournamentRepository.save(tournament);
-        User savedPlayer1=userRepository.save(user1);
-        User savedPlayer2=userRepository.save(user2);
+        //create Tournament and Users
+        this.testTournament=tournamentRepository.save(tournament);
+        this.player1=userRepository.save(user1);
+        this.player2=userRepository.save(user2);
 
-        List<Tournament> tournamentList = new ArrayList<>();
-        List<User> userList = new ArrayList<>();
-        tournamentList.add(savedTournament);
-        userList.add(savedPlayer1);
-        userList.add(savedPlayer2);
+        //create tournament and user relationships
+        player1.addCurrentTournament(testTournament);
+        player2.addCurrentTournament(testTournament);
+        testTournament.addParticipant(player1);
+        testTournament.addParticipant(player2);
 
-        savedPlayer1.setCurrentTournaments(tournamentList);
-        savedPlayer2.setCurrentTournaments(tournamentList);
-        savedTournament.setParticipants(userList);
-
-        this.testTournament=tournamentRepository.save(savedTournament);
-        this.player1=userRepository.save(savedPlayer1);
-        this.player2=userRepository.save(savedPlayer2);
+        tournamentRepository.save(testTournament);
+        userRepository.save(player1);
+        userRepository.save(player2);
 
         Map<Long,Double> scoreboard=new HashMap<Long,Double>();
         scoreboard.put(player1.getId(),0.0);
@@ -120,9 +119,8 @@ public class MatchControllerIntegrationTest {
         round.setMatchList(new ArrayList<>());
         this.testRound=roundRepository.save(round);
 
-        List<Round> roundList=new ArrayList<>();
+        List<Round> roundList=testTournament.getRounds();
         roundList.add(testRound);
-        testTournament.setRounds(roundList);
         tournamentRepository.save(testTournament);
     }
 
@@ -134,30 +132,30 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test//Can't get it to work
+    @Test//Can't get it to work
     void updateMatch_Success() throws Exception{
         Match testMatch=new Match();
         testMatch.setPlayer1(player1.getId());
         testMatch.setPlayer1StartingElo(player2.getElo());
         testMatch.setPlayer2(player1.getId());
         testMatch.setPlayer2StartingElo(player2.getElo());
-        testMatch.setIsComplete(false);
         testMatch.setRound(testRound);
         testMatch.setEloChange1(0.0);
         testMatch.setEloChange2(0.0);
 
+        Match saveMatch=matchRepository.save(testMatch);
+
         List<Match> roundMatchList=testRound.getMatchList();
-        roundMatchList.add(testMatch);
+        roundMatchList.add(saveMatch);
         roundRepository.save(testRound);
 
-        Match saveMatch=matchRepository.save(testMatch);
         ResultRequest outcome=new ResultRequest();
         outcome.setResult(0);
 
         URI url=new URI(baseUrl+port+urlPrefix+"/match/"+saveMatch.getId()+"/update");
 
         ResponseEntity<String> result=restTemplate.exchange(
-            url, 
+            url,
             HttpMethod.PUT,
             new HttpEntity<>(outcome),
             String.class);
