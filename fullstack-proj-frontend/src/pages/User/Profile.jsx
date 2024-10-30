@@ -7,15 +7,23 @@ import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
 import "./style/TournamentDetailStyle.css";
 import { CgProfile } from "react-icons/cg";
+import { BiGroup } from "react-icons/bi";
+import { TiTick } from "react-icons/ti";
+import compPic from "/src/assets/comp.webp";
+import compPic2 from "/src/assets/comp2.webp";
+import compPic3 from "/src/assets/comp3.webp";
+import { ImCross } from "react-icons/im";
+import {Atom} from "react-loading-indicators"
 
 export default function Profile() {
+    const [isLoading, setIsLoading] = useState(false);
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
-
+    const [joinedTournaments, setJoinedTournaments] = useState([]);
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -56,12 +64,69 @@ export default function Profile() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-             
-                
-            </div>
-        </section>;
+        return <>
+        {isLoading ? (
+      <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+          <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+       </div>    
+          ) : (
+              joinedTournaments.filter(tournament => tournament.status !== 'completed').length === 0 ? (
+                  <div style={{textAlign: "center", marginBottom: "20px"}}>
+                      <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
+                  </div>
+              ) : (
+              <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0"}}>
+                <div style={{width:"100%", textAlign:"left",height:"auto"}}>
+                    <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Joined Tournaments</p>
+                </div>
+          <table className="table is-hoverable custom-table animate__animated animate__fadeIn" >
+                <thead>
+                    <tr style={{height:"50px", paddingBottom:"5px"}}>
+                        <th>ID</th>
+                        <th>Tournament Name</th>
+                        <th>Start Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {joinedTournaments.filter(tournament => tournament.status !== 'completed').map((tournament) => (
+                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)}>
+                            <td>{tournament.id}</td>
+                            <td>{tournament.tournamentName}</td>
+                            <td>{tournament.date}</td>
+                         
+                         
+                        </tr>   
+                    ))}
+                </tbody>
+            </table>
+            <div style={{width:"100%", textAlign:"left",height:"auto"}}>
+                    <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Completed Tournament</p>
+                </div>
+          <table className="table is-hoverable custom-table animate__animated animate__fadeIn" >
+                <thead>
+                    <tr style={{height:"50px", paddingBottom:"5px"}}>
+                        <th>ID</th>
+                        <th>Tournament Name</th>
+                        <th>Start Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
+                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)}>
+                            <td>{tournament.id}</td>
+                            <td>{tournament.tournamentName}</td>
+                            <td>{tournament.date}</td>
+                         
+                         
+                        </tr>   
+                    ))}
+                </tbody>
+            </table>
+          </section>
+          
+          ))}
+          
+          </>
       case 'History':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
@@ -123,7 +188,17 @@ export default function Profile() {
     };
 
    
-   
+    const loadTournaments= async()=>{
+        
+        const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
+    
+        if (!result3.data.length == 0){
+            setJoinedTournaments(result3.data);
+        } else {
+            setJoinedTournaments([]);
+        }
+        
+    };
 
     const isTokenExpired = () => {
         const expiryTime = localStorage.getItem('tokenExpiry');
@@ -184,6 +259,7 @@ export default function Profile() {
         };
 
         fetchData();
+        loadTournaments();
         loadUser();
     }, []);
 
@@ -295,9 +371,7 @@ export default function Profile() {
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>
-                    <li className={activeTab === 'History' ? 'is-active' : ''}>
-                    <a onClick={() => setActiveTab('History')}>History</a>
-                    </li>
+                    
                     <li className={activeTab === 'Stats' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Stats')}>Stats</a>
                     </li>

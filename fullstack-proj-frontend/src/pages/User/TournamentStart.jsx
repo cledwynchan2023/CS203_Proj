@@ -160,6 +160,7 @@ export default function TournamentStart() {
                             {renderPagination()}
                         </ul>
                     </nav>
+                    {user.includes(userId) && (
                     <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
@@ -179,6 +180,7 @@ export default function TournamentStart() {
                             </div>
                         </div>
                     </div>
+                    )}
                     <div>
                         <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
                     </div>
