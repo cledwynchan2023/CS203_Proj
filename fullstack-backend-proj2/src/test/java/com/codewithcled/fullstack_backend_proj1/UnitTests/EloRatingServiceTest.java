@@ -107,11 +107,22 @@ public class EloRatingServiceTest {
     }
 
     @Test
+    void EloCalculation_Success_FloorAt0() {
+        int elo1 = 5;
+        int elo2 = 5;
+        int outcome = 1;
+
+        double result=EloRatingService.EloCalculation(elo1, elo2, outcome);
+        
+        assertEquals(0.0,result);
+    }
+
+    @Test
     void EloCalculation_InvalidElo1_ReturnIllegalArgumentException() {
         int elo1 = -1;
         int elo2 = 1000;
         int outcome = 1;
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
 
@@ -120,7 +131,7 @@ public class EloRatingServiceTest {
         } catch (IllegalArgumentException e) {
 
             assertEquals("Invalid elo values", e.getMessage());
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
@@ -131,7 +142,7 @@ public class EloRatingServiceTest {
         int elo1 = 1000;
         int elo2 = -1;
         int outcome = 1;
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
 
@@ -140,7 +151,7 @@ public class EloRatingServiceTest {
         } catch (IllegalArgumentException e) {
 
             assertEquals("Invalid elo values", e.getMessage());
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
@@ -151,7 +162,7 @@ public class EloRatingServiceTest {
         int elo1 = 1000;
         int elo2 = 1000;
         int outcome = 12;
-        boolean exceptionThrown=false;
+        boolean exceptionThrown = false;
 
         try {
 
@@ -162,14 +173,14 @@ public class EloRatingServiceTest {
             assertEquals("Invalid match result only accepts -1 for A wins, 1 for B wins and 0 for draw",
                     e.getMessage());
 
-            exceptionThrown=true;
+            exceptionThrown = true;
         }
 
         assertTrue(exceptionThrown);
     }
 
     @Test
-    void EloCalculationForBoth() throws IllegalArgumentException{
+    void EloCalculationForBoth() throws IllegalArgumentException {
         int elo1 = 1000;
         int elo2 = 1000;
         int outcome = 1;
@@ -223,7 +234,7 @@ public class EloRatingServiceTest {
     }
 
     @Test
-    void EloCalculation_ValidInputDiffK_ReturnDouble() throws IllegalArgumentException{
+    void EloCalculation_ValidInputDiffK_ReturnDouble() throws IllegalArgumentException {
         int elo1 = 2400;
         int elo2 = 2400;
         int outcome = 1;

@@ -57,7 +57,13 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
         // Probability of player A winning over player B
         double p1Win = WinProbabilityOnElo(eloA, eloB);
-        return Math.round(eloA + eloChange(k, winValue, p1Win));
+        double result=eloA + eloChange(k, winValue, p1Win);
+        
+        if (result<0){
+            return 0.0;
+        }
+
+        return Math.round(result);
     }
 
     @Override
