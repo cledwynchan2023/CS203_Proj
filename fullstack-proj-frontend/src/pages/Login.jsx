@@ -69,12 +69,12 @@ function Login() {
 					<img src={logo} style={{width:"100px", height:"100px", backgroundColor: "transparent", marginRight:"20px"}}></img>
 					<p className="text-center " style={{fontSize:"50px", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>Chess.io</p>
 				</div>
-			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%", minWidth:"500px"}}> 
+			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%", minWidth:"500px", display:"flex", justifyContent:"center"}}> 
 				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px", height:"100%", minWidth:"500px"}}> 
 					<p className="text" style={{fontSize:"20px", fontWeight:"bold", marginBottom:"0"}}>Login</p> 
-					<div style={{width:"100%", padding:"30px", height:"50%"}}>
-						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
-						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+					<div style={{width:"100%",  height:"35%",minHeight:"150px", marginBottom:"50px", marginTop:"10px"}}>
+						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"400px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"400px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
 
 					</div>
 					
@@ -88,7 +88,7 @@ function Login() {
 
                         </div>
                     ) : (
-                        <button className="button is-link" style={{ height:'15%',width: '50%',minWidth:"350px", borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
+                        <button className="button is-link" style={{ height:'15%',width: '50%',minWidth:"400px", borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
                     )}
 					<div className="text-center" style={{ marginTop: "20px", fontSize: "17px" }}>
 					{error && <p className="text-danger" style={{ fontSize:"1rem"}}>{error}</p>}

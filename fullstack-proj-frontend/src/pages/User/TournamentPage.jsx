@@ -341,7 +341,7 @@ export default function TournamentPage() {
             });
         },(error) => {
             console.error("WebSocket connection error", error);
-            setConnectionStatus("Connection failed");
+            //setConnectionStatus("Connection failed");
         });
 
         // Disconnect WebSocket on component unmount

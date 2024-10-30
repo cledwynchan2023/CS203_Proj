@@ -17,6 +17,7 @@ import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class TournamentController {
     private TournamentRepository tournamentRepository;
     @Autowired
     private TournamentService tournamentService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @GetMapping("/tournaments")
     public ResponseEntity<List<TournamentDTO>> getAllTournaments() {
         List<Tournament> tournaments = tournamentRepository.findAll();
@@ -149,6 +153,7 @@ public class TournamentController {
         try {
             Tournament updatedTournament = tournamentService.updateUserParticipating(userId, id);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament edited");
             return new ResponseEntity<>(tournamentDTO, HttpStatus.OK);  // Return 200 OK with the updated tournament
         } catch (Exception e) {
             System.out.println("error " + e.getMessage());
@@ -215,7 +220,9 @@ public class TournamentController {
             System.out.println(newTournament.getTournament_name());
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
-            sseController.sendTournamentUpdate(updatedTournament);
+            //sseController.sendTournamentUpdate(updatedTournament);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament edited");
+        
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging
@@ -228,6 +235,8 @@ public class TournamentController {
         try {
             Tournament updatedTournament = tournamentService.startTournament(id);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament Start");
+            System.out.println("Tournament started");
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging

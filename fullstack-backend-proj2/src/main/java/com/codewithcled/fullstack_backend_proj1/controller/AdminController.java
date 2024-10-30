@@ -155,6 +155,7 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament with ID "+id+" not found.");
             }
             tournamentRepository.deleteById(id);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament Deleted");
             return ResponseEntity.ok("Tournament with ID " + id + " has been deleted.");  // Return 200 OK with success message
         }  catch (Exception e) {
             System.out.println(e.getMessage());
@@ -184,6 +185,7 @@ public class AdminController {
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
             sseController.sendTournamentUpdate(updatedTournament);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament edited");
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging

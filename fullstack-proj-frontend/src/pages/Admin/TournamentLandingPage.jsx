@@ -1,3 +1,6 @@
+import 'fullstack-proj-frontend/src/Global.js';
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -104,6 +107,29 @@ export default function TournamentLandingPage() {
             fetchData();
             //loadTournaments();
         }, 2000);
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log("WebSocket connection successful");
+            
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received tournament update");
+                loadTournaments();
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                //setConnectionStatus("Disconnected");
+            });
+        };
         
 
     }, []);
@@ -202,21 +228,21 @@ export default function TournamentLandingPage() {
                     <div style={{width:"80%"}}>
                         <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
                     </div>
-                    <div style={{display:"flex", width:"20%"}}>
+                    <div style={{display:"flex", width:"50%", display:"flex", justifyContent:"center"}}>
                         <p>Filter by:</p>
-                    <div style={{marginLeft:"20px", backgroundColor:"black"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
-                        <div className="dropdown-trigger">
-                            <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={toggleDropdown}>
-                                <span>{selectedDropdownContent}</span>
-                            </button>
-                        </div>
-                        <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{height:"100%", backgroundColor:"black"}}>
-                            <div className="dropdown-content">
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByName("Name")}}> Name</span>
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByDate("Date")}}> Date</span>
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByCapacity("Capacity")}}> Capacity</span>
+                        <div style={{marginLeft:"20px"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
+                            <div className="dropdown-trigger" >
+                                <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={toggleDropdown}>
+                                    <span>{selectedDropdownContent}</span>
+                                </button>
                             </div>
-                        </div>
+                            <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{height:"100%", backgroundColor:"black"}}>
+                                <div className="dropdown-content">
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByName("Name")}}> Name</span>
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByDate("Date")}}> Date</span>
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByCapacity("Capacity")}}> Capacity</span>
+                                </div>
+                            </div>
                         </div>
                         
                     </div>

@@ -505,9 +505,9 @@ const loadTournamentForDelete= async()=>{
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
-            <div style={{width:"100%", alignContent:"center"}}>
+            <div style={{width:"100%", alignContent:"center", display:"flex", flexWrap:"wrap"}}>
                 <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
+                <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
             </div>
             
             

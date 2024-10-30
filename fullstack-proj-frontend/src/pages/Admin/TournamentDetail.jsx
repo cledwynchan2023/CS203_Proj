@@ -66,8 +66,8 @@ export default function TournamentDetail() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"800px", marginBottom:"50px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
                 <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
                         <figure class="image is-4by3">
@@ -79,9 +79,9 @@ export default function TournamentDetail() {
                     </div>
                     <div class="card-content">
                         <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Game of Chess</p>
-                        </div>
+                            <div class="media-content">
+                                <p class="title is-4">Game of Chess</p>
+                            </div>
                         </div>
 
                         <div class="content">
@@ -90,8 +90,8 @@ export default function TournamentDetail() {
                         </div>
                     </div>
                 </div>
-                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                <div style={{width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"300px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
@@ -99,7 +99,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"300px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
@@ -107,7 +107,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"300px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
@@ -115,7 +115,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"300px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
@@ -389,17 +389,18 @@ export default function TournamentDetail() {
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
+        
     }}> 
     <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
         <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
-            <div style={{width:"80%", alignContent:"center"}}>
+            <div style={{width:"60%", alignContent:"center", display:"flex", flexWrap:"wrap"}}>
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
+                <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
             </div>
-            <div style={{display:"flex",alignItems:"center", backgroundColor:"black", width:"20%"}}>
+            <div style={{display:"flex",alignItems:"center", width:"40%"}}>
                 <button className="button is-primary" onClick={startTournament} style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>

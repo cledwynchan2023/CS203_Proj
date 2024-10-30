@@ -1,3 +1,4 @@
+import 'fullstack-proj-frontend/src/Global.js';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -12,8 +13,12 @@ import { TiTick } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
 import {Atom} from "react-loading-indicators"
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 
 export default function TournamentDetail() {
+    const [connectionStatus, setConnectionStatus] = useState("Connecting...");
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const[user,setUser]=useState(null);
@@ -208,6 +213,7 @@ export default function TournamentDetail() {
         setTournament(result.data);
         setUser(result.data.participants);
         setHasJoined(checkJoinedTournamentFirst(result.data.participants));
+        checkStatus(result.data.status);
     };
 
     const checkJoinedTournament = () => {
@@ -329,6 +335,18 @@ export default function TournamentDetail() {
     } catch (error) {}
     };
 
+    const checkStatus = (status) => {
+        if (status == 'active') {
+            return true;
+        } else if (status == 'ongoing') {
+            alert("Tournament has started");
+            navigate(`/user/${userId}/tournament/${id}/start`);
+        } else {
+            alert("Tournament has ended");
+            navigate(`/user/${userId}/tournament/${id}/ended`);
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
@@ -380,6 +398,31 @@ export default function TournamentDetail() {
         setTimeout(() => {
             fetchData();
         },1000);
+
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log("WebSocket connection successful");
+            //setConnectionStatus("Connected");
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received new tournament data");
+                loadTournament();
+            
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            //setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                setConnectionStatus("Disconnected");
+            });
+        };
           
        
 
