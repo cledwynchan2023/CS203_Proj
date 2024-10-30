@@ -1,3 +1,4 @@
+import 'fullstack-proj-frontend/src/Global.js';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -12,6 +13,9 @@ import compPic2 from "/src/assets/comp2.webp";
 import compPic3 from "/src/assets/comp3.webp";
 import { ImCross } from "react-icons/im";
 import {Atom} from "react-loading-indicators"
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 export default function TournamentPage() {
     const navigate = useNavigate();
     const[tournament,setTournament]=useState([]);
@@ -324,6 +328,29 @@ export default function TournamentPage() {
             fetchData();
             loadTournaments();
         }, 2000);
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log("WebSocket connection successful");
+            //setConnectionStatus("Connected");
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received new tournament data");
+                loadTournaments();
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                setConnectionStatus("Disconnected");
+            });
+        };
         
 
     }, []);

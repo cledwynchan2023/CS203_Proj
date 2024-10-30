@@ -16,6 +16,7 @@ import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -49,6 +50,9 @@ public class AdminController {
 
     @Autowired
     private TournamentService tournamentService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/signin/validate-admin-token")
     public ResponseEntity<?> validateAdminToken(@RequestBody TokenRequest tokenRequest) {
@@ -95,6 +99,7 @@ public class AdminController {
         try {
             createdTournament = tournamentService.createTournament(tournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(createdTournament);
+            messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament created");
             return new ResponseEntity<>(tournamentDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
