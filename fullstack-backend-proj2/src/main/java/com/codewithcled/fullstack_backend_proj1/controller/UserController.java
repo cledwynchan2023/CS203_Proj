@@ -6,6 +6,8 @@ import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
@@ -97,10 +99,10 @@ public class UserController {
 
     // Get User Current Participating Tournaments
     @GetMapping("/{id}/currentTournament")
-    public ResponseEntity<List<TournamentDTO>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
+    public ResponseEntity<List<TournamentStartDTO>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
-            List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(user.getCurrentTournaments());
+            List<TournamentStartDTO> tournamentDTOs = TournamentStartMapper.toDTOList(user.getCurrentTournaments());
             return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
             // Log the exception message for debugging
@@ -147,6 +149,17 @@ public class UserController {
                     return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+    }
+
+    @GetMapping("/users/sorted")
+    public ResponseEntity<List<UserDTO>> getSortedUsers() {
+        List<User> users = userRepository.findAll();
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        users.sort((u1, u2) -> u2.getElo().compareTo(u1.getElo()));
+        List<UserDTO> userDTOs = UserMapper.toDTOList(users);
+        return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
     }
 
     
