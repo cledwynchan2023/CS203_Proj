@@ -14,6 +14,8 @@ import compPic2 from "/src/assets/comp2.webp";
 import compPic3 from "/src/assets/comp3.webp";
 import { ImCross } from "react-icons/im";
 import {Atom} from "react-loading-indicators"
+import {PieChart} from "@mui/x-charts"
+import { LineChart } from '@mui/x-charts/LineChart';
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -74,6 +76,19 @@ const handleRowClick = (tournament) => {
 
 }
 
+const getTournaments = () => {
+    const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
+    
+    const tournamentsPlayed = Array.from({ length: completedTournaments.length + 1 }, (_, index) => index);
+    return tournamentsPlayed;
+}
+
+const getEloChangesFromEachTournament = () => {
+    const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
+    const eloChanges = completedTournaments.map(tournament => getEndingElo(tournament));
+    return [100, ...eloChanges];
+}
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
@@ -124,25 +139,54 @@ const handleRowClick = (tournament) => {
       case 'Stats':
         return <>
         <section className="section animate__animated animate__fadeInUpBig" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0", gap:"0"}}>
-            <div style={{width:"100%", display:"flex", gap:"5%", justifyContent:"space-between"}}>
-                <div>
+            <div style={{width:"100%", display:"flex", marginBottom:"100px", flexWrap:'wrap'}}>
+            <div style={{width:"50%",minWidth:"400px", display:"flex", gap:"5%", justifyContent:"space-between", flexWrap:"wrap"}}>
+                <div style={{width:"45%"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}> Matches Played:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}> {getTotalMatchesPlayed()} Matches</p>
                 </div>
-                <div>
+                <div style={{width:"45%"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Win Rate:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}>  {getWinningPercentage()}%</p>
                 </div>
-                <div>
+                <div style={{width:"45%"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Lose Rate:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}>  {getLosingPercentage()}%</p>
                 </div>
-                <div>
+                <div style={{width:"45%"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Draw Rate:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}> {getDrawPercentage()}%</p>
                 </div>
 
                 
+            </div>
+           <div style={{width:"50%", display:"flex"}}>
+           <PieChart
+                series={[
+                    {
+                    data: [
+                        { id: 0, value: getWinningPercentage(), label:"Win Rate" },
+                        { id: 1, value: getDrawPercentage(),label:"Draw Rate" },
+                        { id: 2, value: getLosingPercentage(),label:"Lose Rate" },
+                    ],
+                    label: { fill: 'white' }
+                    },
+                ]}
+                width={500}
+                height={300}
+                />
+                 <LineChart
+                    xAxis={[{ data: getTournaments(), axisLine: { stroke: 'green' }, tick: { fill: 'green' } }]}
+                    series={[
+                        {
+                        data: getEloChangesFromEachTournament(),
+                        },
+                    ]}
+                    width={300}
+                    height={300}
+                    />
+           </div>
+            
             </div>
             <div style={{width:"100%", marginTop:"50px"}}>
                 <div style={{width:"100%", textAlign:"left",height:"auto", marginBottom:"20px"}}>
@@ -169,7 +213,7 @@ const handleRowClick = (tournament) => {
                 </tbody>
             </table>
             </div>
-
+        
         </section>
         </>
       default:
@@ -384,6 +428,17 @@ const handleRowClick = (tournament) => {
         const endingElo = getStartingEloFromMatch(lastMatch) + getEloChangesFromMatch(lastMatch);
        
         return endingElo - startingElo;
+    };
+
+    const getEndingElo= (tournament) => {
+      
+        const noOfRounds = tournament.noOfRounds;
+        const matchListTemp = tournament.rounds[noOfRounds-1].matchList;
+        
+        const lastMatch = findMatch(matchListTemp);
+        const endingElo = getStartingEloFromMatch(lastMatch) + getEloChangesFromMatch(lastMatch);
+       
+        return endingElo;
     };
 
    
