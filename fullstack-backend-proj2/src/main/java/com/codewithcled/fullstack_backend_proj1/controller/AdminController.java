@@ -39,9 +39,6 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private SSEController sseController;
-
     @Value("${admin.token}")
     private String adminToken;
 
@@ -184,7 +181,6 @@ public class AdminController {
             System.out.println(newTournament.getTournament_name());
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
-            sseController.sendTournamentUpdate(updatedTournament);
             messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament edited");
             return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {

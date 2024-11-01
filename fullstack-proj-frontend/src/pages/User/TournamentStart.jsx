@@ -160,7 +160,7 @@ export default function TournamentStart() {
                             {renderPagination()}
                         </ul>
                     </nav>
-                    {user.includes(userId) && (
+                    {user.map(user => user.id - userId == 0) && (
                     <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
@@ -172,7 +172,7 @@ export default function TournamentStart() {
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                             </div>
                             <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                             </div>
                             <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
@@ -433,12 +433,11 @@ const loadTournamentForDelete= async()=>{
                 
                 setTournament(response.data);
                 setScoreboard(new Map(Object.entries(response.data.rounds[response.data.currentRound - 1].scoreboard)));
-                console.log(scoreboard);
-                //console.log(response.data);
+                
                 setTournamentRound(response.data.currentRound);
                 
                 setUser(response.data.participants);
-                
+                console.log(user);
                 if (response.data.status == 'active') {
                     alert("Tournament has not started yet");
                     navigate(`/user/${userId}/tournament/${id}`);
@@ -501,6 +500,7 @@ const loadTournamentForDelete= async()=>{
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
+        height:"100vh",
     }}> 
     <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
         <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
@@ -529,7 +529,7 @@ const loadTournamentForDelete= async()=>{
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100", margin:"0", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>

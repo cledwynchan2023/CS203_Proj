@@ -33,8 +33,6 @@ import java.util.List;
 @RequestMapping("/t")
 public class TournamentController {
     @Autowired
-    private SSEController sseController;
-    @Autowired
     private TournamentRepository tournamentRepository;
     @Autowired
     private TournamentService tournamentService;

@@ -1,9 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.DTO;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TournamentStartDTO {
     private Long id;

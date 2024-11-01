@@ -31,7 +31,8 @@ public class ApplicationConfig {
                             .requestMatchers("/update/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") 
+                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers("/m/**").hasAnyRole("USER", "ADMIN") 
                                 // .requestMatchers("/api/**").authenticated()
                                 
                                 .anyRequest().permitAll())

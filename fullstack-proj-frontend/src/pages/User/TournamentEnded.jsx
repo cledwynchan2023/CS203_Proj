@@ -155,6 +155,7 @@ export default function TournamentEnded() {
                             {renderPagination()}
                         </ul>
                     </nav>
+                    {user.includes(userId) && (
                     <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
@@ -174,6 +175,7 @@ export default function TournamentEnded() {
                             </div>
                         </div>
                     </div>
+                    )}
                     <div>
                         <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
                     </div>
@@ -309,7 +311,7 @@ export default function TournamentEnded() {
       case 'Players':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
                 
-                <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+                <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -335,7 +337,7 @@ export default function TournamentEnded() {
         return <>
         <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+        <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
         
 
             <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>

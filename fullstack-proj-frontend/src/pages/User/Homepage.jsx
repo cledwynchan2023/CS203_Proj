@@ -95,9 +95,9 @@ export default function Homepage() {
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
     }}> 
-         <div className="content" style={{width:"100%",height:"100vh", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"50px"}}>
+         <div className="content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)", paddingTop:"50px", overflowY:"scroll"}}>
             <section className="hero fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center"}}>
-                <div style={{width:"70%", textAlign:"center", paddingTop:"50px"}}>
+                <div style={{width:"70%", textAlign:"center"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Master Your Moves, Conquer the Board – Join the Ultimate Chess Challenge!</p>
                     <p className="subtitles" style={{width:"100%", fontSize:"20px"}}>
                     Welcome to the premier destination for chess enthusiasts of all skill levels! Whether you’re a grandmaster or a beginner, our platform offers exciting tournaments that challenge your strategic thinking and push your skills to new heights. 

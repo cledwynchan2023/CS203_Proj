@@ -143,7 +143,7 @@ export default function TournamentDetail() {
       case 'Players':
         return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-                <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+                <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -168,7 +168,7 @@ export default function TournamentDetail() {
       case 'Scoreboard':
         return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+        <div className="card" style={{width:"90%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
             <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                 <thead>
@@ -445,8 +445,8 @@ export default function TournamentDetail() {
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                 <p class="subtitle">ID: {tournament.id}</p>
             </div>
-            <div style={{alignContent:"center",width:"500px"}}>
-                <button className="button is-link" disabled={hasJoined} onClick={() => addPlayer()} style={{ height:"40px",marginRight:"5%", fontWeight:"bold"}}>{hasJoined ? 'Joined' : 'Join Tournament'}</button>
+            <div style={{alignContent:"center",width:"400px", display:"flex", flexWrap:"wrap", gap:"10px"}}>
+                <button className="button is-link" disabled={hasJoined} onClick={() => addPlayer()} style={{ height:"40px",marginRight:"5%", fontWeight:"bold", width:"100%"}}>{hasJoined ? 'Joined' : 'Join Tournament'}</button>
                 <button className="button is-danger" disabled={!hasJoined} onClick={() => removePlayer()} style={{width:"45%", height:"40px", fontWeight:"bold"}}>Leave</button>
             </div>
             

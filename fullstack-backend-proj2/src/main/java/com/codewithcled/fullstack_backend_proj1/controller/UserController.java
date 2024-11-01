@@ -5,10 +5,8 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
-import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartMapper;
-import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +34,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
-
-    //@Autowired
-    //private TournamentService tournamentService;
-
 
     @Autowired
     private UserService userService;

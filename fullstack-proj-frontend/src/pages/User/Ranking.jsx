@@ -215,7 +215,7 @@ export default function Ranking() {
     }}>
         <div className="content" style={{width:"100%", height:"100%", display:"flex", justifyContent:"center"}}>
 
-            <section className="hero fade-in" style={{height:"100%",display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", }}>
             <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Ranking</p>
                 </div>

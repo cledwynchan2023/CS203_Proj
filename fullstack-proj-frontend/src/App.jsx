@@ -129,13 +129,13 @@ function App() {
         }></Route>
         <Route exact path ="/user/:userId/tournament/:id/start" element={
           <>
-          <AdminNavbar></AdminNavbar>
+          <UserNavbar></UserNavbar>
           <TournamentStartUser/>
           </>
         }></Route>
         <Route exact path ="/user/:userId/tournament/:id/ended" element={
           <>
-          <AdminNavbar></AdminNavbar>
+          <UserNavbar></UserNavbar>
           <TournamentEnded/>
           </>
         }></Route>
