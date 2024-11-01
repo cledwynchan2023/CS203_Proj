@@ -26,7 +26,7 @@ import TournamentStart from './pages/Admin/TournamentStart.jsx';
 import TournamentCompleted from './pages/Admin/TournamentCompleted.jsx';
 import TournamentStartUser from './pages/User/TournamentStart.jsx';
 import TournamentEnded from './pages/User/TournamentEnded.jsx';
-
+import ViewProfile from './pages/User/ViewProfile.jsx';
 function App() {
 
   return (
@@ -162,6 +162,12 @@ function App() {
           <>
           <UserNavbar></UserNavbar>
           <Profile/>
+          </>
+        }></Route>
+        <Route exact path ="/user/:userId/profile/:playerId" element={
+          <>
+          <UserNavbar></UserNavbar>
+          <ViewProfile/>
           </>
         }></Route>
 

@@ -17,7 +17,7 @@ import {Atom} from "react-loading-indicators"
 import {PieChart} from "@mui/x-charts"
 import { LineChart } from '@mui/x-charts/LineChart';
 
-export default function Profile() {
+export default function ViewProfile() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const[sortedUsers, setSortedUsers]=useState([]);
@@ -27,9 +27,10 @@ export default function Profile() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
+    const{playerId} = useParams()
     const [joinedTournaments, setJoinedTournaments] = useState([]);
     const [startTournaments, setStartTournaments] = useState([]);
-    const [activeTab, setActiveTab] = useState('Overview');
+    const [activeTab, setActiveTab] = useState('Stats');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedUser,setEditedUser] = useState({username:"", password:"", email:"", role:"ROLE_USER", confirmPassword:"", elo:""});
@@ -53,7 +54,7 @@ export default function Profile() {
         };
        
         try {
-            const response = await axios.put(`http://localhost:8080/u/${userId}`, userData, {
+            const response = await axios.put(`http://localhost:8080/u/${playerId}`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -80,6 +81,7 @@ const getTournaments = () => {
     const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
     
     const tournamentsPlayed = Array.from({ length: completedTournaments.length + 1 }, (_, index) => index);
+    console.log(tournamentsPlayed);
     return tournamentsPlayed;
 }
 
@@ -103,7 +105,7 @@ const getEloChangesFromEachTournament = () => {
                       <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
                   </div>
               ) : (
-              <section className="hero animate__animated animate__fadeInUpBig" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0"}}>
+              <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0"}}>
                 <div>
                 <div style={{width:"100%", textAlign:"left",height:"auto",marginBottom:"20px"}}>
                     <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}>Joined Tournaments</p>
@@ -201,15 +203,17 @@ const getEloChangesFromEachTournament = () => {
                            },
                            "& .MuiChartsAxis-bottom .MuiChartsAxis-line":{
                             stroke:"white",
-                            strokeWidth:0.6
+                            strokeWidth:2,
+                            strokeDashoffset:0
                             },
                             "& .MuiChartsAxis-left .MuiChartsAxis-line":{
                                 stroke:"white",
-                                strokeWidth:0.6
+                                strokeWidth:2,
+                                strokeDashoffset:0
                             },
                                // change bottom label styles
                                 "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel":{
-                                    strokeWidth:"0.6",
+                                    strokeWidth:"",
                                     fill:"white"
                                 },
                     }}
@@ -236,7 +240,7 @@ const getEloChangesFromEachTournament = () => {
                     </thead>
                     <tbody>
                         {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
-                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)} style={{ backgroundColor: getEloChange(tournament) > 0 ? 'rgba(0,255,0,0.3)' : getEloChange(tournament) < 0 ? 'rgba(255,0,0,0.45)' : 'white' }}>
+                        <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)} style={{ backgroundColor: getEloChange(tournament) > 0 ? 'rgba(0,255,0,0.3)' : getEloChange(tournament) < 0 ? 'rgba(255,0,0,0.45)' : 'grey' }}>
                             <td>{tournament.id}</td>
                             <td>{tournament.tournamentName}</td>
                             <td>{tournament.date}</td>   
@@ -264,15 +268,17 @@ const getEloChangesFromEachTournament = () => {
     const findRanking = (data) =>{
 
         for (let i = 0; i < data.length; i++){
-            if (data[i].id - userId == 0){
-              
+            if (data[i].id - playerId == 0){
+                if (i == 0){
+                    return 1;
+                }
                 return i;
             }
         }
     }
     const loadUser= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/u/id/${userId}`, {
+        const result = await axios.get(`http://localhost:8080/u/id/${playerId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -300,38 +306,18 @@ const getEloChangesFromEachTournament = () => {
     };
 
 
-    const deleteUser = async () => {
-        const confirmation = window.confirm("Are you sure you want to delete this user?");
-        if (!confirmation) {
-            return;
-        }
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`http://localhost:8080/u/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.status === 204){
-                alert("User Deleted Successfully");
-                navigate('/');
-            }
-            
-        } catch (error) {
-            setError('An error occurred while deleting the user.');
-        }
-    };
+   
     const getEloChangesFromMatch = (match) => {
-        if (match.player1 - userId == 0) {
+        if (match.player1 - playerId == 0) {
             return match.eloChange1;
-        } else if (match.player2 - userId == 0) {
+        } else if (match.player2 - playerId == 0) {
             return match.eloChange2;
         }
     }
     const getStartingEloFromMatch = (match) => {
-        if (match.player1 - userId == 0) {
+        if (match.player1 - playerId == 0) {
             return match.player1StartingElo;
-        } else if (match.player2 - userId == 0) {
+        } else if (match.player2 - playerId == 0) {
             return match.player2StartingElo;
         }
     };
@@ -342,7 +328,7 @@ const getEloChangesFromEachTournament = () => {
             const matchList = rounds[i].matchList;
             const match = findMatch(matchList);
             if (match.result == 0){
-                if (match.player1 - userId == 0 || match.player2 - userId == 0){
+                if (match.player1 - playerId == 0 || match.player2 - playerId == 0){
                      count++;
                 }
             }
@@ -369,11 +355,11 @@ const getEloChangesFromEachTournament = () => {
             const matchList = rounds[i].matchList;
             const match = findMatch(matchList);
             if (match.result == -1){
-                if (match.player1 - userId == 0){
+                if (match.player1 - playerId == 0){
                      count++;
                 }
             } else if (match.result == 1){
-                if (match.player2 - userId == 0){
+                if (match.player2 - playerId == 0){
                     count++;
                 }
             }
@@ -403,11 +389,11 @@ const getEloChangesFromEachTournament = () => {
             const matchList = rounds[i].matchList;
             const match = findMatch(matchList);
             if (match.result == -1){
-                if (match.player2 - userId == 0){
+                if (match.player2 - playerId == 0){
                      count++;
                 }
             } else if (match.result == 1){
-                if (match.player1 - userId == 0){
+                if (match.player1 - playerId == 0){
                     count++;
                 }
             }
@@ -442,7 +428,7 @@ const getEloChangesFromEachTournament = () => {
     }
     const findMatch = (matchList) => {
         for (let i = 0; i < matchList.length; i++) {
-            if (matchList[i].player1 - userId == 0 || matchList[i].player2 - userId == 0) {
+            if (matchList[i].player1 - playerId == 0 || matchList[i].player2 - playerId == 0) {
                 return matchList[i];
             }
         }
@@ -477,7 +463,7 @@ const getEloChangesFromEachTournament = () => {
    
     const loadTournaments= async()=>{
         
-        const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
+        const result3 = await axios.get(`http://localhost:8080/u/${playerId}/currentTournament`);
         
         if (!result3.data.length == 0){
             setJoinedTournaments(result3.data);
@@ -525,7 +511,7 @@ const getEloChangesFromEachTournament = () => {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/u/id/${userId}`, {
+                const response = await axios.get(`http://localhost:8080/u/id/${playerId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -567,100 +553,21 @@ const getEloChangesFromEachTournament = () => {
                 <p class="subtitle">ID: {user.id}</p>
                 <p class="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
             </div>
-            <div style={{display:"flex",alignItems:"center", width:"50%"}}>
-               
-                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger"onClick={() => deleteUser()} style={{width:"45%", height:"40px", fontWeight:"bold"}}>Delete</button>
-            </div>
+           
             
         </section>
-        {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Profile</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
-                </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
-               
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <div className="form-floating mb-3">
-                        <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="floatingInput"
-                            placeholder="name@example.com"
-                            value={username}
-                            onChange={(e) =>onInputChange(e)}
-                            name="username"
-                        ></input>
-                        <label htmlFor="username">Username</label>
-                        </div>
-                        
-                        <div className="form-floating mb-3">
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="floatingUsername"
-                            placeholder="email"
-                            value={email}
-                            onChange={(e) =>onInputChange(e)}
-                            name="email"
-                        />
-                        <label htmlFor="Email">Email</label>
-
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="Password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={password}
-                                onChange={(e) => onInputChange(e)}
-                                name="password"
-                            >
-                            </input>
-                            <label htmlFor="Password">Password</label>
-                        </div>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="Password"
-                                className="form-control"
-                                id="floatingRole"
-                                value={confirmPassword}
-                                onChange={(e) => onInputChange(e)}
-                                name="confirmPassword"
-                            >
-                            </input>
-                            <label htmlFor="Password">Confirm Password</label>
-                        </div>
-                        <div style={{marginTop:"5%"}}>
-                        <button type="submit" className='button is-link is-fullwidth'>Edit Profile</button>
-                        </div>
-                    </form>
-            
-                </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
-                    
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                  </div>
-                </footer>
-              </div>
-            </div>
-            )}
+        
         <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
                 <div className="tabs is-left" style={{ height:"80px", margin:"0", margin:"0"}}>
                 <ul>
+                <li className={activeTab === 'Stats' ? 'is-active' : ''}>
+                    <a onClick={() => setActiveTab('Stats')}>Stats</a>
+                    </li>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
                     </li>
                     
-                    <li className={activeTab === 'Stats' ? 'is-active' : ''}>
-                    <a onClick={() => setActiveTab('Stats')}>Stats</a>
-                    </li>
                 </ul>
                 </div>
                 <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"92%"}}>

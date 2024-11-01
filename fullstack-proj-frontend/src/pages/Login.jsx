@@ -46,7 +46,7 @@ function Login() {
 				
 			} else if (userRole=="ROLE_USER"){
 				
-					navigate(`/user/${userId}/tournament`);
+					navigate(`/user/${userId}/home`);
 			}
 			}, 1000);
 			

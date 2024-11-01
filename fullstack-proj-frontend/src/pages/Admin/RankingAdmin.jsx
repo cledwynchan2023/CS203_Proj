@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
 import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
@@ -13,6 +13,7 @@ import swissPic from '/src/assets/swiss.png';
 import { CgProfile } from "react-icons/cg";
 
 export default function RankingAdmin() {
+    const navigate = useNavigate();
     const [selectedId, setSelectedId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const[user,setUser]=useState([]);
@@ -57,6 +58,10 @@ export default function RankingAdmin() {
         setSelectedUser(user);
         setIsModalOpen(true);
     };
+    const handleViewProfile = (userid) =>{
+        setIsModalOpen(false);
+        navigate(`/user/${userId}/profile/${userid}`);
+    }
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -98,9 +103,11 @@ export default function RankingAdmin() {
                         <div style={{display:"flex", alignItems:"center", height:"100%"}}>
                             <CgProfile style={{fontSize:"170px", color:"white"}}/>
                             <div style={{paddingLeft:"20px"}}>
-                                <p className="title" style={{fontWeight:"bold", marginBottom:"20px"}}>{selectedUser.username}</p>
-                                <p className="subtitle">Elo: {selectedUser.elo}</p>
+                            <p className="title" style={{fontWeight:"bold", marginBottom:"10px"}}>{selectedUser.username}</p>
+                                <p className="subtitle" style={{marginBottom:"0"}}>Elo: {selectedUser.elo}</p>
                                 <p className="subtitle">Ranking: {ranking}</p>
+                                <button className="button is-link" onClick={() => handleViewProfile(selectedUser.id)}>View Profile</button>
+                                
                             </div>
 
                         </div>
@@ -205,9 +212,9 @@ export default function RankingAdmin() {
         backgroundImage: `url(${backgroundImage})`,
         height:"100vh"
     }}>
-        <div className="content" style={{width:"100%", height:"90%", display:"flex", justifyContent:"center", marginTop:"50px"}}>
+        <div className="content" style={{width:"100%", height:"90%", display:"flex", justifyContent:"center"}}>
 
-            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"70%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
             <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Ranking</p>
                 </div>
