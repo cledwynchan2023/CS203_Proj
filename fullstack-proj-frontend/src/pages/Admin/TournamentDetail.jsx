@@ -392,7 +392,7 @@ export default function TournamentDetail() {
         
     }}> 
     <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+        <section className="hero is-flex-direction-row fade-in" style={{padding:"10px", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
@@ -400,12 +400,12 @@ export default function TournamentDetail() {
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                 <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
             </div>
-            <div style={{display:"flex",alignItems:"center", width:"40%"}}>
-                <button className="button is-primary" onClick={startTournament} style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
+            <div style={{display:"flex",alignItems:"center", width:"60%", flexWrap:"wrap", gap:"10px"}}>
+                <button className="button is-primary" onClick={startTournament} style={{minWidth:"150px",width:"30%", height:"40px", fontWeight:"bold"}} disabled={isStart === -1}>
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>
-                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger" style={{width:"55%", height:"40px", fontWeight:"bold"}}>Delete</button>
+                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{minWidth:"150px",width:"30%", height:"40px", fontWeight:"bold"}}>Edit</button>
+                <button className="button is-danger" style={{width:"30%", height:"40px", fontWeight:"bold",minWidth:"150px"}}>Delete</button>
             </div>
             
         </section>
@@ -554,7 +554,7 @@ export default function TournamentDetail() {
           </section>
     </div>
     </div>
-    <footer className="footer" style={{textAlign:"center",marginTop:"100px",height:"100px"}}>
+    <footer className="footer" style={{textAlign:"center",height:"100px"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
     </>
