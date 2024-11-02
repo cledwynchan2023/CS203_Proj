@@ -139,7 +139,7 @@ export default function TournamentStart() {
     const sortedScoreboard = Array.from(scoreboard.entries()).sort((a, b) => b[1] - a[1]);
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px", display:"flex"}}>
             
             <div style={{width:"100%", height:"60%"}}>
                     <div style={{width:"100%", height:"100px"}}>
@@ -160,8 +160,8 @@ export default function TournamentStart() {
                             {renderPagination()}
                         </ul>
                     </nav>
-                    {user.map(user => user.id - userId == 0) && (
-                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid purple"}}>
+                    {user.filter(user => user.id - userId == 0).map( user =>(
+                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
                             </div>
@@ -180,7 +180,7 @@ export default function TournamentStart() {
                             </div>
                         </div>
                     </div>
-                    )}
+                    ))}
                     <div>
                         <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
                     </div>
@@ -529,7 +529,7 @@ const loadTournamentForDelete= async()=>{
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100", margin:"0", width:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>

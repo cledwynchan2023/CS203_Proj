@@ -155,8 +155,8 @@ export default function TournamentEnded() {
                             {renderPagination()}
                         </ul>
                     </nav>
-                    {user.includes(userId) && (
-                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"-10px", marginBottom:"50px", border:"5px solid purple"}}>
+                    {user.filter(user => user.id - userId == 0).map( user =>(
+                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
                             </div>
@@ -167,7 +167,7 @@ export default function TournamentEnded() {
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                             </div>
                             <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                             </div>
                             <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
@@ -175,7 +175,7 @@ export default function TournamentEnded() {
                             </div>
                         </div>
                     </div>
-                    )}
+                    ))}
                     <div>
                         <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
                     </div>

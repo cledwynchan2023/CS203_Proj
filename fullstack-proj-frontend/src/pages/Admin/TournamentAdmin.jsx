@@ -15,11 +15,7 @@ const TournamentAdmin = () => {
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
-        // Add any other tokens you want to clear here
-        // localStorage.removeItem('anotherToken');
-        // tokenKeys.forEach(key => {
-        //     localStorage.removeItem(key);
-        // });
+        
     };
 
     const deleteTournament = async (tournament_id) => {
@@ -56,27 +52,7 @@ const TournamentAdmin = () => {
             return false;
         }
     };
-    const initSSE = () => {
-        const eventSource = new EventSource('http://localhost:8080/update/sse/tournament');
-
-        eventSource.onmessage = (event) => {
-            const tournament = JSON.parse(event.data);
-            console.log(users);
-            
-            setUser(tournament);
-            setData(filteredUsers);
-        };
-
-        eventSource.onerror = (error) => {
-            console.error("SSE failure:", error);
-            setError("Loading...");
-            eventSource.close();
-        };
-
-        return () => {
-            eventSource.close();
-        };
-    };
+    
 
 
     useEffect(() => {
@@ -112,10 +88,7 @@ const TournamentAdmin = () => {
         };
 
         fetchData();
-        //loadPastTournaments();
-        //loadTournaments();
-        initSSE();
-
+       
     }, []);
 
     if (error) {
