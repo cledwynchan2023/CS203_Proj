@@ -102,7 +102,7 @@ const getEloChangesFromEachTournament = () => {
           ) : (
               joinedTournaments.filter(tournament => tournament.status !== 'completed').length === 0 ? (
                   <div style={{textAlign: "center", marginBottom: "20px"}}>
-                      <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
+                      <p style={{fontSize:"20px"}}>Player is currently not participating in any tournaments at the moment</p>
                   </div>
               ) : (
               <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0"}}>
@@ -239,7 +239,7 @@ const getEloChangesFromEachTournament = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
+                        {joinedTournaments.filter(tournament => tournament.status === 'completed').reverse().map((tournament) => (
                         <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)} style={{ backgroundColor: getEloChange(tournament) > 0 ? 'rgba(0,255,0,0.3)' : getEloChange(tournament) < 0 ? 'rgba(255,0,0,0.45)' : 'grey' }}>
                             <td>{tournament.id}</td>
                             <td>{tournament.tournamentName}</td>
@@ -272,7 +272,7 @@ const getEloChangesFromEachTournament = () => {
                 if (i == 0){
                     return 1;
                 }
-                return i;
+                return i + 1;
             }
         }
     }
@@ -559,7 +559,7 @@ const getEloChangesFromEachTournament = () => {
         
         <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
-                <div className="tabs is-left" style={{ height:"80px", margin:"0", margin:"0"}}>
+                <div className="tabs is-left" style={{ height:"80px", margin:"0"}}>
                 <ul>
                 <li className={activeTab === 'Stats' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Stats')}>Stats</a>

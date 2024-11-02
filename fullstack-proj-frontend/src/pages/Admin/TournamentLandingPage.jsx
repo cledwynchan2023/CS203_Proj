@@ -192,6 +192,8 @@ export default function TournamentLandingPage() {
     };
 
     const deleteTournament= async(tournament_id)=>{
+        const confirmation = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmation) return;
         const token = localStorage.getItem('token');
         const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
             headers: {

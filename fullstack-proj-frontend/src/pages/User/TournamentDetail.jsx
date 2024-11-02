@@ -204,16 +204,26 @@ export default function TournamentDetail() {
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        try {
+            const result = await axios.get(`http://localhost:8080/t/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
         console.log(result.data);
         setTournament(result.data);
         setUser(result.data.participants);
         setHasJoined(checkJoinedTournamentFirst(result.data.participants));
         checkStatus(result.data.status);
+        } catch (error) {
+           
+                alert("Tournament does not exist or tournament has been removed");
+                navigate(`/user/${userId}/tournament`);
+            
+        }
+       
+       
     };
 
     const checkJoinedTournament = () => {

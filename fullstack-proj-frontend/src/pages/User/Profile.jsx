@@ -29,7 +29,7 @@ export default function Profile() {
     const{userId} = useParams()
     const [joinedTournaments, setJoinedTournaments] = useState([]);
     const [startTournaments, setStartTournaments] = useState([]);
-    const [activeTab, setActiveTab] = useState('Overview');
+    const [activeTab, setActiveTab] = useState('Stats');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedUser,setEditedUser] = useState({username:"", password:"", email:"", role:"ROLE_USER", confirmPassword:"", elo:""});
@@ -265,8 +265,10 @@ const getEloChangesFromEachTournament = () => {
 
         for (let i = 0; i < data.length; i++){
             if (data[i].id - userId == 0){
-              
-                return i;
+                if (i == 0){
+                    return 1;
+                }
+                return i + 1;
             }
         }
     }
@@ -360,7 +362,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
         
-        return (totalDraw/totalMatches).toFixed(4) * 100;
+        return ((totalDraw/totalMatches) * 100).toFixed(2);
     }
 
     const getWinningMatches = (rounds) => {
@@ -425,7 +427,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
      
-        return (totalLose/totalMatches).toFixed(4) * 100;
+        return ((totalLose/totalMatches) * 100).toFixed(2);
     }
     const getWinningPercentage = () => {
         const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
@@ -437,7 +439,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
         
-        return (totalWin/totalMatches).toFixed(4) * 100;
+        return ((totalWin/totalMatches)* 100).toFixed(2);
         
     }
     const findMatch = (matchList) => {
@@ -652,7 +654,7 @@ const getEloChangesFromEachTournament = () => {
             )}
         <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
 
-                <div className="tabs is-left" style={{ height:"80px", margin:"0", margin:"0"}}>
+                <div className="tabs is-left" style={{ height:"80px", margin:"0"}}>
                 <ul>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>

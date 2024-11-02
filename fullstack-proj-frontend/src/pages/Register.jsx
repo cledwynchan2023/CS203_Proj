@@ -66,12 +66,12 @@ export default function Register() {
             }
           }
 
-        const domainValid = await isDomainValid(email);
-        if (!domainValid) {
-          setIsLoading(false);
-            alert("Email domain does not exist or cannot receive emails");
-            return;
-        }
+        // const domainValid = await isDomainValid(email);
+        // if (!domainValid) {
+        //   setIsLoading(false);
+        //     alert("Email domain does not exist or cannot receive emails");
+        //     return;
+        // }
 
         if (password !== confirmPassword) {
           setIsLoading(false);

@@ -239,23 +239,21 @@ export default function TournamentDetail() {
         console.log(response.data);
         setNonParticipatingUser(response.data);
     };
-
-    const deleteTournament = async (id) => {
-        try {
-            if (tournament.currentSize > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
+   
+    const deleteTournament= async(tournament_id)=>{
+        const confirmation = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmation) return;
+        const token = localStorage.getItem('token');
+        const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-            const response = await axios.delete(`http://localhost:8080/t/tournament/${id}`);
-            // Refresh the tournament list after deletion
-            if (response.status === 200){
-                alert("Tournament Deleted Successfully");
-                loadTournament();
-                navigate(`/admin/${userId}/tournament`);
-            }
+        });
+        if (result.status == 200){
             
-        } catch (error) {
-            setError('An error occurred while deleting the tournament.');
+            alert("Tournament deleted successfully");
+            navigate(`/admin/${userId}/tournament`);
+
         }
     };
 
@@ -405,7 +403,7 @@ export default function TournamentDetail() {
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>
                 <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{minWidth:"150px",width:"30%", height:"40px", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger" style={{width:"30%", height:"40px", fontWeight:"bold",minWidth:"150px"}}>Delete</button>
+                <button className="button is-danger" onClick={() => deleteTournament(id)} style={{width:"30%", height:"40px", fontWeight:"bold",minWidth:"150px"}}>Delete</button>
             </div>
             
         </section>

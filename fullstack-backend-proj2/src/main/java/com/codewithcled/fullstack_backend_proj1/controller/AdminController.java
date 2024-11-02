@@ -147,11 +147,10 @@ public class AdminController {
 
     @DeleteMapping("/tournament/{id}")
     public ResponseEntity<String> deleteTournament(@PathVariable("id") Long id) {
+        System.out.println("Deleting tournament with ID " + id);
         try {
-            if (!tournamentRepository.existsById(id)){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament with ID "+id+" not found.");
-            }
-            tournamentRepository.deleteById(id);
+            System.out.println("Deleting tournament with ID " + id);
+            tournamentService.deleteTournament(id);
             messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament Deleted");
             return ResponseEntity.ok("Tournament with ID " + id + " has been deleted.");  // Return 200 OK with success message
         }  catch (Exception e) {

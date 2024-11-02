@@ -40,5 +40,9 @@ public interface TournamentService {
 
     public void checkComplete(Long tournamentId) throws Exception;
 
+    public void deleteTournament(Long id) throws Exception;
+
     public void endTournament(Long id) throws Exception;
+
+    public void removeAllUsers(Long id) throws Exception;
 }

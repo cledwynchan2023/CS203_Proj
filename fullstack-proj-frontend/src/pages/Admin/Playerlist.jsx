@@ -239,7 +239,7 @@ export default function Playerlist() {
         <section className="section is-large" style={{ height:"100%", width:"100%", paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px",overflowX:"scroll"}}>
             <div className="hero-body" style={{marginBottom:"5%", height:"20%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Player List</p>
-                <button className="button is-link is-rounded" onClick={()=> {setIsModalOpen(true)}}>Create Players</button>
+                <button className="button is-link is-rounded" onClick={()=> {setIsModalOpen(true)}}>Create Player</button>
             </div>
             <div className="section animate__animated animate__fadeInUpBig" style={{height:"110%", paddingBottom:"20px",overflowY:"scroll"}}>
 

@@ -168,14 +168,14 @@ export default function TournamentStart() {
                         <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
                             
                             <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + userPairings.player1}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                             </div>
                             <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
                                 <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                             </div>
                             <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id "+ userPairings.player2}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
                             </div>
                         </div>

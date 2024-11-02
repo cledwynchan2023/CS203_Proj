@@ -85,14 +85,14 @@ public class TournamentServiceImplementation implements TournamentService {
                 .orElseThrow(() -> new Exception("User not found"));
 
         if (user.getCurrentTournaments().contains(currentTournament)) {
-            System.out.println(currentTournament.getParticipants());
+            //System.out.println(currentTournament.getParticipants());
             user.removeCurrentTournament(currentTournament);
-            System.out.println(currentTournament.getParticipants().size());
+            //System.out.println(currentTournament.getParticipants().size());
             currentTournament.removeParticipant(user);
             currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
             userRepository.save(user);
         } else {
-
+            System.out.println("User is not participating in the tournament");
             throw new Exception("User is not participating in the tournament");
         }
         return tournamentRepository.save(currentTournament); // Save and return the updated tournament
@@ -162,6 +162,11 @@ public class TournamentServiceImplementation implements TournamentService {
         // System.out.println("Username Taken!");
         // throw new Exception("Username is already being used with another account");
         // }
+
+       
+        if (size % 2 != 0) {
+            throw new Exception("Tournament size must be even");
+        }
         
         Tournament createdTournament = new Tournament();
         createdTournament.setTournament_name(tournament_name);
@@ -358,4 +363,39 @@ public class TournamentServiceImplementation implements TournamentService {
         currentTournament.setStatus("completed");
         tournamentRepository.save(currentTournament);
     }
+    
+        @Override
+        @Transactional
+        public void deleteTournament(Long id) throws Exception {
+            try {
+                Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new Exception("Tournament not found"));
+        
+        // Remove all participants from the tournament
+                removeAllUsers(id);
+        // Save the tournament to update the changes in the database
+        tournamentRepository.save(tournament);
+        
+        // Now delete the tournament
+        tournamentRepository.deleteById(id);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        
+        }
+        @Override
+        public void removeAllUsers(Long id) throws Exception {
+            Tournament tournament = tournamentRepository.findById(id)
+            .orElseThrow(() -> new Exception("Tournament not found"));
+    
+    // Remove all participants from the tournament
+            List<User> participants = new ArrayList<>(tournament.getParticipants());
+            for (User user : participants) {
+                tournament.removeParticipant(user);
+                user.removeCurrentTournament(tournament);
+            }
+            
+            // Save the tournament to update the changes in the database
+            tournamentRepository.save(tournament);
+        }
 }

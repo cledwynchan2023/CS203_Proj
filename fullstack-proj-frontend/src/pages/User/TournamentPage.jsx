@@ -72,8 +72,9 @@ export default function TournamentPage() {
         const result1 = await axios.get("http://localhost:8080/t/tournaments/inactive");
         const result2 = await axios.get("http://localhost:8080/t/tournaments/ongoing");
         const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
-    
+        console.log("triggered");
         if (!result.data.length == 0){
+            console.log(result.data);
             setTournament(result.data);
         }
         else{
@@ -113,9 +114,9 @@ export default function TournamentPage() {
                     ) : (
                     <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
-                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
                 {tournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px", height:"20%" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -179,9 +180,9 @@ export default function TournamentPage() {
                     ) : (
                 <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
-                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap",justifyContent:"left", gap:"5%"}}>
                 {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "25%", minWidth: "300px", height:"20%"}}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -244,7 +245,7 @@ export default function TournamentPage() {
                     ) : (
                     <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                     
-                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
                     {ongoingTournaments.map((ongoingTournaments) => (
                         <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
                         <div className="card-image">
@@ -309,9 +310,9 @@ export default function TournamentPage() {
                             ) : (
                             <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                         
-                        <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                        <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
                         {joinedTournaments.filter(tournament => tournament.status !== 'completed').map((tournament) => (
-                            <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                            <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"20%", width: "30%", minWidth: "300px" }}>
                             <div className="card-image">
                                 <figure className="image is-16by9">
                                 <img
@@ -375,9 +376,9 @@ export default function TournamentPage() {
                                 ) : (
                                 <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                             
-                            <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:"20px"}}>
+                            <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
                             {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
-                                <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                                <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"20%",width: "30%", minWidth: "300px" }}>
                                 <div className="card-image">
                                     <figure className="image is-16by9">
                                     <img
