@@ -342,7 +342,7 @@ export default function TournamentStart() {
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
         setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
-        console.log(tournamentRound);
+        console.log(result.data.rounds[result.data.currentRound - 1].scoreboard);
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
         loadNonParticipatingUsers();
@@ -432,7 +432,11 @@ const loadTournamentForDelete= async()=>{
                 setUserPairings(findUserPairingFirst(response.data.rounds[response.data.currentRound-1].matchList));
                 
                 setTournament(response.data);
-                setScoreboard(new Map(Object.entries(response.data.rounds[response.data.currentRound - 1].scoreboard)));
+                console.log(response.data.rounds[0].scoreboard );
+                const scoreboardMap = new Map(Object.entries(response.data.rounds[response.data.currentRound-1].scoreboard));
+                console.log(scoreboardMap);
+                setScoreboard(scoreboardMap);
+              
                 
                 setTournamentRound(response.data.currentRound);
                 
@@ -529,7 +533,7 @@ const loadTournamentForDelete= async()=>{
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%", margin:"0", width:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", margin:"0", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>
