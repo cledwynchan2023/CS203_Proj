@@ -73,11 +73,15 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
     @Override
     public int getKValue(int eloScore) {
-        if (eloScore >= 2400) {
+        double rawKValue = 40 - 40 * Math.log(eloScore/500);
+        int kValue = (int) Math.round(rawKValue);
+        if (kValue < 10) {
             return 10;
-        } else {
-            return 20;
         }
+        if (kValue > 40) {
+            return 40;
+        }
+        return kValue;
     }
 
     @Override
