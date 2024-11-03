@@ -2,11 +2,12 @@ package com.codewithcled.fullstack_backend_proj1.UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.List;
 
 import com.codewithcled.fullstack_backend_proj1.service.EloRatingServiceImplementation;
 
@@ -34,30 +35,39 @@ public class EloRatingServiceTest {
     }
 
     @Test
-    void getKValue_kGreaterThans1_returnsk2() {
-        int elo = 2400 + 1;
+    void getKValue_KBetween_1000AND2731UPPERPORTION() {
+        int elo = 2731;
+
+        int result = EloRatingService.getKValue(elo);
+
+        assertEquals(11, result);
+    }
+
+    @Test
+    void getKValue_KBetween_515AND2731LOWERPORTION() {
+        int elo = 515;
+
+        int result = EloRatingService.getKValue(elo);
+
+        assertEquals(39, result);
+    }
+
+    @Test
+    void getKValue_kLessThan515_returns40() {
+        int elo = 514;
+
+        int result = EloRatingService.getKValue(elo);
+
+        assertEquals(40, result);
+    }
+
+    @Test
+    void getKValue_Greater_Than2731() {
+        int elo = 2732;
 
         int result = EloRatingService.getKValue(elo);
 
         assertEquals(10, result);
-    }
-
-    @Test
-    void getKValue_kEquals1_returnsk2() {
-        int elo = 2400;
-
-        int result = EloRatingService.getKValue(elo);
-
-        assertEquals(10, result);
-    }
-
-    @Test
-    void getKValue_kLesserThans1_returnsk1() {
-        int elo = 2400 - 1;
-
-        int result = EloRatingService.getKValue(elo);
-
-        assertEquals(20, result);
     }
 
     @Test
@@ -180,14 +190,14 @@ public class EloRatingServiceTest {
     }
 
     @Test
-    void EloCalculationForBoth() throws IllegalArgumentException {
-        int elo1 = 1000;
-        int elo2 = 1000;
+    void EloCalculationForBoth_Success() throws IllegalArgumentException {
+        int elo1 = 2800;
+        int elo2 = 2800;
         int outcome = 1;
 
         List<Double> result = EloRatingService.eloRatingForBoth(elo1, elo2, outcome);
-        assertEquals(990, result.get(0));
-        assertEquals(1010, result.get(1));
+        assertEquals(2795, result.get(0));
+        assertEquals(2805, result.get(1));
     }
 
     @Test
@@ -225,21 +235,21 @@ public class EloRatingServiceTest {
 
     @Test
     void EloCalculation_ValidInputs_ReturnDouble() throws IllegalArgumentException {
-        int elo1 = 1000;
-        int elo2 = 1000;
+        int elo1 = 400;
+        int elo2 = 400;
         int outcome = 1;
 
         double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
-        assertEquals(990, result);
+        assertEquals(380, result);
     }
 
     @Test
     void EloCalculation_ValidInputDiffK_ReturnDouble() throws IllegalArgumentException {
-        int elo1 = 2400;
-        int elo2 = 2400;
+        int elo1 = 2800;
+        int elo2 = 2800;
         int outcome = 1;
 
         double result = EloRatingService.EloCalculation(elo1, elo2, outcome);
-        assertEquals(2395, result);
+        assertEquals(2795, result);
     }
 }

@@ -317,5 +317,52 @@ public class UserControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND,result.getStatusCode());
     }
 
-    
+    @Test
+    void getSortedUsers_Success_ReturnOKAndSortedUserDTOList() throws Exception{
+        User testUser1=new User();
+        testUser1.setUsername("user1");
+        testUser1.setRole("ROLE_USER");
+        testUser1.setElo((double)1200);
+        userRepository.save(testUser1);
+
+        User testUser2=new User();
+        testUser2.setUsername("user2");
+        testUser2.setRole("ROLE_USER");
+        testUser2.setElo((double)1500);
+        userRepository.save(testUser2);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/sorted");
+
+        ResponseEntity<List<UserDTO>> result=restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<UserDTO>>() {
+            });
+
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertNotNull(result.getBody());
+        List<UserDTO> dtoList=result.getBody();
+        assertEquals(2,dtoList.size());
+        assertEquals(1500,dtoList.get(0).getElo());
+        assertEquals(1200,dtoList.get(1).getElo());
+    }
+
+    @Test
+    void getSortedUsers_Failure_Return204NOCONTENT() throws Exception{
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/sorted");
+
+        ResponseEntity<List<UserDTO>> result=restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<UserDTO>>() {
+            });
+
+        assertEquals(HttpStatus.NO_CONTENT,result.getStatusCode());
+
+    }
+
+
+
 }

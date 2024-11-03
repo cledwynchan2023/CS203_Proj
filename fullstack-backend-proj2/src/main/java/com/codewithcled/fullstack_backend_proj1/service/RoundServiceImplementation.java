@@ -183,11 +183,11 @@ public class RoundServiceImplementation implements RoundService {
                 if (match.getPlayer1() == u2id){
                     User opponent = userRepository.findById(match.getPlayer2()).get();
                     Double opponentElo = opponent.getElo();
-                    u1rating += opponentElo;
+                    u2rating += opponentElo;
                 } else{
                     User opponent = userRepository.findById(match.getPlayer1()).get();
                     Double opponentElo = opponent.getElo();
-                    u1rating += opponentElo;
+                    u2rating += opponentElo;
                 }
             }
         }
