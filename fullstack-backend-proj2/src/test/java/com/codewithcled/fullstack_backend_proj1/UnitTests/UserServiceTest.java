@@ -499,7 +499,7 @@ public class UserServiceTest {
         List<Match> returnList = List.of(testMatch);
 
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
-        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser, true, testUser))
+        when(matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser.getId(), true, testUser.getId()))
                 .thenReturn(returnList);
 
         List<Match> result = userService.getUserPastMatches(uId);
@@ -507,7 +507,7 @@ public class UserServiceTest {
         assertIterableEquals(returnList, result);
 
         verify(userRepository).findById(uId);
-        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser, true, testUser);
+        verify(matchRepository).findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, testUser.getId(), true, testUser.getId());
     }
 
     @Test

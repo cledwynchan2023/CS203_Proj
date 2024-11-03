@@ -240,7 +240,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser, true, currentUser);  // Return the list of tournaments the user is participating in
+        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true, currentUser.getId());  // Return the list of tournaments the user is participating in
     }
 
     @Override
