@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.http.HttpStatus;
 
 
@@ -56,7 +57,7 @@ public class AdminController {
         if (adminToken.equals(tokenRequest.getToken())) {
             return ResponseEntity.ok(new TokenResponse(true));
         } else {
-            return ResponseEntity.status(401).body(new TokenResponse(false));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TokenResponse(false));
         }
     }
     

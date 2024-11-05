@@ -1,5 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,12 +14,15 @@ import java.util.List;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
+import com.codewithcled.fullstack_backend_proj1.config.ApplicationConfig;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 
 @Service
 public class MatchServiceImplementation implements MatchService{
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
     @Autowired
     private MatchRepository matchRepository;
 
@@ -128,8 +133,11 @@ public class MatchServiceImplementation implements MatchService{
             sortedScoreboard.put(entry.getKey(), entry.getValue());
         }
 
+        logger.info("Sorted scoreboard: " + sortedScoreboard);
+
         // Update the scoreboard in the current round and save it
         currentRound.setScoreboard(sortedScoreboard);
+        logger.info("Checking Sorted Scoreboard after setting: " + currentRound.getScoreboard());
         roundRepository.save(currentRound);
     
     }

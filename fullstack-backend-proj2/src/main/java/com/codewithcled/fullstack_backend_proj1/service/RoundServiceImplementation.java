@@ -93,7 +93,7 @@ public class RoundServiceImplementation implements RoundService {
         }
 
         //create scoreboard
-        Map<Long, Double> newScoreboard = new TreeMap<>();
+        Map<Long, Double> newScoreboard = new LinkedHashMap<>();
         for(int i = 0; i < copy.size(); i++){
             newScoreboard.put(copy.get(i).getId(), 0.0);
         }
@@ -115,6 +115,9 @@ public class RoundServiceImplementation implements RoundService {
 
         Round round = roundRepository.findById(roundId)
             .orElseThrow(() -> new Exception("Round not found"));
+
+        logger.info("Round scoreboard at checkComplete: " + round.getScoreboard());
+
         boolean complete = true;
         for(Match match : round.getMatchList()){
             if(!match.getIsComplete()){
@@ -129,18 +132,19 @@ public class RoundServiceImplementation implements RoundService {
 
             Map<Long, Double> roundScoreboard = round.getScoreboard();
             List<Entry<Long, Double>> roundScoreboardList = new ArrayList<>(roundScoreboard.entrySet());
+            logger.info("Round scoreboard: " + roundScoreboardList);
 
-            Tournament tournament = round.getTournament();
-            List<Round> rounds = tournament.getRounds();
+            // Tournament tournament = round.getTournament();
+            // List<Round> rounds = tournament.getRounds();
 
-            ScoreboardComparator scoreboardComparator = new ScoreboardComparator(rounds, round, userRepository, matchRepository);
-            roundScoreboardList.sort(scoreboardComparator);;
+            // ScoreboardComparator scoreboardComparator = new ScoreboardComparator(rounds, round, userRepository, matchRepository);
+            // roundScoreboardList.sort(scoreboardComparator);
 
-            Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
-            for(Entry<Long, Double> entry: roundScoreboardList){
-                sortedScoreboard.put(entry.getKey(), entry.getValue());
-            }
-            round.setScoreboard(sortedScoreboard);
+            // Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
+            // for(Entry<Long, Double> entry: roundScoreboardList){
+            //     sortedScoreboard.put(entry.getKey(), entry.getValue());
+            // }
+            // round.setScoreboard(sortedScoreboard);
             
             Tournament currentTournament = round.getTournament();
             Long currentTournamentId = currentTournament.getId();
@@ -165,6 +169,10 @@ public class RoundServiceImplementation implements RoundService {
         List<Entry<Long, Double>> prevRoundScoreboardList = new ArrayList<>(prevRoundScoreboard.entrySet());
 
         Map<Long, Double> newRoundScoreboard = new LinkedHashMap<>(prevRoundScoreboard);
+
+        logger.info("Previous round scoreboard: " + prevRoundScoreboard);
+        logger.info("New round scoreboard: " + newRoundScoreboard);
+
         newRound.setScoreboard(newRoundScoreboard);
         
         //pair up participants by score
