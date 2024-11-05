@@ -2,12 +2,10 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
@@ -52,7 +50,7 @@ public class RoundServiceImplementation implements RoundService {
     // public RoundServiceImplementation(RoundRepository roundRepository){
     //     this.roundRepository = roundRepository;
     // }
-
+    
     @Override
     public Round createFirstRound(Long tournamentId) throws Exception {
 
@@ -109,100 +107,7 @@ public class RoundServiceImplementation implements RoundService {
         return firstRound;
     }
 
-    public int solkoffTiebreak(User u1, User u2, List<Round> rounds, Round currentRound) throws Exception{
-        long u1id = u1.getId();
-        long u2id = u2.getId();
-        double u1median = 0;
-        double u2median = 0;
-
-        for(Round round : rounds){
-            Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, u1id, round, u1id);
-            if (match == null){
-                throw new Exception("Match not found");
-            } else {
-                if (match.getPlayer1() == u1id){
-                    u1median += currentRound.getScoreboard().get(match.getPlayer2());
-                } else{
-                    u1median += currentRound.getScoreboard().get(match.getPlayer1());
-                }
-            }
-        }
-
-        for(Round round : rounds){
-            Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, u2id, round, u2id);
-            if (match == null){
-                throw new Exception("Match not found");
-            } else {
-                if (match.getPlayer1() == u2id){
-                    u2median += currentRound.getScoreboard().get(match.getPlayer2());
-                } else{
-                    u2median += currentRound.getScoreboard().get(match.getPlayer1());
-                }
-            }
-        }
-
-        if(u1median > u2median){
-            return 1;
-        }
-        else if(u1median < u2median){
-            return -1;
-        }
-        else{
-            return 0;
-        }
-    }
-
-    public int ratingTiebreak(User u1, User u2, List<Round> rounds, Round currentRound) throws Exception{
-        long u1id = u1.getId();
-        long u2id = u2.getId();
-        Double u1rating = u1.getElo();
-        Double u2rating = u2.getElo();
-
-        for(Round round : rounds){
-            Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, u1id, round, u1id);
-            if (match == null){
-                throw new Exception("Match not found");
-            } else {
-                if (match.getPlayer1() == u1id){
-                    User opponent = userRepository.findById(match.getPlayer2()).get();
-                    Double opponentElo = opponent.getElo();
-                    u1rating += opponentElo;
-                } else{
-                    User opponent = userRepository.findById(match.getPlayer1()).get();
-                    Double opponentElo = opponent.getElo();
-                    u1rating += opponentElo;
-                }
-            }
-        }
-
-        for(Round round : rounds){
-            Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, u2id, round, u2id);
-            if (match == null){
-                throw new Exception("Match not found");
-            } else {
-                if (match.getPlayer1() == u2id){
-                    User opponent = userRepository.findById(match.getPlayer2()).get();
-                    Double opponentElo = opponent.getElo();
-                    u2rating += opponentElo;
-                } else{
-                    User opponent = userRepository.findById(match.getPlayer1()).get();
-                    Double opponentElo = opponent.getElo();
-                    u2rating += opponentElo;
-                }
-            }
-        }
-
-        if(u1rating > u2rating){
-            return 1;
-        }
-        else if(u1rating < u2rating){
-            return -1;
-        }
-        else{
-            return 0;
-        }
-    }
-
+   
     @Override
     public void checkComplete(Long roundId) throws Exception {
         //for debugging purposes
@@ -227,36 +132,9 @@ public class RoundServiceImplementation implements RoundService {
 
             Tournament tournament = round.getTournament();
             List<Round> rounds = tournament.getRounds();
-            Collections.sort(roundScoreboardList, new Comparator<Entry<Long, Double>>(){
-                @Override
-                public int compare(Entry<Long, Double> e1, Entry<Long, Double> e2){
-                    if(e1.getValue() > e2.getValue()){
-                        return 1;
-                    }
-                    else if(e1.getValue() < e2.getValue()){
-                        return -1;
-                    }
-                    else{
-                        User u1 = userRepository.findById(e1.getKey()).get();
-                        User u2 = userRepository.findById(e2.getKey()).get();
-                        
-                        try {
-                            int solkoffTiebreakResult = solkoffTiebreak(u1, u2, rounds, round);
-                            if (solkoffTiebreakResult != 0){
-                                return solkoffTiebreakResult;
-                            }
 
-                            int ratingTiebreakResult = ratingTiebreak(u1, u2, rounds, round);
-                            if (ratingTiebreakResult != 0){
-                                return ratingTiebreakResult;
-                            }
-                        } catch (Exception e){
-                            throw new RuntimeException("Error during tiebreak calculation", e);
-                        }
-                        return 0;
-                    }
-                }
-            });
+            ScoreboardComparator scoreboardComparator = new ScoreboardComparator(rounds, round, userRepository, matchRepository);
+            roundScoreboardList.sort(scoreboardComparator);;
 
             Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
             for(Entry<Long, Double> entry: roundScoreboardList){
@@ -285,7 +163,8 @@ public class RoundServiceImplementation implements RoundService {
         //and to set up matches
         Map<Long, Double> prevRoundScoreboard = tournament.getRounds().get(tournament.getRounds().size() - 1).getScoreboard();
         List<Entry<Long, Double>> prevRoundScoreboardList = new ArrayList<>(prevRoundScoreboard.entrySet());
-        Map<Long, Double> newRoundScoreboard = new TreeMap<>(prevRoundScoreboard);
+
+        Map<Long, Double> newRoundScoreboard = new LinkedHashMap<>(prevRoundScoreboard);
         newRound.setScoreboard(newRoundScoreboard);
         
         //pair up participants by score
