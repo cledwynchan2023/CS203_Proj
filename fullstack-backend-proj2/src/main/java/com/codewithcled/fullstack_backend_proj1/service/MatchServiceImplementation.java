@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -95,28 +98,40 @@ public class MatchServiceImplementation implements MatchService{
         Map<Long, Double> scoreboard = currentRound.getScoreboard();
         Long player1Id = currentMatch.getPlayer1();
         Long player2Id = currentMatch.getPlayer2();
-        if (result == 0){
-            //draw, scores for both players +0.5
-            Double player1Score = scoreboard.get(player1Id);
-            Double player2Score = scoreboard.get(player2Id);
+        // Retrieve current scores
+        Double player1Score = scoreboard.get(player1Id);
+        Double player2Score = scoreboard.get(player2Id);
+
+        // Update scores based on the result
+        if (result == 0) {
+            // Draw, scores for both players +0.5
             player1Score += 0.5;
             player2Score += 0.5;
-            scoreboard.put(player1Id, player1Score);
-            scoreboard.put(player2Id, player2Score);
         } else {
-            //player 1 or player 2 win, winner score +1
-            Long winnerId;
-            if (result == 1){ //player 2 wins
-                winnerId = player2Id;
-            } else{ //player 1 wins
-                winnerId = player1Id;
+            // Player 1 or player 2 win, winner score +1
+            if (result == 1) { // Player 2 wins
+                player2Score += 1;
+            } else { // Player 1 wins
+                player1Score += 1;
             }
-            Double winnerScore = scoreboard.get(winnerId);
-            winnerScore += 1;
-            scoreboard.put(winnerId, winnerScore);
         }
-        currentRound.setScoreboard(scoreboard);
+    
+        // Remove and reinsert entries to maintain sorting order
+        scoreboard.put(player1Id, player1Score);
+        scoreboard.put(player2Id, player2Score);
+        List<Entry<Long, Double>> scoreboardList = new ArrayList<>(scoreboard.entrySet());
+        ScoreboardComparator scoreboardComparator = new ScoreboardComparator(currentRound.getTournament().getRounds(), currentRound, userRepository, matchRepository);
+        scoreboardList.sort(scoreboardComparator);
+
+        Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
+        for(Entry<Long, Double> entry: scoreboardList){
+            sortedScoreboard.put(entry.getKey(), entry.getValue());
+        }
+
+        // Update the scoreboard in the current round and save it
+        currentRound.setScoreboard(sortedScoreboard);
         roundRepository.save(currentRound);
+    
     }
 
     @Override
