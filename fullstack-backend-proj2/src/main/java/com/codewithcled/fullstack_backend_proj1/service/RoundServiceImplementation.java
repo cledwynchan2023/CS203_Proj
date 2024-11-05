@@ -285,7 +285,8 @@ public class RoundServiceImplementation implements RoundService {
         //and to set up matches
         Map<Long, Double> prevRoundScoreboard = tournament.getRounds().get(tournament.getRounds().size() - 1).getScoreboard();
         List<Entry<Long, Double>> prevRoundScoreboardList = new ArrayList<>(prevRoundScoreboard.entrySet());
-        newRound.setScoreboard(prevRoundScoreboard);
+        Map<Long, Double> newRoundScoreboard = new TreeMap<>(prevRoundScoreboard);
+        newRound.setScoreboard(newRoundScoreboard);
         
         //pair up participants by score
         List<Match> matches = new ArrayList<>();

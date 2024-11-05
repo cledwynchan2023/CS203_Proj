@@ -190,14 +190,14 @@ export default function TournamentStart() {
                         return (
                     <div class="card" style={{width:"100%", minWidth:"400px",height:"120px", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
                         <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%"}}>
-                            <div class="content" style={{width:"25%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                            <div class="content" style={{width:"25%", textAlign:"center",height:"100%", ...getBorderStyle(1), whiteSpace:"nowrap", overflow:"hidden"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
                             </div>
                             <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                             </div>
-                            <div class="content" style={{width:"25%", textAlign:"center", height:"100%", marginRight:"3%", ...getBorderStyle(2)}}>
+                            <div class="content" style={{width:"25%", textAlign:"center", height:"100%", marginRight:"3%", ...getBorderStyle(2), whiteSpace:"nowrap", overflow:"hidden"}}>
                                 <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
                             </div>
