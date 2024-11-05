@@ -95,34 +95,28 @@ public class MatchServiceImplementation implements MatchService{
         Map<Long, Double> scoreboard = currentRound.getScoreboard();
         Long player1Id = currentMatch.getPlayer1();
         Long player2Id = currentMatch.getPlayer2();
-    
-        // Retrieve current scores
-        Double player1Score = scoreboard.get(player1Id);
-        Double player2Score = scoreboard.get(player2Id);
-    
-        // Update scores based on the result
-        if (result == 0) {
-            // Draw, scores for both players +0.5
+        if (result == 0){
+            //draw, scores for both players +0.5
+            Double player1Score = scoreboard.get(player1Id);
+            Double player2Score = scoreboard.get(player2Id);
             player1Score += 0.5;
             player2Score += 0.5;
+            scoreboard.put(player1Id, player1Score);
+            scoreboard.put(player2Id, player2Score);
         } else {
-            // Player 1 or player 2 win, winner score +1
-            if (result == 1) { // Player 2 wins
-                player2Score += 1;
-            } else { // Player 1 wins
-                player1Score += 1;
+            //player 1 or player 2 win, winner score +1
+            Long winnerId;
+            if (result == 1){ //player 2 wins
+                winnerId = player2Id;
+            } else{ //player 1 wins
+                winnerId = player1Id;
             }
+            Double winnerScore = scoreboard.get(winnerId);
+            winnerScore += 1;
+            scoreboard.put(winnerId, winnerScore);
         }
-    
-        // Remove and reinsert entries to maintain sorting order
-        scoreboard.remove(player1Id);
-        scoreboard.remove(player2Id);
-        scoreboard.put(player1Id, player1Score);
-        scoreboard.put(player2Id, player2Score);
-    
-        // Update the scoreboard in the current round and save it
         currentRound.setScoreboard(scoreboard);
-        roundRepository.save(currentRound);    
+        roundRepository.save(currentRound);
     }
 
     @Override
