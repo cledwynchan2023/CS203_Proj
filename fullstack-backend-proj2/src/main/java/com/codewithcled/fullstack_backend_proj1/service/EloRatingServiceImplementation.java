@@ -10,7 +10,7 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
     @Override
     public boolean isValidElo(int elo){
-        if (elo<=0){
+        if (elo<0){
             return false;
         }
 

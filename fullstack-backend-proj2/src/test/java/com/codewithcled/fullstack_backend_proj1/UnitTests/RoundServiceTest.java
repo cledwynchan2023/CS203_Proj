@@ -19,7 +19,6 @@ import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.MatchService;
 import com.codewithcled.fullstack_backend_proj1.service.RoundServiceImplementation;
-import com.codewithcled.fullstack_backend_proj1.service.ScoreboardComparator;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -306,6 +305,12 @@ public class RoundServiceTest {
         assertEquals(testTournament, result.getTournament());
         assertIterableEquals(List.of(testMatch), result.getMatchList());
         assertNotNull(result.getScoreboard());
+        List<ScoreboardEntry> scoreboardEntries=result.getScoreboard().getScoreboardEntries();
+        int count=1;
+        for (ScoreboardEntry entry:scoreboardEntries){
+            assertEquals(tId+count, entry.getPlayerId());
+            count++;
+        }
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);

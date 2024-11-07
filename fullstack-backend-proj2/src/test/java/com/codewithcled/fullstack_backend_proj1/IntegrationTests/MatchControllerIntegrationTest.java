@@ -162,7 +162,7 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test//Works until it calls to checkCOmplete round then fails as connection is refused
+    //@Test//Works until it calls to checkComplete round then fails as connection is refused
     void updateMatch_Success() throws Exception{
         Match testMatch=new Match();
         testMatch.setPlayer1(player1.getId());
