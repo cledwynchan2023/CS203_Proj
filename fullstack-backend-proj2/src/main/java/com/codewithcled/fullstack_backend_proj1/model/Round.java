@@ -1,8 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
 import jakarta.persistence.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
 import java.util.List;
 
 @Entity
@@ -14,8 +13,8 @@ public class Round {
 
     private Integer roundNum;
 
-    @ElementCollection
-    private Map<Long, Double> scoreboard;
+    @Embedded
+    private Scoreboard scoreboard;
 
     @OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Match> matchList;
@@ -56,11 +55,11 @@ public class Round {
         return id;
     }
 
-    public Map<Long, Double> getScoreboard() {
+    public Scoreboard getScoreboard() {
         return scoreboard;
     }
 
-    public void setScoreboard(Map<Long, Double> scoreboard) {
+    public void setScoreboard(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
 

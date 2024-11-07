@@ -2,15 +2,15 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
-public class ScoreboardComparator implements Comparator<Entry<Long, Double>>{
+public class ScoreboardComparator implements Comparator<ScoreboardEntry>{
     private List<Round> rounds;
     private Round currentRound;
     private UserRepository userRepository;
@@ -24,16 +24,16 @@ public class ScoreboardComparator implements Comparator<Entry<Long, Double>>{
     }
 
     @Override
-    public int compare(Entry<Long, Double> e1, Entry<Long, Double> e2){
-        if(e1.getValue() > e2.getValue()){
+    public int compare(ScoreboardEntry e1, ScoreboardEntry e2){
+        if(e1.getScore() > e2.getScore()){
             return 1;
         }
-        else if(e1.getValue() < e2.getValue()){
+        else if(e1.getScore() < e2.getScore()){
             return -1;
         }
         else{
-            User u1 = this.userRepository.findById(e1.getKey()).get();
-            User u2 = this.userRepository.findById(e2.getKey()).get();
+            User u1 = this.userRepository.findById(e1.getPlayerId()).get();
+            User u2 = this.userRepository.findById(e2.getPlayerId()).get();
             
             try {
                 int solkoffTiebreakResult = solkoffTiebreak(u1, u2, this.rounds, this.currentRound);
@@ -64,9 +64,9 @@ public class ScoreboardComparator implements Comparator<Entry<Long, Double>>{
                 throw new Exception("Match not found");
             } else {
                 if (match.getPlayer1() == u1id){
-                    u1median += currentRound.getScoreboard().get(match.getPlayer2());
+                    u1median += currentRound.getScoreboard().getPlayerScore(match.getPlayer2());
                 } else{
-                    u1median += currentRound.getScoreboard().get(match.getPlayer1());
+                    u1median += currentRound.getScoreboard().getPlayerScore(match.getPlayer1());
                 }
             }
         }
@@ -77,9 +77,9 @@ public class ScoreboardComparator implements Comparator<Entry<Long, Double>>{
                 throw new Exception("Match not found");
             } else {
                 if (match.getPlayer1() == u2id){
-                    u2median += currentRound.getScoreboard().get(match.getPlayer2());
+                    u2median += currentRound.getScoreboard().getPlayerScore(match.getPlayer2());
                 } else{
-                    u2median += currentRound.getScoreboard().get(match.getPlayer1());
+                    u2median += currentRound.getScoreboard().getPlayerScore(match.getPlayer1());
                 }
             }
         }

@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -18,6 +15,7 @@ import com.codewithcled.fullstack_backend_proj1.config.ApplicationConfig;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
 
 @Service
 public class MatchServiceImplementation implements MatchService{
@@ -99,13 +97,28 @@ public class MatchServiceImplementation implements MatchService{
         //roundService.checkComplete(currentMatch.getRound().getId());
     }
 
-    public void updateRoundScoreboard(Round currentRound, Match currentMatch, int result){
-        Map<Long, Double> scoreboard = currentRound.getScoreboard();
+    public Double getPlayerScore(Long playerId, List<Entry<Long, Double>> scoreboard){
+        for (Entry<Long, Double> entry: scoreboard){
+            if (entry.getKey() == playerId){
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void updateRoundScoreboard(Round currentRound, Match currentMatch, int result) throws Exception{
+        Scoreboard currentRoundScoreboard = currentRound.getScoreboard();
         Long player1Id = currentMatch.getPlayer1();
         Long player2Id = currentMatch.getPlayer2();
         // Retrieve current scores
-        Double player1Score = scoreboard.get(player1Id);
-        Double player2Score = scoreboard.get(player2Id);
+
+        Double player1Score = currentRoundScoreboard.getPlayerScore(player1Id);
+        Double player2Score = currentRoundScoreboard.getPlayerScore(player2Id);
+
+        if (player1Score == null || player2Score == null){
+            logger.error("Player not found in scoreboard");
+            throw new RuntimeException("Player not found in scoreboard");
+        }
 
         // Update scores based on the result
         if (result == 0) {
@@ -122,24 +135,17 @@ public class MatchServiceImplementation implements MatchService{
         }
     
         // Remove and reinsert entries to maintain sorting order
-        scoreboard.put(player1Id, player1Score);
-        scoreboard.put(player2Id, player2Score);
-        List<Entry<Long, Double>> scoreboardList = new ArrayList<>(scoreboard.entrySet());
+        currentRoundScoreboard.updatePlayerScore(player1Id, player1Score);
+        currentRoundScoreboard.updatePlayerScore(player2Id, player2Score);
+
         ScoreboardComparator scoreboardComparator = new ScoreboardComparator(currentRound.getTournament().getRounds(), currentRound, userRepository, matchRepository);
-        scoreboardList.sort(scoreboardComparator);
+        currentRoundScoreboard.sortScoreboard(scoreboardComparator);
 
-        Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
-        for(Entry<Long, Double> entry: scoreboardList){
-            sortedScoreboard.put(entry.getKey(), entry.getValue());
-        }
-
-        logger.info("Sorted scoreboard: " + sortedScoreboard);
+        logger.info("Sorted scoreboard: " + currentRoundScoreboard.getScoreboardEntries());
 
         // Update the scoreboard in the current round and save it
-        currentRound.setScoreboard(sortedScoreboard);
-        logger.info("Checking Sorted Scoreboard after setting: " + currentRound.getScoreboard());
         roundRepository.save(currentRound);
-    
+        logger.info("Checking Sorted Scoreboard after saving: " + currentRound.getScoreboard());
     }
 
     @Override

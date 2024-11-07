@@ -133,7 +133,7 @@ public class Tournament {
     // }
 
     // latest round's scoreboard is the tournament's scoreboard
-    public Map<Long, Double> getScoreboard() {
+    public Scoreboard getScoreboard() {
         return getRounds().get(getRounds().size() - 1).getScoreboard();
     }
 
