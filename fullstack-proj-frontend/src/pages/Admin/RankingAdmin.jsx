@@ -212,7 +212,7 @@ export default function RankingAdmin() {
         backgroundImage: `url(${backgroundImage})`,
         height:"100vh"
     }}>
-        <div className="content" style={{width:"100%", height:"90%", display:"flex", justifyContent:"center"}}>
+        <div className="content" style={{width:"100%", height:"100%", display:"flex", justifyContent:"center"}}>
 
             <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
             <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>

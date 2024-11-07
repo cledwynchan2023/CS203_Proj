@@ -182,7 +182,7 @@ export default function TournamentPage() {
                 
                 <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap",justifyContent:"left", gap:"5%"}}>
                 {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "25%", minWidth: "300px", height:"20%"}}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px", height:"20%" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -370,7 +370,7 @@ export default function TournamentPage() {
                          </div>    
                             ) : (
                                 joinedTournaments.filter(tournament => tournament.status === 'completed').length === 0 ? (
-                                    <div style={{textAlign: "center", marginTop: "20px"}}>
+                                    <div style={{textAlign: "center", marginTop: "20px", backgroundColor:"transparent"}}>
                                         <p style={{fontSize:"20px"}}>No tournaments completed! Join a tournament now!</p>
                                     </div>
                                 ) : (
@@ -506,7 +506,7 @@ export default function TournamentPage() {
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Browse Tournaments</p>
                 </div>
             </section>
-            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.2)", paddingBottom:"50px", overflowY:"scroll"}}>
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"80%", backgroundColor:"rgba(0, 0, 0, 0.2)", paddingBottom:"50px"}}>
             <div style={{width:"100%", height:"20px"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>
