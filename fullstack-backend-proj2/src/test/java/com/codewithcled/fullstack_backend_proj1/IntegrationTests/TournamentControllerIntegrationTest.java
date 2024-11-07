@@ -31,6 +31,8 @@ import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -516,7 +518,7 @@ public class TournamentControllerIntegrationTest {
         Round round = new Round();
         round.setRoundNum(1);
         round.setId((long) 134);
-        round.setScoreboard(new HashMap<>());
+        round.setScoreboard(new Scoreboard());
         round.setMatchList(new ArrayList<>());
 
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
@@ -532,7 +534,7 @@ public class TournamentControllerIntegrationTest {
         Round round = new Round();
         round.setRoundNum(1);
         round.setId((long) 134);
-        round.setScoreboard(new HashMap<>());
+        round.setScoreboard(new Scoreboard());
         round.setMatchList(new ArrayList<>());
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
 
@@ -939,6 +941,7 @@ public class TournamentControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("ongoing", result.getBody().getStatus());
+        
     }
 
     @Test
@@ -987,7 +990,9 @@ public class TournamentControllerIntegrationTest {
         ResponseEntity<TournamentStartDTO> result = restTemplate.getForEntity(url, TournamentStartDTO.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         TournamentStartDTO tournamentStartDTO = result.getBody();
+        
         assertEquals(savedTournament.getTournament_name(), tournamentStartDTO.getTournamentName());
         assertEquals(savedTournament.getStatus(), tournamentStartDTO.getStatus());
         assertEquals(savedTournament.getSize(), tournamentStartDTO.getSize());
@@ -1044,14 +1049,22 @@ public class TournamentControllerIntegrationTest {
         testRound.setRoundNum(1);
         testRound.setTournament(savedTournament);
         testRound.setIsCompleted(false);
-        testRound.setScoreboard(new HashMap<>());
+
+        Scoreboard scoreboard=new Scoreboard();
+        List<ScoreboardEntry> entries=new ArrayList<>();
+        ScoreboardEntry entry1=new ScoreboardEntry(user1.getId(),0.0);
+        ScoreboardEntry entry2=new ScoreboardEntry(user2.getId(),0.0);
+        entries.add(entry1);
+        entries.add(entry2);
+        scoreboard.setScoreboardEntries(entries);
+        testRound.setScoreboard(scoreboard);
 
         Round testRound2 = new Round();
         testRound2.setMatchList(new ArrayList<>());
         testRound2.setRoundNum(2);
         testRound2.setTournament(savedTournament);
         testRound2.setIsCompleted(false);
-        testRound2.setScoreboard(new HashMap<>());
+        testRound2.setScoreboard(scoreboard);
 
         List<Round> rounds = new ArrayList<>();
         Round savedRound = roundRepository.save(testRound);
@@ -1119,7 +1132,7 @@ public class TournamentControllerIntegrationTest {
         testRound.setRoundNum(1);
         testRound.setIsCompleted(false);
         testRound.setTournament(savedTournament);
-        testRound.setScoreboard(new HashMap<>());
+        testRound.setScoreboard(new Scoreboard());
 
         Round savedRound = roundRepository.save(testRound);
 

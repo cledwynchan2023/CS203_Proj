@@ -111,7 +111,7 @@ public class RoundServiceImplementation implements RoundService {
         //create scoreboard
         Scoreboard newScoreboard = new Scoreboard();
         List<ScoreboardEntry> newScoreboardEntryList = createScoreboardEntryList(participantsList, firstRound);
-        newScoreboard.setEntries(newScoreboardEntryList);
+        newScoreboard.setScoreboardEntries(newScoreboardEntryList);
 
         //set this round's scoreboard and matchlist, then save to repository
         firstRound.setScoreboard(newScoreboard);
@@ -173,7 +173,7 @@ public class RoundServiceImplementation implements RoundService {
         List<ScoreboardEntry> newRoundScoreboardEntries = new ArrayList<>(prevRoundScoreboardEntries);
         
         Scoreboard newRoundScoreboard = new Scoreboard();
-        newRoundScoreboard.setEntries(newRoundScoreboardEntries);
+        newRoundScoreboard.setScoreboardEntries(newRoundScoreboardEntries);
         newRound.setScoreboard(newRoundScoreboard);
 
         logger.info("Previous round scoreboard: " + prevRoundScoreboardEntries);

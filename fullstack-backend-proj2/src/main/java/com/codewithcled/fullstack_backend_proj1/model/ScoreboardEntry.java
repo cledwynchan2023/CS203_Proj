@@ -7,6 +7,10 @@ public class ScoreboardEntry {
     private Long playerId;
     private Double score;
 
+    // No-argument constructor
+    public ScoreboardEntry() {
+    }
+
     public ScoreboardEntry(Long playerId, Double score) {
         this.playerId = playerId;
         this.score = score;

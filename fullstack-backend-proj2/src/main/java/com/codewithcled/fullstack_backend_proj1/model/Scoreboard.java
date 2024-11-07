@@ -7,22 +7,22 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Scoreboard {
     @ElementCollection
-    private List<ScoreboardEntry> entries;
+    private List<ScoreboardEntry> scoreboardEntries;
 
     public List<ScoreboardEntry> getScoreboardEntries() {
-        return entries;
+        return scoreboardEntries;
     }
 
-    public void setEntries(List<ScoreboardEntry> entries) {
-        this.entries = entries;
+    public void setScoreboardEntries(List<ScoreboardEntry> scoreboardEntries) {
+        this.scoreboardEntries = scoreboardEntries;
     }
 
     public void sortScoreboard(Comparator<ScoreboardEntry> comparator){
-        entries.sort(comparator);
+        scoreboardEntries.sort(comparator);
     }
 
     public Double getPlayerScore(long playerId){
-        for(ScoreboardEntry entry : entries){
+        for(ScoreboardEntry entry : scoreboardEntries){
             if(entry.getPlayerId() == playerId){
                 return entry.getScore();
             }
@@ -31,7 +31,7 @@ public class Scoreboard {
     }
 
     public void updatePlayerScore(long playerId, double newScore){
-        for(ScoreboardEntry entry : entries){
+        for(ScoreboardEntry entry : scoreboardEntries){
             if(entry.getPlayerId() == playerId){
                 entry.setScore(newScore);
                 return;

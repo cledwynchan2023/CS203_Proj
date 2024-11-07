@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -22,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,31 +76,52 @@ public class MatchServiceTest {
     }
 
     @Test
-    void updateRoundScoreboard_Success_Draw() {
+    void updateRoundScoreboard_Success_Draw() throws Exception {
         // Arrange
         Round testRound = new Round();
         Match testMatch = new Match();
         Long uId1 = (long) 1;
         Long uId2 = uId1 + 1;
+        User testPlayer1 = new User();
+        User testPlayer2 = new User();
+        testPlayer1.setId(uId1);
+        testPlayer1.setElo((double) 100);
+        testPlayer2.setId(uId2);
+        testPlayer2.setElo((double) 200);
         testMatch.setPlayer1(uId1);
         testMatch.setPlayer2(uId2);
-        Map<Long, Double> scoreboard = new HashMap<>();
-        scoreboard.put(uId1, 0.0);
-        scoreboard.put(uId2, 0.0);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
 
         testRound.setScoreboard(scoreboard);
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        when(userRepository.findById(uId1)).thenReturn(Optional.of(testPlayer1));
+        when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
+                .thenReturn(testMatch);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
+                .thenReturn(testMatch);
 
         // Act
         matchService.updateRoundScoreboard(testRound, testMatch, 0);
 
         // Assert
-        assertEquals(0.5, scoreboard.get(uId1));
-        assertEquals(0.5, scoreboard.get(uId2));
+        assertEquals(0.5, scoreboard.getPlayerScore(uId1));
+        assertEquals(0.5, scoreboard.getPlayerScore(uId2));
         verify(roundRepository).save(testRound);
     }
 
     @Test
-    void updateRoundScoreboard_Success_Player1Win() {
+    void updateRoundScoreboard_Success_Player1Win() throws Exception {
         // Arrange
         Round testRound = new Round();
         Match testMatch = new Match();
@@ -107,23 +129,31 @@ public class MatchServiceTest {
         Long uId2 = uId1 + 1;
         testMatch.setPlayer1(uId1);
         testMatch.setPlayer2(uId2);
-        Map<Long, Double> scoreboard = new HashMap<>();
-        scoreboard.put(uId1, 0.0);
-        scoreboard.put(uId2, 0.0);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
 
         testRound.setScoreboard(scoreboard);
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
 
         // Act
         matchService.updateRoundScoreboard(testRound, testMatch, -1);
 
         // Assert
-        assertEquals(1.0, scoreboard.get(uId1));
-        assertEquals(0.0,scoreboard.get(uId2));
+        assertEquals(1.0, scoreboard.getPlayerScore(uId1));
+        assertEquals(0.0, scoreboard.getPlayerScore(uId2));
         verify(roundRepository).save(testRound);
     }
 
     @Test
-    void updateRoundScoreboard_Success_Player2Win() {
+    void updateRoundScoreboard_Success_Player2Win() throws Exception {
         // Arrange
         Round testRound = new Round();
         Match testMatch = new Match();
@@ -131,19 +161,96 @@ public class MatchServiceTest {
         Long uId2 = uId1 + 1;
         testMatch.setPlayer1(uId1);
         testMatch.setPlayer2(uId2);
-        Map<Long, Double> scoreboard = new HashMap<>();
-        scoreboard.put(uId1, 0.0);
-        scoreboard.put(uId2, 0.0);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
 
         testRound.setScoreboard(scoreboard);
+
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
 
         // Act
         matchService.updateRoundScoreboard(testRound, testMatch, 1);
 
         // Assert
-        assertEquals(1.0, scoreboard.get(uId2));
-        assertEquals(0.0, scoreboard.get(uId1)); // Player 1 should not have scored
+        assertEquals(1.0, scoreboard.getPlayerScore(uId2));
+        assertEquals(0.0, scoreboard.getPlayerScore(uId1)); // Player 1 should not have scored
         verify(roundRepository).save(testRound);
+    }
+
+    @Test
+    void updateRoundScoreboard_Failure_Player1MissingFromScoreboard() throws Exception {
+        // Arrange
+        Round testRound = new Round();
+        Match testMatch = new Match();
+        Long uId1 = (long) 1;
+        Long uId2 = uId1 + 1;
+        testMatch.setPlayer1(uId1);
+        testMatch.setPlayer2(uId2);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1 + 3, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
+        testRound.setScoreboard(scoreboard);
+
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        // Act
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            matchService.updateRoundScoreboard(testRound, testMatch, 1);
+        });
+
+        // Assert
+        assertEquals("Player not found in scoreboard",exception.getMessage());
+
+    }
+
+    @Test
+    void updateRoundScoreboard_Failure_Player2MissingFromScoreboard() throws Exception {
+        // Arrange
+        Round testRound = new Round();
+        Match testMatch = new Match();
+        Long uId1 = (long) 1;
+        Long uId2 = uId1 + 1;
+        testMatch.setPlayer1(uId1);
+        testMatch.setPlayer2(uId2);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2+3, 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
+        testRound.setScoreboard(scoreboard);
+
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        // Act
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            matchService.updateRoundScoreboard(testRound, testMatch, 1);
+        });
+
+        // Assert
+        assertEquals("Player not found in scoreboard",exception.getMessage());
+
     }
 
     @Test
@@ -208,11 +315,15 @@ public class MatchServiceTest {
         testMatch.setPlayer2(player2.getId());
         testMatch.setPlayer2StartingElo(player2.getElo());
 
-        testTournament.setParticipants(List.of(player1, player2));
-        Map<Long, Double> scoreboard = new HashMap<>();
-        scoreboard.put(player1.getId(), 0.0);
-        scoreboard.put(player2.getId(), 0.0);
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(player1.getId(), 1.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(player2.getId(), 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
         testRound.setScoreboard(scoreboard);
+
 
         when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
         when(userRepository.findById(mId)).thenReturn(Optional.of(player1));
@@ -228,8 +339,8 @@ public class MatchServiceTest {
         matchService.updateMatch(mId, result);
 
         verify(matchRepository).findById(mId);
-        verify(userRepository).findById(mId);
-        verify(userRepository).findById(mId + 1);
+        verify(userRepository, times(2)).findById(mId);
+        verify(userRepository, times(2)).findById(mId + 1);
     }
 
     @Test
@@ -398,38 +509,37 @@ public class MatchServiceTest {
     @Test
     void getPlayers_Success() throws Exception {
         // Arrange
-        Long matchId = (long)1;
+        Long matchId = (long) 1;
         Match match = new Match();
         match.setId(matchId);
         User player1 = new User();
         player1.setId(matchId);
         player1.setUsername("player1");
         User player2 = new User();
-        player2.setId(matchId+1);
+        player2.setId(matchId + 1);
         player2.setUsername("player2");
         match.setPlayer1(matchId);
-        match.setPlayer2(matchId+1);
+        match.setPlayer2(matchId + 1);
 
-        
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
         when(userRepository.findById(matchId)).thenReturn(Optional.of(player1));
-        when(userRepository.findById(matchId+1)).thenReturn(Optional.of(player2));
+        when(userRepository.findById(matchId + 1)).thenReturn(Optional.of(player2));
 
         // Act
         String[] players = matchService.getPlayers(matchId);
 
         // Assert
-        assertArrayEquals(new String[]{"player1", "player2"}, players);
+        assertArrayEquals(new String[] { "player1", "player2" }, players);
         verify(matchRepository).findById(matchId);
         verify(userRepository).findById(matchId);
-        verify(userRepository).findById(matchId+1);
+        verify(userRepository).findById(matchId + 1);
     }
 
     @Test
     void testGetPlayers_MatchNotFound() {
         // Arrange
-        Long matchId = (long)1;
-        
+        Long matchId = (long) 1;
+
         when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -438,25 +548,25 @@ public class MatchServiceTest {
         });
         assertEquals("Match not found", exception.getMessage());
         verify(matchRepository).findById(matchId);
-        verify(userRepository,never()).findById(matchId);
-        verify(userRepository,never()).findById(matchId+1);
+        verify(userRepository, never()).findById(matchId);
+        verify(userRepository, never()).findById(matchId + 1);
     }
 
     @Test
     void testGetPlayers_Player1NotFound() {
         // Arrange
-        Long matchId = (long)1;
+        Long matchId = (long) 1;
         Match match = new Match();
         match.setId(matchId);
         User player2 = new User();
-        player2.setId(matchId+1);
+        player2.setId(matchId + 1);
         player2.setUsername("player2");
         match.setPlayer1(matchId);
-        match.setPlayer2(matchId+1);
-        
+        match.setPlayer2(matchId + 1);
+
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
         when(userRepository.findById(matchId)).thenReturn(Optional.empty());
-        
+
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
             matchService.getPlayers(matchId);
@@ -464,25 +574,25 @@ public class MatchServiceTest {
         assertEquals("Player 1 not found", exception.getMessage());
         verify(matchRepository).findById(matchId);
         verify(userRepository).findById(matchId);
-        verify(userRepository,never()).findById(matchId+1);
+        verify(userRepository, never()).findById(matchId + 1);
     }
 
     @Test
     void testGetPlayers_Player2NotFound() {
         // Arrange
-        Long matchId = (long)1;
+        Long matchId = (long) 1;
         Match match = new Match();
         match.setId(matchId);
         User player1 = new User();
         player1.setId(matchId);
         player1.setUsername("player1");
         match.setPlayer1(matchId);
-        match.setPlayer2(matchId+1);
-        
+        match.setPlayer2(matchId + 1);
+
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
         when(userRepository.findById(matchId)).thenReturn(Optional.of(player1));
-        when(userRepository.findById(matchId+1)).thenReturn(Optional.empty());
-        
+        when(userRepository.findById(matchId + 1)).thenReturn(Optional.empty());
+
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
             matchService.getPlayers(matchId);
@@ -491,6 +601,6 @@ public class MatchServiceTest {
         assertEquals("Player 2 not found", exception.getMessage());
         verify(matchRepository).findById(matchId);
         verify(userRepository).findById(matchId);
-        verify(userRepository).findById(matchId+1);
+        verify(userRepository).findById(matchId + 1);
     }
 }

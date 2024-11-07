@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.http.HttpStatus;
 
 
@@ -114,7 +113,7 @@ public class AdminController {
             AuthResponse authResponse = userService.createUser(user);
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
         } catch (Exception ex) {
-            System.out.println("EROR!");
+            System.out.println("ERORR!");
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
         }
 //        catch (Exception ex) {

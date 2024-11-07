@@ -1,7 +1,6 @@
 package com.codewithcled.fullstack_backend_proj1.DTO;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
 
