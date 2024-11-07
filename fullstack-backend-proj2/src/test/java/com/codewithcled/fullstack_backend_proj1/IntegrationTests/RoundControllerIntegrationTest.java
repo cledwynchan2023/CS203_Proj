@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import com.codewithcled.fullstack_backend_proj1.DTO.MatchDTO;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -28,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.net.URI;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RoundControllerIntegrationTest {
@@ -114,9 +114,14 @@ public class RoundControllerIntegrationTest {
     @Test
     void checkRoundComplete_Success() throws Exception {
         Round testRound = new Round();
-        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
-        scoreboard.put(player1.getId(), 0.0);
-        scoreboard.put(player2.getId(), 0.0);
+        Scoreboard scoreboard=new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys=new ArrayList<>();
+        ScoreboardEntry entry1=new ScoreboardEntry(player1.getId(), 0.0);
+        ScoreboardEntry entry2=new ScoreboardEntry(player2.getId(), 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
         testRound.setTournament(testTournament);
         testRound.setRoundNum(1);
         testRound.setScoreboard(scoreboard);
@@ -147,9 +152,14 @@ public class RoundControllerIntegrationTest {
     void getAllMatches_Success_FoundMatches_ReturnMatches() throws Exception {
         Round testRound = new Round();
 
-        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
-        scoreboard.put(player1.getId(), 0.0);
-        scoreboard.put(player2.getId(), 0.0);
+        Scoreboard scoreboard=new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys=new ArrayList<>();
+        ScoreboardEntry entry1=new ScoreboardEntry(player1.getId(), 0.0);
+        ScoreboardEntry entry2=new ScoreboardEntry(player2.getId(), 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
         testRound.setTournament(testTournament);
         testRound.setRoundNum(1);
         testRound.setScoreboard(scoreboard);
@@ -187,9 +197,13 @@ public class RoundControllerIntegrationTest {
     @Test
     void getAllMatches_Success_NoMatches_ReturnEmptyList() throws Exception {
         Round testRound=new Round();
-        Map<Long, Double> scoreboard = new HashMap<Long, Double>();
-        scoreboard.put(player1.getId(), 0.0);
-        scoreboard.put(player2.getId(), 0.0);
+        Scoreboard scoreboard=new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys=new ArrayList<>();
+        ScoreboardEntry entry1=new ScoreboardEntry(player1.getId(), 0.0);
+        ScoreboardEntry entry2=new ScoreboardEntry(player2.getId(), 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
 
         testRound.setTournament(testTournament);
         testRound.setRoundNum(1);

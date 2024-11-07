@@ -19,6 +19,8 @@ import com.codewithcled.fullstack_backend_proj1.DTO.ResultRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignInRequest;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
@@ -32,8 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -115,13 +115,18 @@ public class MatchControllerIntegrationTest {
         userRepository.save(player1);
         userRepository.save(player2);
 
-        Map<Long,Double> scoreboard=new HashMap<Long,Double>();
-        scoreboard.put(player1.getId(),0.0);
-        scoreboard.put(player2.getId(),0.0);
+        Scoreboard scoreboard=new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys=new ArrayList<>();
+        ScoreboardEntry entry1=new ScoreboardEntry(player1.getId(), 0.0);
+        ScoreboardEntry entry2=new ScoreboardEntry(player2.getId(), 0.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
 
         Round round=new Round();
         round.setTournament(testTournament);
         round.setRoundNum(1);
+        round.setScoreboard(null);
         round.setScoreboard(scoreboard);
         round.setIsCompleted(false);
         round.setMatchList(new ArrayList<>());
@@ -157,7 +162,7 @@ public class MatchControllerIntegrationTest {
         roundRepository.deleteAll();
     }
 
-    //@Test//Can't get it to work
+    //@Test//Works until it calls to checkCOmplete round then fails as connection is refused
     void updateMatch_Success() throws Exception{
         Match testMatch=new Match();
         testMatch.setPlayer1(player1.getId());

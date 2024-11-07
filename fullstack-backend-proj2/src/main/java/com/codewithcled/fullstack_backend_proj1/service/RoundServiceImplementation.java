@@ -2,12 +2,9 @@ package com.codewithcled.fullstack_backend_proj1.service;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.codewithcled.fullstack_backend_proj1.model.Round;
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
+import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
@@ -28,6 +27,22 @@ public class RoundServiceImplementation implements RoundService {
 
     //for debugging purposes
     private static final Logger logger = Logger.getLogger(MatchServiceImplementation.class.getName());
+
+    public class eloComparator implements Comparator<User>{
+        @Override
+        //sort by elo, ascending order
+        public int compare(User u1, User u2){
+            if(u1.getElo() > u2.getElo()){
+                return 1;
+            }
+            else if(u1.getElo() < u2.getElo()){
+                return -1;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
 
     @Autowired
     private RoundRepository roundRepository;
@@ -50,7 +65,25 @@ public class RoundServiceImplementation implements RoundService {
     // public RoundServiceImplementation(RoundRepository roundRepository){
     //     this.roundRepository = roundRepository;
     // }
-    
+    public List<Match> createMatches(List<User> participantsList, Round firstRound){
+        List<Match> matches = new ArrayList<>();
+        for(int i = 0; i < participantsList.size() / 2; i++){
+            Match match = matchService.createMatch(participantsList.get(i), participantsList.get(participantsList.size() / 2 + i));
+            match.setRound(firstRound);
+            matches.add(match);
+        }
+        return matches;
+    }
+
+    public List<ScoreboardEntry> createScoreboardEntryList(List<User> participantsList, Round firstRound){
+        List<ScoreboardEntry> newScoreboardEntryList = new LinkedList<>();
+        for(int i = 0; i < participantsList.size(); i++){
+            ScoreboardEntry entry = new ScoreboardEntry(participantsList.get(i).getId(), 0.0);
+            newScoreboardEntryList.add(entry);
+        }
+        return newScoreboardEntryList;
+    }
+
     @Override
     public Round createFirstRound(Long tournamentId) throws Exception {
 
@@ -70,34 +103,17 @@ public class RoundServiceImplementation implements RoundService {
         firstRound.setRoundNum(1);
         firstRound.setTournament(tournament);
 
-        List<User> copy = new ArrayList<>(participants);
-        Collections.sort(copy, new Comparator<User>(){
-            @Override
-            public int compare(User u1, User u2){
-                if(u1.getElo() > u2.getElo()){
-                    return 1;
-                }
-                else if(u1.getElo() < u2.getElo()){
-                    return -1;
-                }
-                else{
-                    return 0;
-                }
-            }
-        });
-        List<Match> matches = new ArrayList<>();
-        for(int i = 0; i < copy.size() / 2; i++){
-            Match match = matchService.createMatch(copy.get(i), copy.get(copy.size() / 2 + i));
-            match.setRound(firstRound);
-            matches.add(match);
-        }
+        //create list containing participants, and sort by elo ascending order
+        List<User> participantsList = new ArrayList<>(participants);
+        Collections.sort(participantsList, new eloComparator());
+        List<Match> matches = createMatches(participantsList, firstRound);
 
         //create scoreboard
-        Map<Long, Double> newScoreboard = new LinkedHashMap<>();
-        for(int i = 0; i < copy.size(); i++){
-            newScoreboard.put(copy.get(i).getId(), 0.0);
-        }
-        
+        Scoreboard newScoreboard = new Scoreboard();
+        List<ScoreboardEntry> newScoreboardEntryList = createScoreboardEntryList(participantsList, firstRound);
+        newScoreboard.setScoreboardEntries(newScoreboardEntryList);
+
+        //set this round's scoreboard and matchlist, then save to repository
         firstRound.setScoreboard(newScoreboard);
         firstRound.setMatchList(matches);
         roundRepository.save(firstRound)
@@ -129,27 +145,14 @@ public class RoundServiceImplementation implements RoundService {
         if(complete){
             //call roundService to check if round is complete
             round.setIsCompleted(true);
+            roundRepository.save(round);
 
-            Map<Long, Double> roundScoreboard = round.getScoreboard();
-            List<Entry<Long, Double>> roundScoreboardList = new ArrayList<>(roundScoreboard.entrySet());
-            logger.info("Round scoreboard: " + roundScoreboardList);
-
-            // Tournament tournament = round.getTournament();
-            // List<Round> rounds = tournament.getRounds();
-
-            // ScoreboardComparator scoreboardComparator = new ScoreboardComparator(rounds, round, userRepository, matchRepository);
-            // roundScoreboardList.sort(scoreboardComparator);
-
-            // Map<Long, Double> sortedScoreboard = new LinkedHashMap<>();
-            // for(Entry<Long, Double> entry: roundScoreboardList){
-            //     sortedScoreboard.put(entry.getKey(), entry.getValue());
-            // }
-            // round.setScoreboard(sortedScoreboard);
+            Scoreboard roundScoreboard = round.getScoreboard();
+            logger.info("Round scoreboard: " + roundScoreboard.getScoreboardEntries());
             
             Tournament currentTournament = round.getTournament();
             Long currentTournamentId = currentTournament.getId();
             String relativeUrl = "/t/tournament/" + currentTournamentId + "/checkComplete";
-            roundRepository.save(round);
             restTemplate.getForObject(relativeUrl, String.class);
         }
     }
@@ -165,22 +168,23 @@ public class RoundServiceImplementation implements RoundService {
         
         //get scoreboard from previous round to put as this round's scoreboard
         //and to set up matches
-        Map<Long, Double> prevRoundScoreboard = tournament.getRounds().get(tournament.getRounds().size() - 1).getScoreboard();
-        List<Entry<Long, Double>> prevRoundScoreboardList = new ArrayList<>(prevRoundScoreboard.entrySet());
-
-        Map<Long, Double> newRoundScoreboard = new LinkedHashMap<>(prevRoundScoreboard);
-
-        logger.info("Previous round scoreboard: " + prevRoundScoreboard);
-        logger.info("New round scoreboard: " + newRoundScoreboard);
-
+        Scoreboard prevRoundScoreboard = tournament.getRounds().get(tournament.getRounds().size() - 1).getScoreboard();
+        List<ScoreboardEntry> prevRoundScoreboardEntries = prevRoundScoreboard.getScoreboardEntries();
+        List<ScoreboardEntry> newRoundScoreboardEntries = new ArrayList<>(prevRoundScoreboardEntries);
+        
+        Scoreboard newRoundScoreboard = new Scoreboard();
+        newRoundScoreboard.setScoreboardEntries(newRoundScoreboardEntries);
         newRound.setScoreboard(newRoundScoreboard);
+
+        logger.info("Previous round scoreboard: " + prevRoundScoreboardEntries);
+        logger.info("New round scoreboard: " + newRoundScoreboardEntries);
         
         //pair up participants by score
         List<Match> matches = new ArrayList<>();
-        for(int i = 0; i < prevRoundScoreboardList.size(); i += 2){
-            User player1 = userRepository.findById(prevRoundScoreboardList.get(i).getKey())
+        for(int i = 0; i < prevRoundScoreboardEntries.size(); i += 2){
+            User player1 = userRepository.findById(prevRoundScoreboardEntries.get(i).getPlayerId())
                 .orElseThrow(() -> new Exception("User not found"));
-            User player2 = userRepository.findById(prevRoundScoreboardList.get(i + 1).getKey())
+            User player2 = userRepository.findById(prevRoundScoreboardEntries.get(i + 1).getPlayerId())
                 .orElseThrow(() -> new Exception("User not found"));
             Match match = matchService.createMatch(player1, player2);
             match.setRound(newRound);
