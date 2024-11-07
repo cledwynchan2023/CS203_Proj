@@ -100,7 +100,7 @@ function Login() {
 			
 		</div> 
 		
-		<footer className="footer" style={{textAlign:"center"}}>
+		<footer className="footer" style={{textAlign:"center", backgroundColor:""}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
 		</>

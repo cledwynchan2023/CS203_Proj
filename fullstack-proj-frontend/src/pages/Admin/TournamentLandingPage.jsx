@@ -215,15 +215,15 @@ export default function TournamentLandingPage() {
         backgroundRepeat: 'no-repeat',
 		flexWrap: 'wrap',
         marginTop:"80px",
-        height:"100%",
+        height:"100vh",
     }}> 
-    <div className="content container fade-in" style={{height:"auto",paddingTop:"100px", paddingBottom:"50px",margin:"0"}}>
+    <div className="content container fade-in" style={{height:"100%",paddingTop:"100px", paddingBottom:"50px",margin:"0"}}>
         {/* <section className="hero">
             <div className="hero-body">
                 <p className="title">Tournament</p>
             </div>
         </section> */}
-        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
+        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"100%"}}>
             <div className="hero-body" style={{marginBottom:"5%"}}>
                 <p className="title is-size-2 is-family-sans-serif">Tournament</p>
                 <div style={{display:"flex", width:"100%"}}>
@@ -251,6 +251,8 @@ export default function TournamentLandingPage() {
                 </div>
                 
             </div>
+            <div style={{height:"100%", overflowY:"scroll"}}>
+            
             {isLoading ? (
             <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
                 <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
@@ -261,6 +263,7 @@ export default function TournamentLandingPage() {
                             <p style={{fontSize:"20px"}}>No tournaments available. Create one!</p>
                         </div>
                     ) : (
+
             <table className="table is-hoverable custom-table animate__animated animate__fadeIn" >
                 <thead>
                     <tr style={{height:"50px", paddingBottom:"5px"}}>
@@ -289,7 +292,8 @@ export default function TournamentLandingPage() {
                     )}
                 </tbody>
             </table>
-            ))}
+            ))
+}</div>
         </section>
     </div>
     
