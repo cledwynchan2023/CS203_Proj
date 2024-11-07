@@ -121,6 +121,151 @@ public class MatchServiceTest {
     }
 
     @Test
+    void updateRoundScoreboard_Success_Draw_SortScoreboardSolkoff() throws Exception {
+        // Arrange
+        Round testRound = new Round();
+        Match testMatch = new Match();
+        Match testMatch2 = new Match();
+        Long uId1 = (long) 1;
+        Long uId2 = uId1 + 1;
+        Long uId3 = uId2 + 1;
+        Long uId4 = uId3 + 1;
+        User testPlayer1 = new User();
+        User testPlayer2 = new User();
+        User opp1 = new User();
+        User opp2 = new User();
+
+        testPlayer1.setId(uId1);
+        testPlayer2.setId(uId2);
+        opp1.setId(uId3);
+        opp2.setId(uId4);
+        testMatch.setPlayer1(uId1);
+        testMatch.setPlayer2(uId2);
+        testMatch2.setPlayer1(uId3);
+        testMatch2.setPlayer2(uId1);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 1.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 1.0);
+        ScoreboardEntry entry3 = new ScoreboardEntry(uId3, 2.0);
+        ScoreboardEntry entry4 = new ScoreboardEntry(uId4, 2.0);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboardEntrys.add(entry3);
+        scoreboardEntrys.add(entry4);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
+        testRound.setScoreboard(scoreboard);
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        when(userRepository.findById(uId1)).thenReturn(Optional.of(testPlayer1));
+        when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
+        when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
+        when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
+                .thenReturn(testMatch2);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
+                .thenReturn(testMatch);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId3, testRound, uId3))
+                .thenReturn(testMatch2);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId4, testRound, uId4))
+                .thenReturn(testMatch);
+
+        // Act
+        matchService.updateRoundScoreboard(testRound, testMatch, 0);
+
+        // Assert
+        assertEquals(1.5, scoreboard.getPlayerScore(uId1));
+        assertEquals(1.5, scoreboard.getPlayerScore(uId2));
+        List<Long> keyOrder=List.of(uId2,uId1,uId3,uId4);
+        int count=0;
+        for (ScoreboardEntry entry:scoreboard.getScoreboardEntries()){
+            assertEquals(keyOrder.get(count),entry.getPlayerId());
+            count++;
+        }
+        verify(roundRepository).save(testRound);
+    }
+
+    @Test
+    void updateRoundScoreboard_Success_Draw_SortScoreboardElo() throws Exception {
+        // Arrange
+        Round testRound = new Round();
+        Match testMatch = new Match();
+        Match testMatch2 = new Match();
+        Long uId1 = (long) 1;
+        Long uId2 = uId1 + 1;
+        Long uId3 = uId2 + 1;
+        Long uId4 = uId3 + 1;
+        Double elo1=(double)100;
+        Double elo2=elo1+100;
+        Double elo3=elo1+200;
+        User testPlayer1 = new User();
+        User testPlayer2 = new User();
+        User opp1 = new User();
+        User opp2 = new User();
+
+        testPlayer1.setId(uId1);
+        testPlayer1.setElo(elo1);
+        testPlayer2.setId(uId2);
+        testPlayer2.setElo(elo1);
+        opp1.setId(uId3);
+        opp1.setElo(elo2);
+        opp2.setId(uId4);
+        opp2.setElo(elo3);
+        testMatch.setPlayer1(uId1);
+        testMatch.setPlayer2(uId2);
+        testMatch2.setPlayer1(uId3);
+        testMatch2.setPlayer2(uId2);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        ScoreboardEntry entry3 = new ScoreboardEntry(uId3, 0.5);
+        ScoreboardEntry entry4 = new ScoreboardEntry(uId4, 0.5);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboardEntrys.add(entry3);
+        scoreboardEntrys.add(entry4);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
+        testRound.setScoreboard(scoreboard);
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        when(userRepository.findById(uId1)).thenReturn(Optional.of(testPlayer1));
+        when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
+        when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
+        when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
+                .thenReturn(testMatch);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
+                .thenReturn(testMatch2);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId3, testRound, uId3))
+                .thenReturn(testMatch2);
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId4, testRound, uId4))
+                .thenReturn(testMatch);
+
+        // Act
+        matchService.updateRoundScoreboard(testRound, testMatch, 0);
+
+        // Assert
+        assertEquals(0.5, scoreboard.getPlayerScore(uId1));
+        assertEquals(0.5, scoreboard.getPlayerScore(uId2));
+        List<Long> keyOrder=List.of(uId1,uId2,uId3,uId4);
+        int count=0;
+        for (ScoreboardEntry entry:scoreboard.getScoreboardEntries()){
+            assertEquals(keyOrder.get(count),entry.getPlayerId());
+            count++;
+        }
+        verify(roundRepository).save(testRound);
+    }
+
+    @Test
     void updateRoundScoreboard_Success_Player1Win() throws Exception {
         // Arrange
         Round testRound = new Round();
@@ -215,7 +360,7 @@ public class MatchServiceTest {
         });
 
         // Assert
-        assertEquals("Player not found in scoreboard",exception.getMessage());
+        assertEquals("Player not found in scoreboard", exception.getMessage());
 
     }
 
@@ -232,7 +377,7 @@ public class MatchServiceTest {
         Scoreboard scoreboard = new Scoreboard();
         List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
         ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
-        ScoreboardEntry entry2 = new ScoreboardEntry(uId2+3, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2 + 3, 0.0);
         scoreboardEntrys.add(entry1);
         scoreboardEntrys.add(entry2);
         scoreboard.setScoreboardEntries(scoreboardEntrys);
@@ -249,7 +394,70 @@ public class MatchServiceTest {
         });
 
         // Assert
-        assertEquals("Player not found in scoreboard",exception.getMessage());
+        assertEquals("Player not found in scoreboard", exception.getMessage());
+
+    }
+
+    @Test
+    void updateRoundScoreboard_Failure_SortScoreboardExceptionMissingMatch() throws Exception {
+        // Arrange
+        Round testRound = new Round();
+        Match testMatch = new Match();
+        Match testMatch2 = new Match();
+        Long uId1 = (long) 1;
+        Long uId2 = uId1 + 1;
+        Long uId3 = uId2 + 1;
+        Long uId4 = uId3 + 1;
+        Double elo1=(double)100;
+        Double elo2=elo1+100;
+        Double elo3=elo1+200;
+        User testPlayer1 = new User();
+        User testPlayer2 = new User();
+        User opp1 = new User();
+        User opp2 = new User();
+
+        testPlayer1.setId(uId1);
+        testPlayer1.setElo(elo1);
+        testPlayer2.setId(uId2);
+        testPlayer2.setElo(elo1);
+        opp1.setId(uId3);
+        opp1.setElo(elo2);
+        opp2.setId(uId4);
+        opp2.setElo(elo3);
+        testMatch.setPlayer1(uId1);
+        testMatch.setPlayer2(uId2);
+        testMatch2.setPlayer1(uId3);
+        testMatch2.setPlayer2(uId2);
+
+        Scoreboard scoreboard = new Scoreboard();
+        List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        ScoreboardEntry entry3 = new ScoreboardEntry(uId3, 0.5);
+        ScoreboardEntry entry4 = new ScoreboardEntry(uId4, 0.5);
+        scoreboardEntrys.add(entry1);
+        scoreboardEntrys.add(entry2);
+        scoreboardEntrys.add(entry3);
+        scoreboardEntrys.add(entry4);
+        scoreboard.setScoreboardEntries(scoreboardEntrys);
+
+        testRound.setScoreboard(scoreboard);
+        Tournament tournament = new Tournament();
+        testRound.setTournament(tournament);
+        tournament.setRounds(List.of(testRound));
+
+        when(userRepository.findById(uId1)).thenReturn(Optional.of(testPlayer1));
+        when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
+        when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
+                .thenReturn(null);
+
+        // Act
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            matchService.updateRoundScoreboard(testRound, testMatch, 0);
+        });
+
+        // Assert
+        assertEquals("Error during tiebreak calculation",exception.getMessage());
 
     }
 
@@ -324,7 +532,6 @@ public class MatchServiceTest {
         scoreboard.setScoreboardEntries(scoreboardEntrys);
         testRound.setScoreboard(scoreboard);
 
-
         when(matchRepository.findById(mId)).thenReturn(Optional.of(testMatch));
         when(userRepository.findById(mId)).thenReturn(Optional.of(player1));
         when(userRepository.findById(mId + 1)).thenReturn(Optional.of(player2));
@@ -339,8 +546,9 @@ public class MatchServiceTest {
         matchService.updateMatch(mId, result);
 
         verify(matchRepository).findById(mId);
-        verify(userRepository, times(2)).findById(mId);
-        verify(userRepository, times(2)).findById(mId + 1);
+        verify(userRepository).findById(mId);
+        verify(userRepository).findById(mId + 1);
+        verify(eloRatingService).eloRatingForBoth(elo.intValue(), elo.intValue(), result);
     }
 
     @Test
