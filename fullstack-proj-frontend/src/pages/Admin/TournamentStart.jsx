@@ -261,7 +261,7 @@ export default function TournamentStart() {
                     </tr>
                 </thead>
                 <tbody>
-                {Array.from(scoreboard.entries()).map(([id, score], index) => {
+                {Array.from(scoreboard.entries()).reverse().map(([id, score], index) => {
                     const user = getUser(id); // Assuming you have a users array with user details
                     return (
                 <tr key={id}>
@@ -306,7 +306,7 @@ export default function TournamentStart() {
         setScoreboard(result.data.rounds[result.data.currentRound-1].scoreboard);
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
-        setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
+        setScoreboard(new Map(result.data.rounds[result.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
         console.log(tournamentRound);
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         loadNonParticipatingUsers();
@@ -435,11 +435,11 @@ const loadTournamentForDelete= async()=>{
                 setData(response.data);
                 setCurrentRound(response.data.currentRound);
                 setRound(response.data.rounds[response.data.currentRound-1]);
-                
+                console.log(response.data.rounds[response.data.currentRound-1]);
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
                 setTournament(response.data);
-                setScoreboard(new Map(Object.entries(response.data.rounds[response.data.currentRound - 1].scoreboard)));
-                console.log(scoreboard);
+                setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
+                
                 //console.log(response.data);
                 setTournamentRound(response.data.currentRound);
                 
@@ -469,7 +469,8 @@ const loadTournamentForDelete= async()=>{
         };
 
         fetchData();
-        
+        // Convert the scoreboard Map to an array and reverse it
+
         loadNonParticipatingUsers();
         
         //loadUsers();

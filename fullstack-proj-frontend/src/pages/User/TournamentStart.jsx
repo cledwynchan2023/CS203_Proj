@@ -338,7 +338,7 @@ export default function TournamentStart() {
         setTournament(result.data);
         console.log(result.data.currentRound);
         setTournamentRound(result.data.currentRound);
-        setScoreboard(result.data.rounds[result.data.currentRound-1].scoreboard);
+        setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
         setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
@@ -433,9 +433,8 @@ const loadTournamentForDelete= async()=>{
                 
                 setTournament(response.data);
                 console.log(response.data.rounds[0].scoreboard );
-                const scoreboardMap = new Map(Object.entries(response.data.rounds[response.data.currentRound-1].scoreboard));
-                console.log(scoreboardMap);
-                setScoreboard(scoreboardMap);
+                
+                setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
               
                 
                 setTournamentRound(response.data.currentRound);
