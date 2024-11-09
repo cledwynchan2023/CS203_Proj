@@ -35,6 +35,7 @@ public class scoreBoardSortTest {
         @Resource
         private ScoreboardComparator scoreboardComparator;
 
+        @SuppressWarnings("deprecation")
         @BeforeEach
         public void setUp() throws Exception {
                 // Initialize mocks created above
