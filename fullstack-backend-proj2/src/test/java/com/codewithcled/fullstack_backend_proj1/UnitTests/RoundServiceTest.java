@@ -53,7 +53,7 @@ public class RoundServiceTest {
     private RoundServiceImplementation roundService;
 
     @Test
-    void createFirstRound_Success() throws Exception {
+    void createFirstRound_Success_ReturnCreatedRound() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -96,7 +96,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    void createFirstRound_Success_EloSwapped() throws Exception {
+    void createFirstRound_Success_EloSwapped_ReturnCreatedRound() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -139,25 +139,25 @@ public class RoundServiceTest {
     }
 
     @Test
-    void createFirstRound_Failure_TournamentNotFound() throws Exception {
+    void createFirstRound_Failure_TournamentNotFound_ReturnException() throws Exception {
         Long tId = (long) 132;
 
+        // Arrange
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
-        boolean exceptionThrown = false;
 
-        try {
+        // Act & Assert
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.createFirstRound(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
 
-        assertEquals(true, exceptionThrown);
+        // Assert
+        assertEquals("Tournament not found", exception.getMessage());
         verify(tournamentRepository).findById(tId);
     }
 
     @Test
-    void createFirstRound_Failure_ParticipantsNotEven() throws Exception {
+    void createFirstRound_Failure_ParticipantsNotEven_ReturnsException() throws Exception {
+        // arrange
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -169,16 +169,13 @@ public class RoundServiceTest {
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
 
-        boolean exceptionThrown = false;
-
-        try {
+        // act
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.createFirstRound(tId);
-        } catch (Exception e) {
-            assertEquals("Number of participants must be even", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
 
-        assertEquals(true, exceptionThrown);
+        // assert
+        assertEquals("Number of participants must be even", exception.getMessage());
         verify(tournamentRepository).findById(tId);
     }
 
@@ -200,7 +197,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    void checkComplete_Success_AllMatchComplete() throws Exception {
+    void checkComplete_Success_AllMatchComplete_ReturnRoundUpdate() throws Exception {
 
         Long rId = (long) 24234;
         Tournament testTournament = new Tournament();
@@ -209,6 +206,7 @@ public class RoundServiceTest {
         testMatch.setIsComplete(true);
         testRound.setMatchList(List.of(testMatch));
         testRound.setTournament(testTournament);
+        testRound.setIsCompleted(false);
         User testUser1 = new User();
         testUser1.setId(rId + 1);
         testUser1.setElo((double) 13232);
@@ -231,6 +229,8 @@ public class RoundServiceTest {
 
         roundService.checkComplete(rId);
 
+        assertTrue(testRound.getIsCompleted());
+
         List<Long> keyOrderList = new ArrayList<>(List.of(rId + 1, rId + 2));
         List<ScoreboardEntry> entries = testRound.getScoreboard().getScoreboardEntries();
         int count = 0;
@@ -248,21 +248,16 @@ public class RoundServiceTest {
         Long rId = (long) 24234;
 
         when(roundRepository.findById(rId)).thenReturn(Optional.empty());
-        boolean exceptionThrown = false;
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.checkComplete(rId);
-        } catch (Exception e) {
-            assertEquals("Round not found", e.getMessage());
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("Round not found", exception.getMessage());
         verify(roundRepository).findById(rId);
     }
 
     @Test
-    void createNextRound_Success() throws Exception {
+    void createNextRound_Success_ReturnNewRound() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -305,10 +300,10 @@ public class RoundServiceTest {
         assertEquals(testTournament, result.getTournament());
         assertIterableEquals(List.of(testMatch), result.getMatchList());
         assertNotNull(result.getScoreboard());
-        List<ScoreboardEntry> scoreboardEntries=result.getScoreboard().getScoreboardEntries();
-        int count=1;
-        for (ScoreboardEntry entry:scoreboardEntries){
-            assertEquals(tId+count, entry.getPlayerId());
+        List<ScoreboardEntry> scoreboardEntries = result.getScoreboard().getScoreboardEntries();
+        int count = 1;
+        for (ScoreboardEntry entry : scoreboardEntries) {
+            assertEquals(tId + count, entry.getPlayerId());
             count++;
         }
 
@@ -320,25 +315,21 @@ public class RoundServiceTest {
     }
 
     @Test
-    void createNextRound_Failure_TournamentNotFound() throws Exception {
+    void createNextRound_Failure_TournamentNotFound_ReturnException() throws Exception {
         Long tId = (long) 132;
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.createNextRound(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
+        assertEquals("Tournament not found", exception.getMessage());
 
-        assertEquals(true, exceptionThrown);
         verify(tournamentRepository).findById(tId);
     }
 
     @Test
-    void createNextRound_Failure_Player1NotFound() throws Exception {
+    void createNextRound_Failure_Player1NotFound_ReturnException() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -371,22 +362,17 @@ public class RoundServiceTest {
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
         when(userRepository.findById(tId + 1)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.createNextRound(tId);
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("User not found", exception.getMessage());
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);
     }
 
     @Test
-    void createNextRound_Failure_Player2NotFound() throws Exception {
+    void createNextRound_Failure_Player2NotFound_ReturnException() throws Exception {
         Long tId = (long) 132;
         Tournament testTournament = new Tournament();
         testTournament.setId(tId);
@@ -420,15 +406,10 @@ public class RoundServiceTest {
         when(userRepository.findById(tId + 1)).thenReturn(Optional.of(testUser1));
         when(userRepository.findById(tId + 2)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             roundService.createNextRound(tId);
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("User not found", exception.getMessage());
 
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(tId + 1);
@@ -436,7 +417,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    void getAllMatches_Success() throws Exception {
+    void getAllMatches_Success_ReturnMatchList() throws Exception {
         Match testMatch1 = new Match();
         testMatch1.setId((long) 1);
         Match testMatch2 = new Match();
@@ -462,7 +443,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    void getAllMatches_Failure_RoundNotFound() {
+    void getAllMatches_Failure_RoundNotFound_ReturnException() {
         Match testMatch1 = new Match();
         testMatch1.setId((long) 1);
         Match testMatch2 = new Match();

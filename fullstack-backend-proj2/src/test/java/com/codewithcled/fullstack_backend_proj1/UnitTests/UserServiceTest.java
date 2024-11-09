@@ -47,7 +47,7 @@ public class UserServiceTest {
     private UserServiceImplementation userService;
 
     @Test
-    void loadUserByUsername_Success() throws Exception {
+    void loadUserByUsername_Success_ReturnUserDetails() throws Exception {
         String userName = "testUser";
         User testUser = new User();
         testUser.setPassword(userName);
@@ -63,25 +63,19 @@ public class UserServiceTest {
     }
 
     @Test
-    void loadUserByUsername_Failure() throws Exception {
+    void loadUserByUsername_Failure_ReturnException() throws Exception {
         String userName = "testUser";
         User testUser = new User();
         testUser.setPassword(userName);
         testUser.setEmail(userName);
         testUser.setId((long) 11);
-        boolean exceptionThrown = false;
 
         when(userRepository.findByEmail(userName)).thenReturn(null);
 
-        try {
+        UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername(userName);
-        } catch (UsernameNotFoundException e) {
-            assertEquals("User not found with this email" + userName, e.getMessage());
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("User not found with this email" + userName, exception.getMessage());
 
         verify(userRepository).findByEmail(userName);
     }
@@ -189,7 +183,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_Success() throws Exception {
+    void createUser_Success_ReturnAuthResponse() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -219,7 +213,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_Success_createAdmin() throws Exception {
+    void createUser_Success_createAdmin_ReturnAuthResponse() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -249,7 +243,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_Failure_SameEmail() throws Exception {
+    void createUser_Failure_SameEmail_ReturnException() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -269,25 +263,19 @@ public class UserServiceTest {
         testUser.setEmail(email);
         testUser.setRole(role);
         testUser.setElo(elo);
-        boolean exceptionThrown = false;
 
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             userService.createUser(signUpRequestDetails);
-        } catch (Exception e) {
-            assertEquals("Email Is Already Used With Another Account", e.getMessage());
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("Email Is Already Used With Another Account", exception.getMessage());
 
         verify(userRepository).findByEmail(email);
     }
 
     @Test
-    void createUser_Failure_SameUserName() throws Exception {
+    void createUser_Failure_SameUserName_ReturnException() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -303,16 +291,12 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(null);
         when(userRepository.existsByUsername(username)).thenReturn(true);
-        boolean exceptionThrown = false;
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             userService.createUser(signUpRequestDetails);
-        } catch (Exception e) {
-            assertEquals("Username is already being used with another account", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
+        assertEquals("Username is already being used with another account", exception.getMessage());
 
-        assertTrue(exceptionThrown);
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
     }
@@ -344,7 +328,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUser_Success() {
+    void updateUser_Success_ReturnOptionalUser() {
         Long uId = (long) 11;
         SignUpRequest updateUserDetails = new SignUpRequest();
 
@@ -367,9 +351,7 @@ public class UserServiceTest {
         updateUserDetails.setRole(role);
         updateUserDetails.setElo((double) elo);
 
-        Optional<User> returnUser = Optional.of(oldUser);
-
-        when(userRepository.findById(uId)).thenReturn(returnUser);
+        when(userRepository.findById(uId)).thenReturn(Optional.of(oldUser));
         when(passwordEncoder.encode(password)).thenReturn(password);
         when(userRepository.save(oldUser)).thenReturn(oldUser);
 
@@ -384,7 +366,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUser_Failure() {
+    void updateUser_Failure_returnOptionalEmpty() {
         Long uId = (long) 11;
         SignUpRequest updateUserDetails = new SignUpRequest();
 
@@ -412,7 +394,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserParticipatingTournaments_Success() throws Exception {
+    void getUserParticipatingTournaments_Success_ReturnUserTournamentList() throws Exception {
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -426,8 +408,7 @@ public class UserServiceTest {
         testUser.setUsername("testUser");
         testUser.setCurrentTournaments(tournamentList);
 
-        Optional<User> returnUser = Optional.of(testUser);
-        when(userRepository.findById(uId)).thenReturn(returnUser);
+        when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
         List<Tournament> result = userService.getUserParticipatingTournaments(uId);
 
@@ -436,7 +417,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserParticipatingTournaments_Failure() throws Exception {
+    void getUserParticipatingTournaments_Failure_ReturnException() throws Exception {
         Long uId = (long) 11;
 
         List<Tournament> tournamentList = new ArrayList<Tournament>();
@@ -450,27 +431,18 @@ public class UserServiceTest {
         testUser.setUsername("testUser");
         testUser.setCurrentTournaments(tournamentList);
 
-        Optional<User> returnUser = Optional.empty();
-        when(userRepository.findById(uId)).thenReturn(returnUser);
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             userService.getUserParticipatingTournaments(uId);
-        } catch (Exception e) {
-
-            assertEquals("User not found", e.getMessage());
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("User not found", exception.getMessage());
 
         verify(userRepository).findById(uId);
     }
 
     @Test
-    public void getUserPastMatches_Success() throws Exception {
+    public void getUserPastMatches_Success_ReturnListOfMatches() throws Exception {
         Long uId = (long) 1234;
         User testUser = new User();
         testUser.setId(uId);
@@ -511,7 +483,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserPastMatches_Failure() throws Exception {
+    public void getUserPastMatches_Failure_UserNotFound_ReturnException() throws Exception {
         Long uId = (long) 1234;
         User testUser = new User();
         testUser.setId(uId);
@@ -540,21 +512,17 @@ public class UserServiceTest {
 
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-
-        try {
+        
+        Exception exception = assertThrows(Exception.class, () -> {
             userService.getUserPastMatches(uId);
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
+        assertEquals("User not found", exception.getMessage());
 
-        assertTrue(exceptionThrown);
         verify(userRepository).findById(uId);
     }
 
     @Test
-    void updateUserWithoutPassword_Success() {
+    void updateUserWithoutPassword_Success_ReturnOptionalUser() {
         Long uId = (long) 123;
         User testUser = new User();
         testUser.setId(uId);
@@ -580,7 +548,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUserWithoutPassword_Failure_UserNotFound() {
+    void updateUserWithoutPassword_Failure_UserNotFound_ReturnOptionalEmpty() {
         Long uId = (long) 123;
 
         EditUserRequest editUserRequest = new EditUserRequest();

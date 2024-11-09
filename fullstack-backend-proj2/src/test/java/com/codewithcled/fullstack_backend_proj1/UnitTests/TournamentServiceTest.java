@@ -74,22 +74,18 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getTournamentParticipants_failure_returnError() {
+    void getTournamentParticipants_failure_returnException() {
         Long id = (long) 500;
-        boolean exceptionThrown = false;
 
         when(tournamentRepository.findById(id)).thenReturn(Optional.empty());
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.getTournamentParticipants(id);
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Error Occured");
-            verify(tournamentRepository).findById(id);
+        });
+        assertEquals("Error Occured", exception.getMessage());
 
-            exceptionThrown = true;
-        }
+        verify(tournamentRepository).findById(id);
 
-        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -178,31 +174,23 @@ public class TournamentServiceTest {
         User testUser = new User();
         testUser.setId(uIdT);
         testUser.setUsername("TestUser");
-        Optional<Tournament> returnTournament = Optional.empty();
         List<User> finalParticipantList = new ArrayList<User>();
         finalParticipantList.add(firstUser);
         finalParticipantList.add(testUser);
-        boolean exceptionThrown = false;
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        try {
-
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.updateUserParticipating(uIdT, tId);
+        });
+        assertEquals("Tournament not found", exception.getMessage());
 
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository, never()).findById(uIdT);
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository, never()).findById(uIdT);
     }
 
     @Test
-    void updateUserParticipating_Failure_NoUser_returnError() {
+    void updateUserParticipating_Failure_NoUser_returnException() {
         Long uIdF = (long) 10;
         Long uIdT = (long) 11;
         Long tId = (long) 11;
@@ -213,27 +201,21 @@ public class TournamentServiceTest {
         testTournament.addParticipant(firstUser);
         Optional<Tournament> returnTournament = Optional.of(testTournament);
         Optional<User> returnUser = Optional.empty();
-        boolean exceptionThrown = false;
 
         when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
         when(userRepository.findById(uIdT)).thenReturn(returnUser);
-        try {
 
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.updateUserParticipating(uIdT, tId);
+        });
+        assertEquals("User not found", exception.getMessage());
 
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository).findById(uIdT);
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uIdT);
     }
 
     @Test
-    void updateUserParticipating_Failure_TournamentAtMaxSize_returnError() {
+    void updateUserParticipating_Failure_TournamentAtMaxSize_returnException() {
         Long uIdF = (long) 10;
         Long uIdT = (long) 11;
         Long tId = (long) 11;
@@ -248,23 +230,16 @@ public class TournamentServiceTest {
         testUser.setId(uIdT);
         testUser.setUsername("TestUser");
 
-        boolean exceptionThrown = false;
-
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
         when(userRepository.findById(uIdT)).thenReturn(Optional.of(testUser));
-        try {
 
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.updateUserParticipating(uIdT, tId);
+        });
 
-        } catch (Exception e) {
-            assertEquals("Tournament is full", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository).findById(uIdT);
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        assertEquals("Tournament is full", exception.getMessage());
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uIdT);
     }
 
     @Test
@@ -302,87 +277,65 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void removeUserParticipating_Failure_TournamentNotFound_ReturnError() {
+    void removeUserParticipating_Failure_TournamentNotFound_ReturnException() {
         Long uId = (long) 10;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
         testTournament.addParticipant(new User());
-        Optional<Tournament> returnTournament = Optional.empty();
-        boolean exceptionThrown = false;
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        try {
-
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.removeUserParticipating(uId, tId);
+        });
 
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        assertEquals("Tournament not found", exception.getMessage());
+        verify(tournamentRepository).findById(tId);
     }
 
     @Test
-    void removeUserParticipating_Failure_UserNotFound_ReturnError() {
+    void removeUserParticipating_Failure_UserNotFound_ReturnException() {
         Long uId = (long) 10;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
         testTournament.addParticipant(new User());
-        Optional<Tournament> returnTournament = Optional.of(testTournament);
-        Optional<User> returnUser = Optional.empty();
-        boolean exceptionThrown = false;
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
-        when(userRepository.findById(uId)).thenReturn(returnUser);
-        try {
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.removeUserParticipating(uId, tId);
+        });
 
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository).findById(uId);
+        assertEquals("User not found", exception.getMessage());
 
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uId);
     }
 
     @Test
-    void removeUserParticipating_Failure_UserNotInTournament_ReturnError() {
+    void removeUserParticipating_Failure_UserNotInTournament_ReturnException() {
         Long uId = (long) 10;
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
         User firstUser = new User();
         firstUser.setUsername("FirstUser");
-        Optional<Tournament> returnTournament = Optional.of(testTournament);
-        Optional<User> returnUser = Optional.of(firstUser);
-        boolean exceptionThrown = false;
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
-        when(userRepository.findById(uId)).thenReturn(returnUser);
-        try {
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(userRepository.findById(uId)).thenReturn(Optional.of(firstUser));
 
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.removeUserParticipating(uId, tId);
+        });
 
-        } catch (Exception e) {
-            assertEquals("User is not participating in the tournament", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-            verify(userRepository).findById(uId);
+        assertEquals("User is not participating in the tournament", exception.getMessage());
+        verify(tournamentRepository).findById(tId);
+        verify(userRepository).findById(uId);
 
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -402,9 +355,8 @@ public class TournamentServiceTest {
         originalTournament.setSize(4);
         originalTournament.setStatus("active");
         originalTournament.setNoOfRounds(3);
-        Optional<Tournament> returnTournament = Optional.of(originalTournament);
 
-        when(tournamentRepository.findById(tId)).thenReturn(returnTournament);
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(originalTournament));
         when(tournamentRepository.save(originalTournament)).thenReturn(originalTournament);
 
         Tournament result = tournamentService.updateTournament(tId, tournamentUpdateData);
@@ -450,28 +402,22 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void updateTournament_Failure_TournamentNotFound_ReturnError() {
+    void updateTournament_Failure_TournamentNotFound_ReturnException() {
         Long tId = (long) 11;
         CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
         tournamentUpdateData.setTournament_name("newName");
         Tournament originalTournament = new Tournament();
         originalTournament.setTournament_name("oldName");
-        boolean exceptionThrown = false;
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        try {
 
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.updateTournament(tId, tournamentUpdateData);
+        });
 
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            verify(tournamentRepository).findById(tId);
-
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        assertEquals("Tournament not found", exception.getMessage());
+        verify(tournamentRepository).findById(tId);
     }
 
     @Test
@@ -539,22 +485,17 @@ public class TournamentServiceTest {
         testTournament.setId(tId);
         testTournament.setTournament_name("testTournament");
         resultList.add(testTournament);
-        boolean exceptionThrown = false;
 
         when(tournamentRepository.findAll()).thenReturn(resultList);
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.getTournamentsWithNoCurrentUser(uId);
+        });
 
-        } catch (Exception e) {
-            assertEquals("User not found", e.getMessage());
-            verify(tournamentRepository).findAll();
-            verify(userRepository).findById(uId);
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        assertEquals("User not found", exception.getMessage());
+        verify(tournamentRepository).findAll();
+        verify(userRepository).findById(uId);
 
     }
 
@@ -696,7 +637,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getActiveTournament_Success() {
+    void ActiveTournament_Success_ReturnListOfActiveTournaments() {
         Tournament testTournament = new Tournament();
         testTournament.setStatus("active");
         Tournament testTournament2 = new Tournament();
@@ -713,7 +654,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getOngoingTournament_Success() {
+    void OngoingTournament_Success_ReturnListOfOngoingTournaments() {
         Tournament testTournament = new Tournament();
         testTournament.setStatus("active");
         testTournament.setTournament_name("t1");
@@ -732,7 +673,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getInActiveTournament_Success() {
+    void InActiveTournament_Success_ReturnListOfCompletedTournaments() {
         Tournament testTournament = new Tournament();
         testTournament.setStatus("active");
         Tournament testTournament2 = new Tournament();
@@ -749,7 +690,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getFilteredTournamentsByName_Success() throws Exception {
+    void FilteredTournamentsByName_Success_ReturnSortedTournamentListByName() throws Exception {
         Tournament testTournament1 = new Tournament();
         testTournament1.setTournament_name("t1");
         testTournament1.setDate("10/5/2024");
@@ -784,7 +725,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getFilteredTournamentsByDate_Success() throws Exception {
+    void FilteredTournamentsByDate_Success_ReturnSortedTournamentListByDate() throws Exception {
         Tournament testTournament1 = new Tournament();
         testTournament1.setTournament_name("t1");
         testTournament1.setDate("10/5/2024");
@@ -821,7 +762,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getFilteredTournamentsByDate_Failure_OneTournamentHasIncorrectDateFormat() throws Exception {
+    void FilteredTournamentsByDate_Failure_OneTournamentHasIncorrectDateFormat_ReturnException() throws Exception {
         Tournament testTournament1 = new Tournament();
         testTournament1.setTournament_name("t1");
         testTournament1.setDate("10/5/2024");
@@ -847,20 +788,17 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        boolean exceptionThrown=false;
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.getFilteredTournamentsByDate();
-        } catch (RuntimeException e) {
-            assertEquals("java.text.ParseException: Unparseable date: \"1252024\"",e.getMessage());
-            exceptionThrown=true;
-        }
-        assertTrue(exceptionThrown);
+        });
+
+        assertEquals("java.text.ParseException: Unparseable date: \"1252024\"", exception.getMessage());
 
         verify(tournamentRepository).findAll();
     }
 
     @Test
-    void getFilteredTournamentsBySize_Success() throws Exception {
+    void getFilteredTournamentsBySize_Success_ReturnTournamentListSortedByOpenSlots() throws Exception {
         // Comparing by availiable slots not just size
         Tournament testTournament1 = new Tournament();
         testTournament1.setTournament_name("t1");
@@ -897,7 +835,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void startTournament_Success() throws Exception {
+    void startTournament_Success_ReturnUpdatedTournament() throws Exception {
         Long tId = (long) 11;
         int roundNo = 2;
         Tournament testTournament = new Tournament();
@@ -924,7 +862,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void startTournament_Failure_TournamentNotActive() throws Exception {
+    void startTournament_Failure_TournamentNotActive_ReturnException() throws Exception {
         Long tId = (long) 11;
         int roundNo = 2;
         Tournament testTournament = new Tournament();
@@ -936,34 +874,24 @@ public class TournamentServiceTest {
         testTournament.setRounds(rounds);
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
-
-        boolean exceptionThrown = false;
-        try {
+        
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.startTournament(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament is ongoing or completed", e.getMessage());
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("Tournament is ongoing or completed", exception.getMessage());
 
         verify(tournamentRepository).findById(tId);
     }
 
     @Test
-    void startTournament_Failure_TournamentNotFound() throws Exception {
+    void startTournament_Failure_TournamentNotFound_ReturnException() throws Exception {
         Long tId = (long) 11;
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.startTournament(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
-
-        assertTrue(exceptionThrown);
+        });
+        assertEquals("Tournament not found", exception.getMessage());
 
         verify(tournamentRepository).findById(tId);
     }
@@ -1014,24 +942,21 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void checkComplete_Failure() throws Exception {
+    void checkComplete_Failure_ReturnException() throws Exception {
         Long tId = (long) 11;
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
-        boolean exceptionThrown = false;
-        try {
+        
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.checkComplete(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
+        assertEquals("Tournament not found", exception.getMessage());
 
-        assertTrue(exceptionThrown);
         verify(tournamentRepository).findById(tId);
     }
 
     @Test
-    void endTournament_Success() throws Exception {
+    void endTournament_Success_ReturnUpdatedTournament() throws Exception {
         Long tId = (long) 11;
         Tournament testTournament = new Tournament();
         testTournament.setTournament_name("test");
@@ -1049,21 +974,17 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void endTournament_Failure() throws Exception {
+    void endTournament_Failure_ReturnException() throws Exception {
         Long tId = (long) 11;
 
         when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        boolean exceptionThrown = false;
 
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.endTournament(tId);
-        } catch (Exception e) {
-            assertEquals("Tournament not found", e.getMessage());
-            exceptionThrown = true;
-        }
+        });
+        assertEquals("Tournament not found", exception.getMessage());
 
-        assertTrue(exceptionThrown);
         verify(tournamentRepository).findById(tId);
     }
 
