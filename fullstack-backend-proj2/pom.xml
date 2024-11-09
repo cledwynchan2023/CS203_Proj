@@ -93,7 +93,6 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.33</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -112,7 +111,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					
+
 					<execution>
 						<id>report</id>
 						<phase>test</phase>

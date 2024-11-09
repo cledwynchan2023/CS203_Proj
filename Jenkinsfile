@@ -5,7 +5,17 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'mvn --version'
+                sh 'mvn spring-boot:run'
+            }
+        }
+        stage('Test'){
+            steps{
+                sh 'mvn clean test'
+            }
+            post{
+                always{
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
     }
