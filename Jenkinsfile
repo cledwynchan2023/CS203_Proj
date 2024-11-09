@@ -5,11 +5,13 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                cd 'fullstack-backend-proj2'
                 sh 'mvn spring-boot:run'
             }
         }
         stage('Test'){
             steps{
+                cd 'fullstack-backend-proj2'
                 sh 'mvn clean test'
             }
             post{
