@@ -331,7 +331,7 @@ export default function TournamentCompleted() {
                     </tr>
                 </thead>
                 <tbody>
-                {Array.from(scoreboard.entries()).map(([id, score], index) => {
+                {Array.from(scoreboard.entries()).reverse().map(([id, score], index) => {
                     const user = getUser(id); // Assuming you have a users array with user details
                     let rowStyle = {};
                     if (index === 0) {
@@ -384,7 +384,7 @@ export default function TournamentCompleted() {
         setScoreboard(result.data.rounds[result.data.currentRound-1].scoreboard);
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
-        setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
+        setScoreboard(new Map(result.data.rounds[result.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
         console.log(tournamentRound);
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         loadNonParticipatingUsers();
@@ -516,7 +516,7 @@ const loadTournamentForDelete= async()=>{
                 
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
                 setTournament(response.data);
-                setScoreboard(new Map(Object.entries(response.data.rounds[response.data.currentRound - 1].scoreboard)));
+                setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
                 console.log(scoreboard);
                 //console.log(response.data);
                 setTournamentRound(response.data.currentRound);

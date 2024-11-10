@@ -435,9 +435,10 @@ const loadTournamentForDelete= async()=>{
                 setData(response.data);
                 setCurrentRound(response.data.currentRound);
                 setRound(response.data.rounds[response.data.currentRound-1]);
-                console.log(response.data.rounds[response.data.currentRound-1]);
+              
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
                 setTournament(response.data);
+                //console.log(response.data.rounds[1].scoreboard.scoreboardEntries);
                 setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
                 
                 //console.log(response.data);
@@ -458,6 +459,7 @@ const loadTournamentForDelete= async()=>{
                 }
                 console.log(isStart);
             } catch (error) {
+                console.log("ERROR" + error);
                 if (error.response && error.response.status === 401) {
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage

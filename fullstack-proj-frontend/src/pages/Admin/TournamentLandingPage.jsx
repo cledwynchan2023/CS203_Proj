@@ -41,8 +41,6 @@ export default function TournamentLandingPage() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
             return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -68,8 +66,7 @@ export default function TournamentLandingPage() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
+
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
@@ -111,8 +108,6 @@ export default function TournamentLandingPage() {
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-            console.log("WebSocket connection successful");
-            
             stompClient.subscribe('/topic/tournamentCreate', () => {
                 // Reload tournament data on match update
                 console.log("Received tournament update");
@@ -126,8 +121,7 @@ export default function TournamentLandingPage() {
         // Disconnect WebSocket on component unmount
         return () => {
             if (stompClient) stompClient.disconnect(() => {
-                console.log("WebSocket connection closed");
-                //setConnectionStatus("Disconnected");
+
             });
         };
         
@@ -142,7 +136,7 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/name");
-        console.log(result.data);
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -155,7 +149,7 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/date");
-        console.log(result.data);
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -168,7 +162,6 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/capacity");
-        console.log(result.data);
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -180,7 +173,6 @@ export default function TournamentLandingPage() {
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments");
-        console.log(result.data);
         if (!result.data.length == 0){
             setTournament(result.data);
             setIsLoading(false);
@@ -192,7 +184,7 @@ export default function TournamentLandingPage() {
     };
 
     const deleteTournament= async(tournament_id)=>{
-        const confirmation = window.confirm("Are you sure you want to delete this user?");
+        const confirmation = window.confirm("Are you sure you want to delete this tournament?");
         if (!confirmation) return;
         const token = localStorage.getItem('token');
         const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
@@ -214,23 +206,19 @@ export default function TournamentLandingPage() {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
 		flexWrap: 'wrap',
-        marginTop:"80px",
         height:"100vh",
+
     }}> 
-    <div className="content container fade-in" style={{height:"100%",paddingTop:"100px", paddingBottom:"50px",margin:"0"}}>
-        {/* <section className="hero">
+    <div className="content fade-in" style={{height:"100%",width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+       
+        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", height:"100%", width:"100%", overflow:"scroll"}}>
             <div className="hero-body">
-                <p className="title">Tournament</p>
-            </div>
-        </section> */}
-        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"100%"}}>
-            <div className="hero-body" style={{marginBottom:"5%"}}>
-                <p className="title is-size-2 is-family-sans-serif">Tournament</p>
-                <div style={{display:"flex", width:"100%"}}>
-                    <div style={{width:"80%"}}>
-                        <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
+                <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Tournament</p>
+                <div style={{display:"flex", width:"100%", flexWrap:"wrap", gap:"20px", marginBottom:"20px"}}>
+                    <div style={{width:"40%", minWidth:"180px"}}>
+                        <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`} style={{maxWidth:"200px"}}>Create Tournament</Link>
                     </div>
-                    <div style={{display:"flex", width:"50%", display:"flex", justifyContent:"center"}}>
+                    <div style={{display:"flex", width:"50%", justifyContent:"right", minWidth:"200px"}}>
                         <p>Filter by:</p>
                         <div style={{marginLeft:"20px"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
                             <div className="dropdown-trigger" >
@@ -251,7 +239,7 @@ export default function TournamentLandingPage() {
                 </div>
                 
             </div>
-            <div style={{height:"100%", overflowY:"scroll"}}>
+            <div style={{height:"80%", overflowX:"scroll"}}>
             
             {isLoading ? (
             <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
