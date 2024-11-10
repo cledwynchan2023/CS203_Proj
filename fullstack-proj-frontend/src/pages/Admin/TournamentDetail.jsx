@@ -488,7 +488,7 @@ export default function TournamentDetail() {
                                 name="status"
                             >
                                 <option value="active">Active</option>
-                                <option value="completer">Not Active</option>
+                                <option value="completed">Completed</option>
                                 <option value="ongoing">Ongoing</option>
                             </select>
                             <label htmlFor="Status">Status</label>
