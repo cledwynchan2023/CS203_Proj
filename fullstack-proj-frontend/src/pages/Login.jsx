@@ -23,7 +23,6 @@ function Login() {
 			} 
             setIsLoading(true);
 			const response = await axios.post('http://localhost:8080/auth/signin', { username, password }); 
-	
 			const token = response.data.jwt; 
 			localStorage.setItem('token', token);
 			setIsLoading(false)
@@ -40,9 +39,7 @@ function Login() {
 			console.log(userRole + " HELLO");
 			
 			if (userRole == "ROLE_ADMIN"){
-				
 					navigate(`/admin/${userId}/tournament`);
-				
 				
 			} else if (userRole=="ROLE_USER"){
 				
@@ -75,17 +72,13 @@ function Login() {
 					<div style={{width:"100%",  height:"35%",minHeight:"150px", marginBottom:"50px", marginTop:"10px"}}>
 						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"35%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
 						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"35%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-
-					</div>
-					
-					
+					</div>		
 					{isLoading ? (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40%' }}>
 							<div>
 								<Atom size={24} color="white" />
 								<p style={{width:"100%"}}>Login in....</p>
 							</div>
-
                         </div>
                     ) : (
                         <button className="button is-link" style={{ height:'12%',width: '50%',minWidth:"350px", borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>

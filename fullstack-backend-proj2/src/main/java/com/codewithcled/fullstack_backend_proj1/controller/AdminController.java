@@ -3,7 +3,6 @@ package com.codewithcled.fullstack_backend_proj1.controller;
 import org.springframework.beans.factory.annotation.Value;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
-import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import com.codewithcled.fullstack_backend_proj1.service.TournamentService;
@@ -20,7 +19,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-
 /*ADMIN CONTROLLER
  * Authorisation: Can do whatever user can do plus
  * - Create/Delete tournaments
@@ -34,8 +32,7 @@ import org.springframework.http.HttpStatus;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-    @Autowired
-    private TournamentRepository tournamentRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -91,7 +88,6 @@ public class AdminController {
     //Create Tournament
     @PostMapping("/tournament")
     public ResponseEntity<TournamentDTO> createTournament(@RequestBody CreateTournamentRequest tournament) {
-        
         Tournament createdTournament;
         try {
             createdTournament = tournamentService.createTournament(tournament);
@@ -102,13 +98,12 @@ public class AdminController {
             System.out.println("ERROR: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
         }
-    
     }
 
     // Create User to Database
+    @SuppressWarnings("null")
     @PostMapping("/signup/user")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception {
-
+    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception { 
         try {
             AuthResponse authResponse = userService.createUser(user);
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
@@ -116,10 +111,6 @@ public class AdminController {
             System.out.println("ERORR!");
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
         }
-//        catch (Exception ex) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 for other errors
-//        }
-
     }
 
     //delete user
@@ -132,7 +123,7 @@ public class AdminController {
         return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
     }
 
-
+    //get user by username
     @GetMapping("/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String email) {
         try {
@@ -142,9 +133,9 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        
     }
 
+    //delete tournament
     @DeleteMapping("/tournament/{id}")
     public ResponseEntity<String> deleteTournament(@PathVariable("id") Long id) {
         System.out.println("Deleting tournament with ID " + id);
@@ -158,9 +149,6 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the tournament.");  // Return 500 Internal Server Error for other issues
         }
     }
-
-    
-
 
     //editing players from the playerlist page
     @PutMapping("/user/{id}")
@@ -187,9 +175,5 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
         }
     }
-
-
-
-
    
 }

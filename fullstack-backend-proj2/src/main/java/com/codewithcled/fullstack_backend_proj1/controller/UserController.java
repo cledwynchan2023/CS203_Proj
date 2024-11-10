@@ -122,8 +122,6 @@ public class UserController {
         return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
     }
 
-
-
     //editing profile
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
@@ -154,9 +152,6 @@ public class UserController {
         users.sort((u1, u2) -> u2.getElo().compareTo(u1.getElo()));
         List<UserDTO> userDTOs = UserMapper.toDTOList(users);
         return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
-    }
-
-    
-
+    }   
 
 }
