@@ -80,7 +80,7 @@ public class MatchServiceImplementation implements MatchService{
      * @return the match with the given ID
      * @throws NoSuchElementException if the match is not found
      */
-    private Match getMatchById(Long matchId) throws Exception {
+    private Match getMatchById(Long matchId) throws NoSuchElementException {
         return matchRepository.findById(matchId)
             .orElseThrow(() -> new NoSuchElementException("Match not found"));
     }
@@ -244,8 +244,7 @@ public class MatchServiceImplementation implements MatchService{
      * {@inheritDoc}
      */
     public int getResult(Long matchId) throws Exception{
-        Match currentMatch = matchRepository.findById(matchId)
-        .orElseThrow(() -> new NoSuchElementException("Match not found"));
+        Match currentMatch = getMatchById(matchId);
 
         return currentMatch.getResult();
     }
@@ -255,8 +254,7 @@ public class MatchServiceImplementation implements MatchService{
      * {@inheritDoc}
      */
     public Double getEloChange1(Long matchId) throws Exception{
-        Match currentMatch = matchRepository.findById(matchId)
-        .orElseThrow(() -> new NoSuchElementException("Match not found"));
+        Match currentMatch = getMatchById(matchId);
 
         return currentMatch.getEloChange1();
     }
@@ -266,8 +264,7 @@ public class MatchServiceImplementation implements MatchService{
      * {@inheritDoc}
      */
     public Double getEloChange2(Long matchId) throws Exception{
-        Match currentMatch = matchRepository.findById(matchId)
-        .orElseThrow(() -> new NoSuchElementException("Match not found"));
+        Match currentMatch = getMatchById(matchId);
 
         return currentMatch.getEloChange2();
     }
@@ -278,8 +275,7 @@ public class MatchServiceImplementation implements MatchService{
      * {@inheritDoc}
      */
     public String[] getPlayerUsernames(Long matchId) throws Exception{
-        Match currentMatch = matchRepository.findById(matchId)
-        .orElseThrow(() -> new NoSuchElementException("Match not found"));
+        Match currentMatch = getMatchById(matchId);
 
         String[] players = new String[2];
         players[0] = userRepository.findById(currentMatch.getPlayer1())

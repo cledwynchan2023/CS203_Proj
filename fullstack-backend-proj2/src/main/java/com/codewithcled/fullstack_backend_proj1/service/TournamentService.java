@@ -24,16 +24,16 @@ public interface TournamentService {
     public List<Tournament> getActiveTournament();
 
     /**
-     * Get all completed tournaments
-     * @return List of all completed tournaments
-     */
-    public List<Tournament> getCompletedTournament();
-
-    /**
      * Get all ongoing tournaments
      * @return List of all ongoing tournaments
      */
     public List<Tournament> getOngoingTournament();
+
+    /**
+     * Get all completed tournaments
+     * @return List of all completed tournaments
+     */
+    public List<Tournament> getCompletedTournament();
 
     /**
      * Get all participants of a tournament
