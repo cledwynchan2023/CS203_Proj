@@ -38,8 +38,8 @@ public class MatchController {
     }
 
     @GetMapping("/match/{id}/getPlayers")
-    public ResponseEntity<String[]> getPlayers(@PathVariable("id") Long id) throws Exception{
-        String[] players = matchService.getPlayers(id);
+    public ResponseEntity<String[]> getPlayerUsernames(@PathVariable("id") Long id) throws Exception{
+        String[] players = matchService.getPlayerUsernames(id);
         return ResponseEntity.ok(players);
     }
     
