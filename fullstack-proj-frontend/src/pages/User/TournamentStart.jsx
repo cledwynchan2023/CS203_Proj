@@ -40,7 +40,7 @@ export default function TournamentStart() {
     const [noOfMatches, setNoOfMatches] = useState(1);
     const onSubmit= async (e)=>{
         e.preventDefault();
-        console.log(editedTournament);
+
         const tournamentData = {
             tournament_name,
             date,
@@ -48,7 +48,7 @@ export default function TournamentStart() {
             size,
             noOfRounds
         };
-        console.log(tournamentData.tournament_name);
+
         try {
             const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
             if (response.status === 200){
@@ -63,7 +63,7 @@ export default function TournamentStart() {
         
     }
     const handlePageClick = (round) => {
-        console.log(round + " " + tournamentRound);
+
         if (round > tournamentRound){
             return;
         } else if (round <= tournamentRound){
@@ -71,7 +71,7 @@ export default function TournamentStart() {
             setPairing(tournament.rounds[round-1].matchList);
             setUserPairings(findUserPairingFirst(tournament.rounds[round-1].matchList));
             setRound(tournament.rounds[round-1]);
-            console.log(tournamentRound);
+           
         }
         
     };
@@ -334,18 +334,18 @@ export default function TournamentStart() {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(result.data);
+  
         const resultName = result.data.tournamentName;
        
     
         setTournament(result.data);
-        console.log(result.data.currentRound);
+
         setTournamentRound(result.data.currentRound);
         setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
         setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
-        console.log(result.data.rounds[result.data.currentRound - 1].scoreboard);
+       
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
         loadNonParticipatingUsers();
@@ -363,7 +363,7 @@ export default function TournamentStart() {
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
+    
         const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -383,8 +383,7 @@ export default function TournamentStart() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
+       
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
@@ -399,8 +398,7 @@ export default function TournamentStart() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
+ 
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
@@ -419,17 +417,11 @@ export default function TournamentStart() {
                 
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
                 setUserPairings(findUserPairingFirst(response.data.rounds[response.data.currentRound-1].matchList));
-                
                 setTournament(response.data);
-                console.log(response.data.rounds[0].scoreboard );
-                
                 setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-              
-                
                 setTournamentRound(response.data.currentRound);
                 
                 setUser(response.data.participants);
-                console.log(user);
                 if (response.data.status == 'active') {
                     alert("Tournament has not started yet");
                     navigate(`/user/${userId}/tournament/${id}`);
@@ -441,7 +433,7 @@ export default function TournamentStart() {
                     navigate(`/user/${userId}/tournament/${id}/ended`);
                     setIsStart(-1);
                 }
-                console.log(isStart);
+               
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -459,7 +451,7 @@ export default function TournamentStart() {
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-            console.log("WebSocket connection successful");
+       
             setConnectionStatus("Connected");
             stompClient.subscribe('/topic/matchUpdates', () => {
                 // Reload tournament data on match update
@@ -467,7 +459,7 @@ export default function TournamentStart() {
                 loadTournament();
             });
         },(error) => {
-            console.error("WebSocket connection error", error);
+           
             setConnectionStatus("Connection failed");
         });
 

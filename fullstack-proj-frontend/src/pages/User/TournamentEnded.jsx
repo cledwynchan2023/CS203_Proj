@@ -16,8 +16,6 @@ export default function TournamentEnded() {
     const{userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [isStart, setIsStart] = useState(1);
@@ -31,34 +29,11 @@ export default function TournamentEnded() {
     const[pairing, setPairing] = useState([]);
     const[round, setRound] = useState([]);  
     const [currentRound, setCurrentRound] = useState(tournamentRound);
-    const [disabledButtons, setDisabledButtons] = useState({});
-    const [noOfMatches, setNoOfMatches] = useState(1);
-    const onSubmit= async (e)=>{
-        e.preventDefault();
-        console.log(editedTournament);
-        const tournamentData = {
-            tournament_name,
-            date,
-            status,
-            size,
-            noOfRounds
-        };
-        console.log(tournamentData.tournament_name);
-        try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
-            if (response.status === 200){
-                alert("Tournament Edited Successfully");
-                setIsEditModalOpen(false);
-                loadTournament();
-            }
-            
-        } catch (error) {
-            console.error("There was an error registering the tournament!", error);
-        }
-        
-    }
+
+
+    
     const handlePageClick = (round) => {
-        console.log(round + " " + tournamentRound);
+  
         if (round > tournamentRound){
             return;
         } else if (round <= tournamentRound){
@@ -66,7 +41,7 @@ export default function TournamentEnded() {
             setPairing(tournament.rounds[round-1].matchList);
             setUserPairings(findUserPairingFirst(tournament.rounds[round-1].matchList));
             setRound(tournament.rounds[round-1]);
-            console.log(tournamentRound);
+          
         }
         
     };
@@ -97,15 +72,6 @@ export default function TournamentEnded() {
         return pages;
     };
 
-    const getIsCompleted = async (currentRound) => {
-        const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return result.data.rounds[currentRound - 1].isCompleted;
-    }
 
 
     const getUsername = (selectedId) => {
@@ -131,7 +97,7 @@ export default function TournamentEnded() {
     
 
   const renderTabContent = () => {
-    const sortedScoreboard = Array.from(scoreboard.entries()).sort((a, b) => b[1] - a[1]);
+   
     switch (activeTab) {
       case 'Overview':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px", paddingTop:"0"}}>
@@ -373,14 +339,7 @@ export default function TournamentEnded() {
         localStorage.removeItem('tokenExpiry'); 
        
     };
-    const findUserPairing = () => {
-        for (let i =0; i < pairing.length; i++){
-            if (pairing[i].player1 == userId || pairing[i].player2 == userId){
-                return pairing[i];
-            }
-        }
-        return null;
-    };
+ 
 
     const findUserPairingFirst = (pairings) => {
         for (let i =0; i < pairings.length; i++){
@@ -390,57 +349,44 @@ export default function TournamentEnded() {
         }
         return null;
     };
-    const loadTournament= async()=>{
-        const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log(result.data);
-        const resultName = result.data.tournamentName;
+    // const loadTournament= async()=>{
+    //     const token = localStorage.getItem('token');
+    //     const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     });
+
+    //     const resultName = result.data.tournamentName;
        
     
-        setTournament(result.data);
-        console.log(result.data.currentRound);
-        setTournamentRound(result.data.currentRound);
-        setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-        setRound(result.data.rounds[result.data.currentRound-1]);
-        setCurrentRound(result.data.currentRound);
-        setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
-        console.log(tournamentRound);
-        setPairing(result.data.rounds[result.data.currentRound-1].matchList);
-        setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
-        loadNonParticipatingUsers();
-        setUser(result.data.participants);
+    //     setTournament(result.data);
 
-        if (result.data.status == 'completed') {
-            alert("Tournament has ended");
-            navigate(`/user/${userId}/tournament/${id}/completed`);
+    //     setTournamentRound(result.data.currentRound);
+    //     setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
+    //     setRound(result.data.rounds[result.data.currentRound-1]);
+    //     setCurrentRound(result.data.currentRound);
+    //     setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
 
-        }
-        
-        
-    };
+    //     setPairing(result.data.rounds[result.data.currentRound-1].matchList);
+    //     setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
+    //     loadNonParticipatingUsers();
+    //     setUser(result.data.participants);
 
-const loadTournamentForDelete= async()=>{
-        const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log(result.data);
-        setTournament(result.data);
-        loadNonParticipatingUsers();
-        setUser(result.data.participants);
+    //     if (result.data.status == 'completed') {
+    //         alert("Tournament has ended");
+    //         navigate(`/user/${userId}/tournament/${id}/completed`);
+
+    //     }
         
         
-    };
+    // };
+
+
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
+
         const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -460,8 +406,7 @@ const loadTournamentForDelete= async()=>{
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
+           
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
@@ -476,7 +421,7 @@ const loadTournamentForDelete= async()=>{
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+           
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
@@ -499,8 +444,6 @@ const loadTournamentForDelete= async()=>{
                 
                 setTournament(response.data);
                 setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-                console.log(scoreboard);
-                //console.log(response.data);
                 setTournamentRound(response.data.currentRound);
                 
                 setUser(response.data.participants);
@@ -515,7 +458,7 @@ const loadTournamentForDelete= async()=>{
                 } else {
                     setIsStart(-1);
                 }
-                console.log(isStart);
+
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     clearTokens();
@@ -530,8 +473,7 @@ const loadTournamentForDelete= async()=>{
         fetchData();
         
         loadNonParticipatingUsers();
-        
-        //loadUsers();
+
 
     }, []);
     

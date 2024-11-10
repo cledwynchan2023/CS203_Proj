@@ -33,7 +33,7 @@ export default function TournamentStart() {
     const [noOfMatches, setNoOfMatches] = useState(1);
     const onSubmit= async (e)=>{
         e.preventDefault();
-        console.log(editedTournament);
+
         const tournamentData = {
             tournament_name,
             date,
@@ -41,7 +41,7 @@ export default function TournamentStart() {
             size,
             noOfRounds
         };
-        console.log(tournamentData.tournament_name);
+
         try {
             const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
             if (response.status === 200){
@@ -56,7 +56,7 @@ export default function TournamentStart() {
         
     }
     const handlePageClick = (round) => {
-        console.log(round + " " + tournamentRound);
+      
         if (round > tournamentRound){
             return;
         } else if (round <= tournamentRound){
@@ -108,7 +108,7 @@ export default function TournamentStart() {
     const handleResult = async (matchId,result) => {
         setDisabledButtons((prev) => ({ ...prev, [matchId]: true }));
         const token = localStorage.getItem('token');
-        console.log("pressed");
+      
         const response = await axios.put(`http://localhost:8080/m/match/${matchId}/update`, {result}, {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -136,9 +136,9 @@ export default function TournamentStart() {
     const getUser = (selectedId) => {
         
         for (let i = 0; i < user.length; i++) {
-            console.log(user[i].id + " " + selectedId);
+       
             if (user[i].id - selectedId == 0) {
-                console.log(user[i].username);
+            
                 return user[i];
             }
         }
@@ -299,18 +299,18 @@ export default function TournamentStart() {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(result.data);
+    
         const resultName = result.data.tournamentName;
        
     
         setTournament(result.data);
-        console.log(result.data.currentRound);
+   
         setTournamentRound(result.data.currentRound);
         setScoreboard(result.data.rounds[result.data.currentRound-1].scoreboard);
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
         setScoreboard(new Map(result.data.rounds[result.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-        console.log(tournamentRound);
+    
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         loadNonParticipatingUsers();
         setUser(result.data.participants);
@@ -377,10 +377,8 @@ export default function TournamentStart() {
               
                 setPairing(response.data.rounds[response.data.currentRound-1].matchList);
                 setTournament(response.data);
-                //console.log(response.data.rounds[1].scoreboard.scoreboardEntries);
+               
                 setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-                
-                //console.log(response.data);
                 setTournamentRound(response.data.currentRound);
                 
                 setUser(response.data.participants);

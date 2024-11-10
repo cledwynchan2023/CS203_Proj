@@ -81,7 +81,7 @@ const getTournaments = () => {
     const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
     
     const tournamentsPlayed = Array.from({ length: completedTournaments.length + 1 }, (_, index) => index);
-    console.log(tournamentsPlayed);
+
     return tournamentsPlayed;
 }
 
@@ -516,7 +516,7 @@ const getEloChangesFromEachTournament = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                console.log(response.data);
+
                 setData(response.data);
                 setUser(response.data);
             } catch (error) {

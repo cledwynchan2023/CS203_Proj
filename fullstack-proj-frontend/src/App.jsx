@@ -12,7 +12,6 @@ import AdminNavbar from './layout/AdminNavbar.jsx';
 import PlayerListAdmin from './pages/Admin/Playerlist.jsx';
 import TournamentAdminEdit from './pages/Admin/TournamentAdminEdit.jsx';
 import RankingAdmin from './pages/Admin/RankingAdmin.jsx';
-import TournamentStartAdmin from './pages/Admin/TournamentStartAdmin.jsx';
 import NotFound from './pages/NotFound.jsx';
 import TournamentLandingPageAdmin from './pages/Admin/TournamentLandingPage.jsx';
 import TournamentDetail from './pages/Admin/TournamentDetail.jsx';
@@ -68,12 +67,7 @@ function App() {
           <TournamentAdminEdit/>
           </>
         }></Route>
-        {/* <Route exact path ="/admin/:userId/tournament/:id" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <TournamentDetailAdmin/>
-          </>
-        }></Route> */}
+
         <Route exact path ="/admin/:userId/tournament/:id" element={
           <>
           <AdminNavbar></AdminNavbar>
@@ -87,13 +81,7 @@ function App() {
           </>
         }></Route>
        
-        
-        <Route exact path ="/admin/tournament/:id/start_page" element={
-          <>
-          <AdminNavbar></AdminNavbar>
-          <TournamentStartAdmin/>
-          </>
-        }></Route>
+
         <Route exact path ="/admin/:userId/ranking" element={
           <>
           <AdminNavbar></AdminNavbar>
@@ -114,13 +102,6 @@ function App() {
           </>
         }></Route>
         
-        {/* <Route exact path ="/user/:id/tournament" element={
-          <>
-          <Navbar></Navbar>
-          <TournamentUser/>
-          </>
-        }></Route> */}
-
         <Route exact path ="/user/:userId/home" element={
           <>
           <UserNavbar></UserNavbar>
