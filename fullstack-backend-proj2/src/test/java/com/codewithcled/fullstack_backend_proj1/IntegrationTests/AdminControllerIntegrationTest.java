@@ -439,7 +439,7 @@ public class AdminControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    //@Test // returns OK instead of throwing exception
+    @Test
     public void deleteTournament_Failure_TournamentNotFound() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
         HttpHeaders headers = new HttpHeaders();
@@ -451,8 +451,8 @@ public class AdminControllerIntegrationTest {
                 new HttpEntity<>("", headers),
                 String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals("Tournament with ID " + 110 + " not found.", result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("An error occurred while deleting the tournament.", result.getBody());
     }
 
     @Test

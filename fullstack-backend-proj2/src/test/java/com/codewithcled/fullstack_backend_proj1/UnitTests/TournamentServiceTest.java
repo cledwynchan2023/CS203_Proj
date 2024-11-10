@@ -534,6 +534,35 @@ public class TournamentServiceTest {
     }
 
     @Test
+    void createTournament_Failure_OddSize_ReturnException() throws Exception {
+        String tournament_name = "Test tournament";
+        String date = "20/10/2201";
+        String status = "Active";
+        int size = 1;
+        int noOfRounds = 0;
+
+        CreateTournamentRequest tournamentCreateData = new CreateTournamentRequest();
+        tournamentCreateData.setTournament_name(tournament_name);
+        tournamentCreateData.setDate(date);
+        tournamentCreateData.setStatus(status);
+        tournamentCreateData.setSize(size);
+        tournamentCreateData.setNoOfRounds(noOfRounds);
+
+        Tournament returnTournament = new Tournament();
+        returnTournament.setTournament_name(tournament_name);
+        returnTournament.setDate(date);
+        returnTournament.setStatus(status);
+        returnTournament.setSize(size);
+        returnTournament.setNoOfRounds(noOfRounds);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            tournamentService.createTournament(tournamentCreateData);
+        });
+
+        assertEquals("Tournament size must be even",exception.getMessage());
+    }
+
+    @Test
     void getNonParticipatingCurrentUser_Success_ReturnUserList() throws Exception {
         Long tId = (long) 11;
         Long uId1 = (long) 10;
@@ -982,6 +1011,75 @@ public class TournamentServiceTest {
 
         Exception exception = assertThrows(Exception.class, () -> {
             tournamentService.endTournament(tId);
+        });
+        assertEquals("Tournament not found", exception.getMessage());
+
+        verify(tournamentRepository).findById(tId);
+    }
+
+    @Test
+    void deleteTournament_Success_ReturnVoid() throws Exception{
+        Long tId = (long) 11;
+        Tournament testTournament = new Tournament();
+        testTournament.setTournament_name("test");
+        testTournament.setId(tId);
+        testTournament.setStatus("active");
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
+        
+        tournamentService.deleteTournament(tId);
+
+        verify(tournamentRepository,times(2)).findById(tId);
+        verify(tournamentRepository,times(2)).save(testTournament);
+        verify(tournamentRepository).deleteById(tId);
+    }
+
+    @Test
+    void deleteTournament_Failure_TournamentNotFound() throws Exception{
+        Long tId = (long) 11;
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
+        
+        Exception exception = assertThrows(Exception.class, () -> {
+            tournamentService.deleteTournament(tId);
+        });
+        assertEquals("Tournament not found", exception.getMessage());
+
+        verify(tournamentRepository).findById(tId);
+    }
+
+    @Test
+    void removeAllUsers_Success_UsersRemovedFromTournament() throws Exception{
+        Long tId = (long) 11;
+        Tournament testTournament = new Tournament();
+        testTournament.setTournament_name("test");
+        testTournament.setId(tId);
+        testTournament.setStatus("active");
+
+        User testUser=new User();
+        testUser.setId(tId);
+        testUser.setCurrentTournaments(new ArrayList<>(List.of(testTournament)));
+        testTournament.setParticipants(new ArrayList<>(List.of(testUser)));
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.of(testTournament));
+        when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
+
+        tournamentService.removeAllUsers(tId);
+
+        assertEquals(0,testTournament.getParticipants().size());
+        assertEquals(0,testUser.getCurrentTournaments().size());
+        verify(tournamentRepository).findById(tId);
+        verify(tournamentRepository).save(testTournament);
+    }
+
+    @Test
+    void removeAllUsers_Failure_TournamentNotFound() throws Exception{
+        Long tId = (long) 11;
+
+        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            tournamentService.removeAllUsers(tId);
         });
         assertEquals("Tournament not found", exception.getMessage());
 

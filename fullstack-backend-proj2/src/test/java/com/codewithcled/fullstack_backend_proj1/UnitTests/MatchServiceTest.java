@@ -165,7 +165,7 @@ public class MatchServiceTest {
         tournament.setRounds(List.of(testRound));
 
         when(userRepository.findById(uId1)).thenReturn(Optional.of(testPlayer1));
-        when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
+        //when(userRepository.findById(uId2)).thenReturn(Optional.of(testPlayer2));
         when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
         when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
@@ -220,8 +220,8 @@ public class MatchServiceTest {
         opp2.setElo(elo3);
         testMatch.setPlayer1(uId1);
         testMatch.setPlayer2(uId2);
-        testMatch2.setPlayer1(uId3);
-        testMatch2.setPlayer2(uId2);
+        testMatch2.setPlayer1(uId2);
+        testMatch2.setPlayer2(uId3);
 
         Scoreboard scoreboard = new Scoreboard();
         List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
@@ -245,13 +245,13 @@ public class MatchServiceTest {
         when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
         when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
-                .thenReturn(testMatch2);
+                .thenReturn(testMatch);//uId1 total elo 100+100=200
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
-                .thenReturn(testMatch);
+                .thenReturn(testMatch);//uId2 total elo 100+100=200
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId3, testRound, uId3))
-                .thenReturn(testMatch2);
+                .thenReturn(testMatch2);//uId3 total elo 200+100=300
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId4, testRound, uId4))
-                .thenReturn(testMatch);
+                .thenReturn(testMatch2);//uId4 total elo 300+200=500
 
         // Act
         matchService.updateRoundScoreboard(testRound, testMatch, 0);
@@ -262,7 +262,7 @@ public class MatchServiceTest {
         assertEquals(0.5, scoreboard.getPlayerScore(uId3));
         assertEquals(0.5, scoreboard.getPlayerScore(uId4));
 
-        List<Long> keyOrder = List.of(uId2, uId1, uId3, uId4);
+        List<Long> keyOrder = List.of(uId4, uId3, uId1, uId2);
         int count = 0;
         for (ScoreboardEntry entry : scoreboard.getScoreboardEntries()) {
             assertEquals(keyOrder.get(count), entry.getPlayerId());
@@ -741,7 +741,7 @@ public class MatchServiceTest {
         when(userRepository.findById(matchId + 1)).thenReturn(Optional.of(player2));
 
         // Act
-        String[] players = matchService.getPlayers(matchId);
+        String[] players = matchService.getPlayerUsernames(matchId);
 
         // Assert
         assertArrayEquals(new String[] { "player1", "player2" }, players);
@@ -759,7 +759,7 @@ public class MatchServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            matchService.getPlayers(matchId);
+            matchService.getPlayerUsernames(matchId);
         });
 
         assertEquals("Match not found", exception.getMessage());
@@ -785,7 +785,7 @@ public class MatchServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            matchService.getPlayers(matchId);
+            matchService.getPlayerUsernames(matchId);
         });
         assertEquals("Player 1 not found", exception.getMessage());
         verify(matchRepository).findById(matchId);
@@ -811,7 +811,7 @@ public class MatchServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(Exception.class, () -> {
-            matchService.getPlayers(matchId);
+            matchService.getPlayerUsernames(matchId);
         });
 
         assertEquals("Player 2 not found", exception.getMessage());

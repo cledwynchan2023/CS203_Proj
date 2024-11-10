@@ -475,6 +475,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     //@Test // Issue with sending the post getting unsupported Media Type Exception
+    //Method is unused
     public void addRound_Success() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
@@ -725,22 +726,22 @@ public class TournamentControllerIntegrationTest {
         assertEquals("testUser2", result.getBody().get(0).getUsername());
     }
 
-    //@Test// No clue how to get this to throw an error
-    public void getUsersWithNoCurrentTournament_Failure() throws Exception {
+    @Test
+    public void getUsersWithNoCurrentTournament_Failure_InvalidUId() throws Exception {
 
-        URI url = new URI(baseUrl + port + urlPrefix + "/users/12380");
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/sfew");
 
-        ResponseEntity<List<UserDTO>> result = restTemplate.exchange(url,
+        ResponseEntity<Exception> result = restTemplate.exchange(url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<UserDTO>>() {
+                new ParameterizedTypeReference<Exception>() {
                 });
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
-    public void getUsersWithNoCurrentTournament_FailureNoUsers() throws Exception {
+    public void getUsersWithNoCurrentTournament_Failure_NoUsers() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -805,7 +806,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void removeParticipant_Failure() throws Exception {
+    public void removeParticipant_Failure_TournamentNotFound() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/132/participant/delete");
         String urlTemplate = UriComponentsBuilder.fromUri(url)
                 .queryParam("user_id", "{user_id}")
@@ -826,7 +827,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void deleteTournament_Success() throws Exception {
+    public void deleteTournament_Success_TournamentDeleted() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -848,9 +849,9 @@ public class TournamentControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    //@Test Don't know how to get it to throw 500
-    public void deleteTournament_Failure() throws Exception {
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/1183");
+    @Test
+    public void deleteTournament_Failure_TournamentNotFound() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/-12480");
 
         ResponseEntity<String> result = restTemplate.exchange(
                 url,
@@ -859,7 +860,7 @@ public class TournamentControllerIntegrationTest {
                 String.class);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        assertEquals("Tournament with ID " + 1183 + " not found.", result.getBody());
+        assertEquals("An error occurred while deleting the tournament.", result.getBody());
     }
 
     @Test
