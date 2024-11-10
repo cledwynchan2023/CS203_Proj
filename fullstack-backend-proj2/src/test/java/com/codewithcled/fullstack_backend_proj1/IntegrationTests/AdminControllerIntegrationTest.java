@@ -188,7 +188,7 @@ public class AdminControllerIntegrationTest {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
-        signUpRequest.setEmail("TestUser");
+        signUpRequest.setEmail("TestUser@gmail.com");
         signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("TestUser");
@@ -206,6 +206,35 @@ public class AdminControllerIntegrationTest {
 
     @Test
     public void createUser_Failure_SameUserNames() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser@gmail.com");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("TestUser");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser@gmail.com");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+        userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
+
+        ResponseEntity<AuthResponse> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(signUpRequest, headers),
+                AuthResponse.class);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+    }
+
+    @Test
+    public void createUser_Failure_InvalidEmailFormat() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);

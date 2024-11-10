@@ -186,7 +186,7 @@ public class UserServiceTest {
     void createUser_Success_ReturnAuthResponse() throws Exception {
         String username = "test";
         String password = "password";
-        String email = "email";
+        String email = "email@test.com";
         String role = "ROLE_USER";
 
         SignUpRequest signUpRequestDetails = new SignUpRequest();
@@ -207,7 +207,7 @@ public class UserServiceTest {
         assertEquals("Register Success", result.getMessage());
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
-        verify(userRepository, times(2)).save(any());
+        verify(userRepository).save(any());
         verify(passwordEncoder).encode(password);
 
     }
@@ -216,7 +216,7 @@ public class UserServiceTest {
     void createUser_Success_createAdmin_ReturnAuthResponse() throws Exception {
         String username = "test";
         String password = "password";
-        String email = "email";
+        String email = "email@test.com";
         String role = "ROLE_ADMIN";
 
         SignUpRequest signUpRequestDetails = new SignUpRequest();
@@ -237,13 +237,13 @@ public class UserServiceTest {
         assertEquals("Register Success", result.getMessage());
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
-        verify(userRepository, times(2)).save(any());
+        verify(userRepository).save(any());
         verify(passwordEncoder).encode(password);
 
     }
 
     @Test
-    void createUser_Failure_SameEmail_ReturnException() throws Exception {
+    void createUser_Failure_InValidEmailFormat_ReturnException() throws Exception {
         String username = "test";
         String password = "password";
         String email = "email";
@@ -257,19 +257,36 @@ public class UserServiceTest {
         signUpRequestDetails.setRole(role);
         signUpRequestDetails.setElo(elo);
 
+        Exception exception = assertThrows(Exception.class, () -> {
+            userService.createUser(signUpRequestDetails);
+        });
+        assertEquals("Invalid email format", exception.getMessage());
+    }
+
+    @Test
+    void createUser_Failure_SameEmail_ReturnException() throws Exception {
+        String username = "test";
+        String password = "password";
+        String email = "email@test.com";
+        String role = "ROLE_USER";
+        double elo = 100;
+
+        SignUpRequest signUpRequestDetails = new SignUpRequest();
+        signUpRequestDetails.setUsername(username);
+        signUpRequestDetails.setPassword(password);
+        signUpRequestDetails.setEmail(email);
+        signUpRequestDetails.setRole(role);
+        signUpRequestDetails.setElo(elo);
+
         User testUser = new User();
-        testUser.setUsername(username);
-        testUser.setPassword(password);
         testUser.setEmail(email);
-        testUser.setRole(role);
-        testUser.setElo(elo);
 
         when(userRepository.findByEmail(email)).thenReturn(testUser);
 
         Exception exception = assertThrows(Exception.class, () -> {
             userService.createUser(signUpRequestDetails);
         });
-        assertEquals("Email Is Already Used With Another Account", exception.getMessage());
+        assertEquals("Email is already used with another account", exception.getMessage());
 
         verify(userRepository).findByEmail(email);
     }
@@ -278,7 +295,7 @@ public class UserServiceTest {
     void createUser_Failure_SameUserName_ReturnException() throws Exception {
         String username = "test";
         String password = "password";
-        String email = "email";
+        String email = "email@test.com";
         String role = "ROLE_USER";
         double elo = 100;
 
@@ -295,7 +312,7 @@ public class UserServiceTest {
         Exception exception = assertThrows(Exception.class, () -> {
             userService.createUser(signUpRequestDetails);
         });
-        assertEquals("Username is already being used with another account", exception.getMessage());
+        assertEquals("Username is already used with another account", exception.getMessage());
 
         verify(userRepository).findByEmail(email);
         verify(userRepository).existsByUsername(username);
