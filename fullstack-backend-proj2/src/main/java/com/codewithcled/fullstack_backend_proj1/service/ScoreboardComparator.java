@@ -3,8 +3,6 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.ScoreboardEntry;
 import com.codewithcled.fullstack_backend_proj1.model.User;
@@ -18,7 +16,6 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry>{
     private UserRepository userRepository;
     private MatchRepository matchRepository;
 
-    @Autowired
     public ScoreboardComparator(List<Round> rounds, Round currentRound, UserRepository userRepository, MatchRepository matchRepository){
         this.rounds = rounds;
         this.currentRound = currentRound;

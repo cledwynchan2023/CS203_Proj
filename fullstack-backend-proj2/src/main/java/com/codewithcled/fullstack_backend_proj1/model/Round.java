@@ -1,9 +1,11 @@
 package com.codewithcled.fullstack_backend_proj1.model;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
+/**
+ * Represents a round in a tournament.
+ */
 @Entity
 public class Round {
 
@@ -11,17 +13,33 @@ public class Round {
     @Id
     private Long id;
 
+    /**
+     * The round number.
+     */
     private Integer roundNum;
 
+    /**
+     * The scoreboard for the round.
+     */
     @Embedded
     private Scoreboard scoreboard;
 
+    /**
+     * The list of matches in the round.
+     */
     @OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Match> matchList;
+
+    /**
+     * The tournament to which this round belongs.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
+    /**
+     * Indicates whether the round is completed.
+     */
     private Boolean isCompleted = false;
 
     public Boolean getIsCompleted() {
