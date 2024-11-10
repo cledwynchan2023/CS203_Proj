@@ -615,7 +615,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void getUsersNotInCurrentTournament_Success_NoTournamentID_returnAll() throws Exception {
+    void getUsersNotInCurrentTournament_Failure_NoTournamentID_returnException() throws Exception {
         Long tId = (long) 11;
         Long uId1 = (long) 10;
         Long uId2 = (long) 11;
@@ -639,11 +639,12 @@ public class TournamentServiceTest {
         userList.add(tUser2);
 
         when(userRepository.findAll()).thenReturn(userList);
-        when(tournamentRepository.findById(tId)).thenReturn(Optional.empty());
 
-        List<User> result = tournamentService.getUsersNotInCurrentTournament(tId);
-
-        assertIterableEquals(userList, result);
+        Exception exception = assertThrows(Exception.class, () -> {
+            tournamentService.getUsersNotInCurrentTournament(tId);
+        });
+        
+        assertEquals("Tournament not found", exception.getMessage());
 
         verify(userRepository).findAll();
     }
