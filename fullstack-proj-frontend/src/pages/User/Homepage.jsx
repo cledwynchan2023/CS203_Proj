@@ -26,9 +26,7 @@ export default function Homepage() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.userId);
-            console.log(decodedToken.authorities)
+           
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
@@ -42,8 +40,7 @@ export default function Homepage() {
     const isUserToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
+           
             return decodedToken.authorities === 'ROLE_USER'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -55,7 +52,7 @@ export default function Homepage() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+     
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();

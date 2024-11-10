@@ -134,182 +134,177 @@ export default function TournamentEnded() {
     const sortedScoreboard = Array.from(scoreboard.entries()).sort((a, b) => b[1] - a[1]);
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px"}}>
-            
-            <div style={{width:"100%", height:"60%"}}>
-                    <div style={{width:"100%", height:"100px"}}>
-                        <p className="title is-2">Round {currentRound}</p>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px", paddingTop:"0"}}>
+        <div style={{width:"100%", height:"60%"}}>
+                <div style={{width:"100%", height:"50px"}}>
+                    <p className="title is-2">Round {currentRound}</p>
+                </div>
+                <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
+                    <a
+                        className={`pagination-previous ${currentRound === 1 ? 'is-disabled' : ''}`}
+                        title="Previous Round"
+                        onClick={() => currentRound > 1 && handlePageClick(currentRound - 1)}
+                    >
+                        Previous Round
+                    </a>
+                    <a  className={`pagination-previous ${currentRound === tournamentRound ? 'is-disabled' : ''}`}
+                        title="Next Round"
+                        onClick={() => currentRound >= 1 && handlePageClick(currentRound + 1)}>Next round</a>
+                    <ul class="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
+                        {renderPagination()}
+                    </ul>
+                </nav>
+                {user.filter(user => user.id - userId == 0).map( user =>(
+            <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
+                    <div style={{textAlign:"center"}}> 
+                        <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
                     </div>
-                    <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%"}}>
-                        <a
-                            className={`pagination-previous ${currentRound === 1 ? 'is-disabled' : ''}`}
-                            title="Previous Round"
-                            onClick={() => currentRound > 1 && handlePageClick(currentRound - 1)}
-                        >
-                            Previous Round
-                        </a>
-                        <a  className={`pagination-previous ${currentRound === tournamentRound ? 'is-disabled' : ''}`}
-                            title="Next Round"
-                            onClick={() => currentRound >= 1 && handlePageClick(currentRound + 1)}>Next round</a>
-                        <ul class="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
-                            {renderPagination()}
-                        </ul>
-                    </nav>
-                    {user.filter(user => user.id - userId == 0).map( user =>(
-                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
-                            <div style={{textAlign:"center"}}> 
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
-                            </div>
-                        <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
-                            
-                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
-                            </div>
-                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
-                            </div>
-                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
-                            </div>
-                        </div>
+                <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
+                    
+                    <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                        <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
+                        <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                     </div>
-                    ))}
-                    <div>
-                        <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
+                    <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                        <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                     </div>
-                    {pairing.map((pair, index) => {
-                        const backgroundColor = index % 2 === 0 ? '#252525' : '#212121'; // Alternate colors
-                        const matchId = round.matchList[index].id; // Assuming each pair has a unique matchId
-                        const isDisabled = round.matchList[index].complete;
-                        const matchResult = round.matchList[index].result;
-                        const getBorderStyle = (playerIndex) => {
-                            if (matchResult === 0) {
-                                return { border: '5px solid yellow', borderRadius: '20px' };
-                            } else if (matchResult === -1 && playerIndex === 1) {
-                                return { border: '5px solid green', borderRadius: '20px' };
-                            } else if (matchResult === 1 && playerIndex === 2) {
-                                return { border: '5px solid green',borderRadius: '20px' };
-                            } else {
-                                return {};
-                            }
-                        };
-                        const getStatus = (result) => {
-                            if (result === null) {
-                                return 'Ongoing';
-                            } else if (result === -1) {
-                                return 'Player 1 Won';
-                            } else if (result === 1) {
-                                return 'Player 2 Won';
-                            } else if (result === 0) {
-                                return 'Draw';
-                            } else {
-                                return 'Unknown Status';
-                            }
-                        };
-                        return (
-                            
-                    <div class="card" style={{width:"100%",height:"120px", display:"flex", alignItems:"center", overflowX:"scroll", marginBottom:"-10px", backgroundColor: backgroundColor}}>
-                       
-                        <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%", gap:"5%"}}>
-                            <div class="content" style={{width:"200px", textAlign:"center",height:"100%", ...getBorderStyle(1), whiteSpace:"nowrap",overflow: "hidden"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player1}</p>
+                    <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                        <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
+                        <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
+                    </div>
+                </div>
+            </div>
+            ))}
+                {pairing.map((pair, index) => {
+                    const backgroundColor = index % 2 === 0 ? '#252525' : '#212121'; // Alternate colors
+                    const matchId = round.matchList[index].id; // Assuming each pair has a unique matchId
+                    const isDisabled = round.matchList[index].complete;
+                    const matchResult = round.matchList[index].result;
+                    const getBorderStyle = (playerIndex) => {
+                        if (matchResult === 0) {
+                            return { border: '5px solid yellow', borderRadius: '20px', backgroundColor:"grey" };
+                        } else if (matchResult === -1 && playerIndex === 1) {
+                           
+                            return { border: '5px solid green', borderRadius: '20px', backgroundColor:"green" };
+                        } else if (matchResult === 1 && playerIndex === 2) {
+                            return { border: '5px solid green',borderRadius: '20px',  backgroundColor:"green" };
+                        } 
+
+                        if (matchResult == -1 && playerIndex ===2){
+                            return { border: '5px solid red', borderRadius: '20px', backgroundColor:"red" };
+                        } else if (matchResult === 1 && playerIndex === 1) {
+                            return { border: '5px solid red', borderRadius: '20px', backgroundColor:"red" };
+                        }
+                    };
+                    
+                    return (
+                <div class="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                    <div class="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
+                        <div style={{width:"80%", display:'flex', minWidth:"300px", justifyContent:"center", backgroundColor:""}}>
+                            <div class="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
                             </div>
-                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center",whiteSpace:"nowrap"}}>
+                            <div style={{width:"30%", display:"flex", alignItems:"center", justifyContent:"center"}}>
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                             </div>
-                            <div class="content" style={{width:"200px",textAlign:"center", height:"100%", marginRight:"3%",...getBorderStyle(2), whiteSpace:"nowrap",overflow: "hidden"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player2}</p>
+                            <div class="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
+                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
                                 <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
                             </div>
-                            <div style={{height:"100%", margin:"0", width:"200px" }}>
-                                <p class="subtitle">Status: {getStatus(matchResult)}</p>
-                            </div>
                         </div>
+                        
+                        
                     </div>
-                )})}
-            </div>
-        </section>;
+                </div>
+            )})}
+        </div>
+    </section>;
+        
     case 'Details':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
-                    <div class="card-image">
-                        <figure class="image is-4by3">
-                        <img
-                            src={chessplaying1}
-                            alt="Placeholder image"
-                        />
-                        </figure>
-                    </div>
-                    <div class="card-content">
-                        <div class="media">
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", height:"600px"}}>
+        <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
+            <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                    <img
+                        src={chessplaying1}
+                        alt="Placeholder image"
+                    />
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media">
                         <div class="media-content">
                             <p class="title is-4">Game of Chess</p>
                         </div>
-                        </div>
+                    </div>
 
-                        <div class="content">
-                        Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
-                        <br />
-                        </div>
+                    <div class="content">
+                    Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
+                    <br />
                     </div>
                 </div>
-                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card" style={{width:"95%",height:"100px", minWidth:"250px"}}>
+            </div>
+
+            <div style={{width:"50%", minWidth:"300px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%", backgroundColor:"", alignContent:"center"}}>
+                <div style={{width:"100%", height:"50px", textAlign:"center"}}>
+                    <p class="title is-4" >Tournament Details</p>
+                </div>
+                <div class="card" style={{width:"95%",height:"100px", minWidth:"250px", backgroundColor:"gold"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Winner</p>
                                 <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{user.length > 0 && scoreboard.size > 0 ? (() => {
-                                        const winnerId = Array.from(scoreboard.keys())[0];
-                                        const winner = getUser(winnerId);
-                                        console.log(winner);
+                                       const entriesArray = Array.from(scoreboard.entries());
+                                       const lastEntry = entriesArray[entriesArray.length - 1];
+                                       const [lastKey, lastValue] = lastEntry;
+                                       const winner = getUser(lastKey);
+                            
                                         return winner.username;
                                     })() : 'Unknown'}</p>
                             </div>
                         </div>
+                </div>
+                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div class="card-content">
+                        <div class="content">
+                            <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                        </div>
                     </div>
-                    
+                </div>
+                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div class="card-content">
+                        <div class="content">
+                            <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div class="card-content">
+                        <div class="content">
+                            <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
+                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div class="card-content">
+                        <div class="content">
+                            <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
+                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
-        </section>;
+            
+        </div>
+    </section>;
       case 'Players':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className=" is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
                 
                 <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
@@ -335,7 +330,7 @@ export default function TournamentEnded() {
             </section>;
       case 'Scoreboard':
         return <>
-        <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        <section className=" is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
         <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
         
@@ -350,7 +345,7 @@ export default function TournamentEnded() {
                     </tr>
                 </thead>
                 <tbody>
-                {Array.from(scoreboard.entries()).map(([id, score], index) => {
+                {Array.from(scoreboard.entries()).reverse().map(([id, score], index) => {
                     const user = getUser(id); // Assuming you have a users array with user details
                     return (
                 <tr key={id}>
@@ -548,16 +543,23 @@ const loadTournamentForDelete= async()=>{
   return (
     <>
     <div className="background-container" style={{ 
-        backgroundImage: `url(${backgroundImage})`, 
+          backgroundImage: `url(${backgroundImage})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          flexWrap: 'wrap',
+          height:"100vh",
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
-            <div style={{width:"200px"}}>
-                <img src={comp1} width={150}></img>
-            </div>
-            <div style={{width:"100%", alignContent:"center"}}>
-                <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
+    <div className="content" style={{width:"100%", height:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", overflowY:"scroll"}}>
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"200px"}}>
+            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"80%", minWidth:"400px"}}>
+                <div style={{width:"200px"}}>
+                    <img src={comp1} width={150}></img>
+                </div>
+                <div style={{width:"100%", alignContent:"center"}}>
+                    <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
+                    <p class="subtitle">ID: {tournament.id}</p>
+                </div>
             </div>
             
             

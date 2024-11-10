@@ -139,13 +139,12 @@ export default function TournamentStart() {
     const sortedScoreboard = Array.from(scoreboard.entries()).sort((a, b) => b[1] - a[1]);
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px", display:"flex"}}>
-            
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"100%", marginBottom:"50px", paddingTop:"0"}}>
             <div style={{width:"100%", height:"60%"}}>
-                    <div style={{width:"100%", height:"100px"}}>
+                    <div style={{width:"100%", height:"50px"}}>
                         <p className="title is-2">Round {currentRound}</p>
                     </div>
-                    <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%"}}>
+                    <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
                         <a
                             className={`pagination-previous ${currentRound === 1 ? 'is-disabled' : ''}`}
                             title="Previous Round"
@@ -191,13 +190,18 @@ export default function TournamentStart() {
                         const matchResult = round.matchList[index].result;
                         const getBorderStyle = (playerIndex) => {
                             if (matchResult === 0) {
-                                return { border: '5px solid yellow', borderRadius: '20px' };
+                                return { border: '5px solid yellow', borderRadius: '20px', backgroundColor:"grey" };
                             } else if (matchResult === -1 && playerIndex === 1) {
-                                return { border: '5px solid green', borderRadius: '20px' };
+                               
+                                return { border: '5px solid green', borderRadius: '20px', backgroundColor:"green" };
                             } else if (matchResult === 1 && playerIndex === 2) {
-                                return { border: '5px solid green',borderRadius: '20px' };
-                            } else {
-                                return {};
+                                return { border: '5px solid green',borderRadius: '20px',  backgroundColor:"green" };
+                            } 
+
+                            if (matchResult == -1 && playerIndex ===2){
+                                return { border: '5px solid red', borderRadius: '20px', backgroundColor:"red" };
+                            } else if (matchResult === 1 && playerIndex === 1) {
+                                return { border: '5px solid red', borderRadius: '20px', backgroundColor:"red" };
                             }
                         };
                         const getStatus = (result) => {
@@ -215,30 +219,36 @@ export default function TournamentStart() {
                         };
                         return (
                             
-                    <div class="card" style={{width:"100%",height:"120px", display:"flex", alignItems:"center", overflowX:"scroll", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                            <div class="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
                        
-                        <div class="card-content" style={{display:"flex", justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%", gap:"5%"}}>
-                            <div class="content" style={{width:"200px", textAlign:"center",height:"100%", ...getBorderStyle(1), whiteSpace:"nowrap",overflow: "hidden"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player1}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
+                       <div class="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
+                            <div style={{width:"80%", display:'flex', minWidth:"300px", justifyContent:"center", backgroundColor:""}}>
+                                <div class="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                                    <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
+                                    <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
+                                </div>
+                                <div style={{width:"30%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                    <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                                </div>
+                                <div class="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
+                                    <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
+                                    <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
+                                </div>
+                               
                             </div>
-                            <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center",whiteSpace:"nowrap"}}>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
-                            </div>
-                            <div class="content" style={{width:"200px",textAlign:"center", height:"100%", marginRight:"3%",...getBorderStyle(2), whiteSpace:"nowrap",overflow: "hidden"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{pair.player2}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
-                            </div>
-                            <div style={{height:"100%", margin:"0", width:"200px" }}>
-                                <p class="subtitle">Status: {getStatus(matchResult)}</p>
+                            <div class="content" style={{backgroundColor:"", width:"20%", justifyContent:"center", display:"flex", alignItems:"center", gap:"3%", minWidth:"300px", marginTop:"20px"}}>
+                                <div style={{height:"100%", margin:"0", width:"200px", textAlign:'center' }}>
+                                    <p class="subtitle">Status: {getStatus(matchResult)}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 )})}
             </div>
         </section>;
+         
       case 'Players':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className=" is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
                 
                 <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
@@ -264,7 +274,7 @@ export default function TournamentStart() {
             </section>;
       case 'Scoreboard':
         return <>
-        <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        <section className=" is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
         <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
         
@@ -307,14 +317,7 @@ export default function TournamentStart() {
         localStorage.removeItem('tokenExpiry'); 
        
     };
-    const findUserPairing = () => {
-        for (let i =0; i < pairing.length; i++){
-            if (pairing[i].player1 == userId || pairing[i].player2 == userId){
-                return pairing[i];
-            }
-        }
-        return null;
-    };
+
 
     const findUserPairingFirst = (pairings) => {
         for (let i =0; i < pairings.length; i++){
@@ -357,20 +360,6 @@ export default function TournamentStart() {
         
     };
 
-const loadTournamentForDelete= async()=>{
-        const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log(result.data);
-        setTournament(result.data);
-        loadNonParticipatingUsers();
-        setUser(result.data.participants);
-        
-        
-    };
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
@@ -502,24 +491,30 @@ const loadTournamentForDelete= async()=>{
   return (
     <>
     <div className="background-container" style={{ 
-        backgroundImage: `url(${backgroundImage})`, 
-        height:"100vh",
+       backgroundImage: `url(${backgroundImage})`, 
+       backgroundSize: 'cover', 
+       backgroundPosition: 'center',
+       backgroundRepeat: 'no-repeat',
+       flexWrap: 'wrap',
+       height:"100vh",
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
-            <div style={{width:"200px"}}>
-                <img src={comp1} width={150}></img>
-            </div>
-            <div style={{width:"100%", alignContent:"center", display:"flex", flexWrap:"wrap"}}>
-                <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
+    <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.7)", overflow:"scroll"}}>
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"100px", marginLeft:"20px", marginRight:"20px"}}>
+            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"100%", minWidth:"400px"}}>   
+                <div style={{width:"100px"}}>
+                    <img src={comp1} width={150}></img>
+                </div>
+                <div style={{width:"80%", alignContent:"center", display:"flex", flexWrap:"wrap", paddingLeft:"20px", minWidth:"300px"}}>
+                    <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
+                    <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
+                </div>
             </div>
             
             
         </section>
-        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", marginBottom:"20px", minHeight:"600px"}}>
 
-                <div className="tabs is-left" style={{ height:"70px"}}>
+            <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
                 <ul>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
@@ -531,8 +526,8 @@ const loadTournamentForDelete= async()=>{
                     <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
                     </li>
                 </ul>
-                </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", margin:"0", width:"100%"}}>
+            </div>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>

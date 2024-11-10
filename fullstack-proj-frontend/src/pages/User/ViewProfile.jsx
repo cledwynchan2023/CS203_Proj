@@ -516,6 +516,7 @@ const getEloChangesFromEachTournament = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                console.log(response.data);
                 setData(response.data);
                 setUser(response.data);
             } catch (error) {

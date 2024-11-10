@@ -30,11 +30,7 @@ export default function TournamentPage() {
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
-        // Add any other tokens you want to clear here
-        // localStorage.removeItem('anotherToken');
-        // tokenKeys.forEach(key => {
-        //     localStorage.removeItem(key);
-        // });
+
     };
 
     const isTokenExpired = () => {
@@ -46,9 +42,7 @@ export default function TournamentPage() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.userId);
-            console.log(decodedToken.authorities)
+  
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 return true;
             } else {
@@ -72,9 +66,9 @@ export default function TournamentPage() {
         const result1 = await axios.get("http://localhost:8080/t/tournaments/completed");
         const result2 = await axios.get("http://localhost:8080/t/tournaments/ongoing");
         const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
-        console.log("triggered");
+
         if (!result.data.length == 0){
-            console.log(result.data);
+
             setTournament(result.data);
         }
         else{
@@ -434,7 +428,7 @@ export default function TournamentPage() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
@@ -472,7 +466,7 @@ export default function TournamentPage() {
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-            console.log("WebSocket connection successful");
+      
             //setConnectionStatus("Connected");
             stompClient.subscribe('/topic/tournamentCreate', () => {
                 // Reload tournament data on match update
@@ -480,7 +474,7 @@ export default function TournamentPage() {
                 loadTournaments();
             });
         },(error) => {
-            console.error("WebSocket connection error", error);
+ 
             //setConnectionStatus("Connection failed");
         });
 
@@ -500,9 +494,9 @@ export default function TournamentPage() {
         backgroundImage: `url(${backgroundImage})`, 
         height:"100%"
     }}> 
-         <div className="content media-content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)"}}>
-            <section className="hero fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center", marginBottom:"20px"}}>
-                <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
+         <div className="content media-content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.7)"}}>
+            <section className=" fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center"}}>
+                <div style={{width:"100%", paddingTop:"30px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Browse Tournaments</p>
                 </div>
             </section>

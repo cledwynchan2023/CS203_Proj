@@ -559,17 +559,19 @@ const getEloChangesFromEachTournament = () => {
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", paddingBottom:"20px", paddingTop:"20px"}}>
-            <div style={{width:"200px",marginRight:"20px"}}>
-                <CgProfile style={{width:"100%", height:"100%"}}/>
+    <div className="content" style={{width:"100%", height:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", overflowY:"scroll"}}>
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"200px"}}>
+            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"50%", minWidth:"400px"}}>
+                <div style={{width:"200px",marginLeft:"30px"}}>
+                    <CgProfile style={{width:"70%", height:"70%"}}/>
+                </div>
+                <div style={{width:"80%", alignContent:"center"}}>
+                    <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{user.username}</p>
+                    <p class="subtitle">ID: {user.id}</p>
+                    <p class="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
+                </div>
             </div>
-            <div style={{width:"90%", alignContent:"center"}}>
-                <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{user.username}</p>
-                <p class="subtitle">ID: {user.id}</p>
-                <p class="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
-            </div>
-            <div style={{display:"flex",alignItems:"center", width:"50%"}}>
+            <div style={{display:"flex", alignItems:"center", width:"50%",paddingleft:"10px", gap:"10px", justifyContent:"center", minWidth:"320px"}}>
                
                 <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
                 <button className="button is-danger"onClick={() => deleteUser()} style={{width:"45%", height:"40px", fontWeight:"bold"}}>Delete</button>

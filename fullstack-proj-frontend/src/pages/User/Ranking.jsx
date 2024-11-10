@@ -36,9 +36,7 @@ export default function Ranking() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.userId);
-            console.log(decodedToken.authorities)
+
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
 
                 return true;
@@ -68,7 +66,7 @@ export default function Ranking() {
         switch (activeTab) {
             case 'Global':
                 return <>
-                <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"90%"}}>
+                <section className=" is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"90%"}}>
             
             <table className="table is-hoverable custom-table" >
                 <thead>
@@ -155,11 +153,9 @@ export default function Ranking() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
+
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
-                console.log(isAdminToken(token));
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
@@ -173,7 +169,7 @@ export default function Ranking() {
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    console.log("Invalid TOken")
+                
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
