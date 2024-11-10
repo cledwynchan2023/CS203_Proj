@@ -192,9 +192,9 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
         Double u2TotalOpponentRatings = u1.getElo() + calculateOpponentsTotalRating(user2id);
 
         if (u1TotalOpponentRatings > u2TotalOpponentRatings) {
-            return 1;
-        } else if (u1TotalOpponentRatings < u2TotalOpponentRatings) {
             return -1;
+        } else if (u1TotalOpponentRatings < u2TotalOpponentRatings) {
+            return 1;
         } else {
             return 0;
         }

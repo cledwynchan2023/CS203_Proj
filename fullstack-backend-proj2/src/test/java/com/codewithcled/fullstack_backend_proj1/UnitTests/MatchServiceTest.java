@@ -227,8 +227,8 @@ public class MatchServiceTest {
         List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
         ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
         ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
-        ScoreboardEntry entry3 = new ScoreboardEntry(uId3, 0.5);
-        ScoreboardEntry entry4 = new ScoreboardEntry(uId4, 0.5);
+        ScoreboardEntry entry3 = new ScoreboardEntry(uId4, 0.5);
+        ScoreboardEntry entry4 = new ScoreboardEntry(uId3, 0.5);
         scoreboardEntrys.add(entry1);
         scoreboardEntrys.add(entry2);
         scoreboardEntrys.add(entry3);
@@ -262,7 +262,7 @@ public class MatchServiceTest {
         assertEquals(0.5, scoreboard.getPlayerScore(uId3));
         assertEquals(0.5, scoreboard.getPlayerScore(uId4));
 
-        List<Long> keyOrder = List.of(uId4, uId3, uId1, uId2);
+        List<Long> keyOrder = List.of(uId1, uId2, uId3, uId4);
         int count = 0;
         for (ScoreboardEntry entry : scoreboard.getScoreboardEntries()) {
             assertEquals(keyOrder.get(count), entry.getPlayerId());

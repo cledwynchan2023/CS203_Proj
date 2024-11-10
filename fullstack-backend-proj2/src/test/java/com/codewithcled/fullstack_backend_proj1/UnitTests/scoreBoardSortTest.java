@@ -292,7 +292,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloGreater_Return1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloGreater_ReturnNeg1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -343,7 +343,7 @@ public class scoreBoardSortTest {
                 scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(1, result);
+                assertEquals(-1, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
                 verify(userRepository).findById(uId3);
@@ -351,7 +351,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloLesser_ReturnNeg1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloLesser_Return1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -402,7 +402,7 @@ public class scoreBoardSortTest {
                 scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(-1, result);
+                assertEquals(1, result);
 
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
@@ -411,7 +411,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloLesser_WorksWhenSwappingOpponents_ReturnNeg1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloLesser_WorksWhenSwappingOpponents_Return1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -462,7 +462,7 @@ public class scoreBoardSortTest {
                 scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(-1, result);
+                assertEquals(1, result);
 
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
