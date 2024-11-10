@@ -220,13 +220,13 @@ public class MatchServiceTest {
         opp2.setElo(elo3);
         testMatch.setPlayer1(uId1);
         testMatch.setPlayer2(uId2);
-        testMatch2.setPlayer1(uId2);
-        testMatch2.setPlayer2(uId3);
+        testMatch2.setPlayer1(uId3);
+        testMatch2.setPlayer2(uId4);
 
         Scoreboard scoreboard = new Scoreboard();
         List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-        ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
-        ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+        ScoreboardEntry entry1 = new ScoreboardEntry(uId2, 0.0);
+        ScoreboardEntry entry2 = new ScoreboardEntry(uId1, 0.0);
         ScoreboardEntry entry3 = new ScoreboardEntry(uId4, 0.5);
         ScoreboardEntry entry4 = new ScoreboardEntry(uId3, 0.5);
         scoreboardEntrys.add(entry1);
@@ -245,13 +245,13 @@ public class MatchServiceTest {
         when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
         when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
-                .thenReturn(testMatch);//uId1 total elo 100+100=200
+                .thenReturn(testMatch);//uId1 total opponent elo 100
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
-                .thenReturn(testMatch);//uId2 total elo 100+100=200
+                .thenReturn(testMatch);//uId2 total opponent elo 100
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId3, testRound, uId3))
-                .thenReturn(testMatch2);//uId3 total elo 200+100=300
+                .thenReturn(testMatch2);//uId3 total opponent elo 300
         when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId4, testRound, uId4))
-                .thenReturn(testMatch2);//uId4 total elo 300+200=500
+                .thenReturn(testMatch2);//uId4 total opponent elo 200
 
         // Act
         matchService.updateRoundScoreboard(testRound, testMatch, 0);
@@ -262,7 +262,7 @@ public class MatchServiceTest {
         assertEquals(0.5, scoreboard.getPlayerScore(uId3));
         assertEquals(0.5, scoreboard.getPlayerScore(uId4));
 
-        List<Long> keyOrder = List.of(uId1, uId2, uId3, uId4);
+        List<Long> keyOrder = List.of(uId2, uId1, uId4, uId3);//Should be sorted in ascending order of opponent elo
         int count = 0;
         for (ScoreboardEntry entry : scoreboard.getScoreboardEntries()) {
             assertEquals(keyOrder.get(count), entry.getPlayerId());

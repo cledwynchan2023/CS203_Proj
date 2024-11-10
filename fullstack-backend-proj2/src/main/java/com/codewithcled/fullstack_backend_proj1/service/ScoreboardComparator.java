@@ -194,13 +194,13 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
             throw new NoSuchElementException("User not found");
         }
 
-        Double u1TotalOpponentRatings = u2.getElo() + calculateOpponentsTotalRating(user1id);
-        Double u2TotalOpponentRatings = u1.getElo() + calculateOpponentsTotalRating(user2id);
+        Double u1TotalOpponentRatings = calculateOpponentsTotalRating(user1id);
+        Double u2TotalOpponentRatings = calculateOpponentsTotalRating(user2id);
 
         if (u1TotalOpponentRatings > u2TotalOpponentRatings) {
-            return -1;
-        } else if (u1TotalOpponentRatings < u2TotalOpponentRatings) {
             return 1;
+        } else if (u1TotalOpponentRatings < u2TotalOpponentRatings) {
+            return -1;
         } else {
             return 0;
         }
