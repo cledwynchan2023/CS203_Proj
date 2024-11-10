@@ -1,7 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,65 +22,75 @@ import java.util.Collections;
 @Configuration
 public class ApplicationConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
-    private static final String[] PUBLIC_URLS = {"/login/**", "/auth/**"};
-    private static final String ADMIN_URL = "/admin/**";
-    private static final String[] USER_URLS = {"/user/**", "/m/**"};
 
-    /**
-     * Configures the security filter chain.
-     * This configuration sets the session creation policy to STATELESS, allows public access to login and auth URLs,
-     * restricts access to admin URLs to the ADMIN role, restricts access to user URLs to the USER and ADMIN roles,
-     * adds a JWT token validation filter before the BasicAuthenticationFilter, sets a custom authentication entry point,
-     * disables CSRF protection, and enables CORS with custom configuration.
-     *
-     * @param http the HttpSecurity to modify
-     * @return the configured SecurityFilterChain
-     * @throws Exception if an error occurs
-     */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        logger.info("Configuring security filter chain");
+
 
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeRequests(authorize -> authorize
-                .requestMatchers(PUBLIC_URLS).permitAll() // Allow public access to login and auth URLs
-                .requestMatchers(ADMIN_URL).hasRole("ADMIN") // Restrict access to admin URLs to ADMIN role
-                .requestMatchers(USER_URLS).hasAnyRole("USER", "ADMIN") // Restrict access to user URLs to USER and ADMIN roles
-                .anyRequest().permitAll() // Allow all other requests
-            )
-            .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class) // Add JWT token validation filter
-            .exceptionHandling(exceptionHandling -> exceptionHandling
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Custom entry point for authentication exceptions
-            )
-            .csrf(csrf -> csrf.disable()) // Disable CSRF protection
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Enable CORS with custom configuration
-
+                .authorizeRequests(
+                        authorize -> authorize
+                            .requestMatchers("/login/**").permitAll()
+                            .requestMatchers("/update/**").permitAll()
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers("/auth/**").permitAll()
+                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers("/m/**").hasAnyRole("USER", "ADMIN") 
+                                // .requestMatchers("/api/**").authenticated()
+                                
+                                .anyRequest().permitAll())
+                .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Custom entry point
+                )
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+        //.httpBasic(Customizer.withDefaults())
+        //.formLogin(Customizer.withDefaults());
         return http.build();
     }
 
-    /**
-     * Configures CORS settings.
-     * This configuration allows all origins, all HTTP methods, and all headers.
-     *
-     * @return the configured CorsConfigurationSource
-     */
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("*")); // Allow all origins
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow specified HTTP methods
-        configuration.setAllowedHeaders(Collections.singletonList("*")); // Allow all headers
-        return request -> configuration;
+    private CorsConfigurationSource corsConfigurationSource() {
+        return new CorsConfigurationSource() {
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                CorsConfiguration ccfg = new CorsConfiguration();
+                ccfg.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+                ccfg.setAllowedMethods(Collections.singletonList("*"));
+                ccfg.setAllowCredentials(true);
+                ccfg.setAllowedHeaders(Collections.singletonList("*"));
+                ccfg.setExposedHeaders(Arrays.asList("Authorization"));
+                ccfg.setMaxAge(3600L);
+                return ccfg;
+
+            }
+        };
+
     }
 
-    /**
-     * Creates a BCrypt password encoder.
-     *
-     * @return the BCrypt password encoder
-     */
+
+
+
+
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -89,13 +99,13 @@ public class ApplicationConfig {
     @Value("${rest.base.url}")
     private String baseUrl;
 
-    /**
-     * Creates a RestTemplate with a custom URI template handler.
-     *
-     * @return the RestTemplate
-     */
+
+
+
+
+
     @Bean
-    RestTemplate restTemplate() {
+    public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
         return restTemplate;

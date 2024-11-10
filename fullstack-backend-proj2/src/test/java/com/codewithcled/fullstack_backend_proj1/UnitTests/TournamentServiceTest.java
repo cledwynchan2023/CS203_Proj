@@ -439,7 +439,7 @@ public class TournamentServiceTest {
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
-        List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
+        List<Tournament> result = tournamentService.getTournamentsCurrentUserNotIn(uId);
 
         assertIterableEquals(List.of(testTournament,notInTournament), result);
         verify(tournamentRepository).findAll();
@@ -467,7 +467,7 @@ public class TournamentServiceTest {
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
         when(userRepository.findById(uId)).thenReturn(Optional.of(testUser));
 
-        List<Tournament> result = tournamentService.getTournamentsWithNoCurrentUser(uId);
+        List<Tournament> result = tournamentService.getTournamentsCurrentUserNotIn(uId);
 
         assertIterableEquals(List.of(notInTournament), result);
         verify(tournamentRepository).findAll();
@@ -490,7 +490,7 @@ public class TournamentServiceTest {
         when(userRepository.findById(uId)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> {
-            tournamentService.getTournamentsWithNoCurrentUser(uId);
+            tournamentService.getTournamentsCurrentUserNotIn(uId);
         });
 
         assertEquals("User not found", exception.getMessage());

@@ -41,10 +41,6 @@ public class TournamentServiceImplementation implements TournamentService {
     public List<Tournament> getAllTournament() {
         return tournamentRepository.findAll();
     }
-    @Override
-    public Tournament findTournamentByName(String name) {
-        return null;
-    }
 
     @Override
     public List<User> getTournamentParticipants(Long id) throws Exception {
@@ -84,9 +80,7 @@ public class TournamentServiceImplementation implements TournamentService {
                 .orElseThrow(() -> new Exception("User not found"));
 
         if (user.getCurrentTournaments().contains(currentTournament)) {
-            //System.out.println(currentTournament.getParticipants());
             user.removeCurrentTournament(currentTournament);
-            //System.out.println(currentTournament.getParticipants().size());
             currentTournament.removeParticipant(user);
             currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
             userRepository.save(user);
@@ -126,7 +120,7 @@ public class TournamentServiceImplementation implements TournamentService {
     }
 
     @Override
-    public List<Tournament> getTournamentsWithNoCurrentUser(Long userId) throws Exception {
+    public List<Tournament> getTournamentsCurrentUserNotIn(Long userId) throws Exception {
 
         List<Tournament> list = getAllTournament();
         User user = userRepository.findById(userId)

@@ -162,7 +162,7 @@ public class TournamentController {
     @GetMapping("/tournaments/{id}")
     public ResponseEntity<List<TournamentDTO>> getTournamentWithNoCurrentUser(@PathVariable("id") Long id) throws Exception {
         try {
-            List<Tournament> tournaments = tournamentService.getTournamentsWithNoCurrentUser(id);
+            List<Tournament> tournaments = tournamentService.getTournamentsCurrentUserNotIn(id);
             List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
             return new ResponseEntity<>(tournamentDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {

@@ -20,24 +20,71 @@ public interface TournamentService {
      */
     public List<Tournament> getActiveTournament();
 
-
+    /**
+     * Get all completed tournaments
+     * @return List of all completed tournaments
+     */
     public List<Tournament> getCompletedTournament();
-    public List<Tournament> getOngoingTournament();
-    public Tournament findTournamentByName(String name);
 
+    /**
+     * Get all ongoing tournaments
+     * @return List of all ongoing tournaments
+     */
+    public List<Tournament> getOngoingTournament();
+
+    /**
+     * Get all participants of a tournament
+     * @param id Tournament id
+     * @return List of all participants of a tournament
+     * @throws Exception
+     */
     public List<User> getTournamentParticipants (Long id) throws Exception;
 
-    public Tournament updateUserParticipating (Long userId, Long id) throws Exception;
+    /**
+     * Update tournament participants by adding a user
+     * @param userId User id of the user to be added
+     * @param tournamentId tournament id of the tournament to be updated
+     * @return Updated tournament
+     * @throws Exception
+     */
+    public Tournament updateUserParticipating (Long userId, Long tournamentId) throws Exception;
 
-    public Tournament removeUserParticipating(Long userId, Long id) throws Exception;
+    /**
+     * Update tournament participants by removing a user
+     * @param userId User id of the user to be removed
+     * @param tournamentId tournament id of the tournament to be updated
+     * @return Updated tournament
+     * @throws Exception
+     */
+    public Tournament removeUserParticipating(Long userId, Long tournamentId) throws Exception;
 
+    /**
+     * Update tournament details
+     * @param id Tournament id
+     * @param newTournament New tournament details
+     * @return Updated tournament
+     * @throws Exception
+     */
     public Tournament updateTournament(Long id, CreateTournamentRequest newTournament) throws Exception;
 
-    public List<Tournament> getTournamentsWithNoCurrentUser (Long userId) throws Exception;
+    /**
+     * Get all tournaments that the current user is not participating in
+     * @param userId User id of the current user
+     * @return List of all tournaments that the current user is not participating in
+     * @throws Exception
+     */
+    public List<Tournament> getTournamentsCurrentUserNotIn (Long userId) throws Exception;
 
+    /**
+     * Create a new tournament with the given details
+     * @param tournament Tournament details
+     * @return Created tournament
+     * @throws Exception
+     */
     public Tournament createTournament(CreateTournamentRequest tournament) throws Exception;
 
-    public List<User> getNonParticipatingCurrentUser(Long tournamentId) throws Exception;
+    
+    public List<User> getNonParticipatingCurrentUser(Long id) throws Exception;
     
     public List<Tournament> getFilteredTournamentsByName() throws Exception;
 
@@ -49,7 +96,7 @@ public interface TournamentService {
 
     public Tournament startTournament(Long id) throws Exception;
 
-    public void checkComplete(Long tournamentId) throws Exception;
+    public void checkComplete(Long id) throws Exception;
 
     public void deleteTournament(Long id) throws Exception;
 
