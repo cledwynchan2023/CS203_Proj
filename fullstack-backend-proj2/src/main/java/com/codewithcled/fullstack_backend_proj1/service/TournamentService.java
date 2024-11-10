@@ -8,11 +8,22 @@ import java.util.List;
 
 public interface TournamentService {
 
-    public List<Tournament> getAllTournament()  ;
-    public List<Tournament> getActiveTournament()  ;
-    public List<Tournament> getInactiveTournament()  ;
+    /**
+     * Get all tournaments
+     * @return List of all tournaments
+     */
+    public List<Tournament> getAllTournament();
+
+    /**
+     * Get all active tournaments
+     * @return List of all active tournaments
+     */
+    public List<Tournament> getActiveTournament();
+
+
+    public List<Tournament> getCompletedTournament();
     public List<Tournament> getOngoingTournament();
-    public Tournament findTournamentByName(String name) ;
+    public Tournament findTournamentByName(String name);
 
     public List<User> getTournamentParticipants (Long id) throws Exception;
 

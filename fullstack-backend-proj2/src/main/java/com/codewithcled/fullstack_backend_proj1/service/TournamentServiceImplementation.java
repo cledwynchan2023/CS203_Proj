@@ -3,7 +3,6 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import com.codewithcled.fullstack_backend_proj1.model.Round;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
 import com.codewithcled.fullstack_backend_proj1.model.User;
-// import com.codewithcled.fullstack_backend_proj1.repository.RoundRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +30,10 @@ public class TournamentServiceImplementation implements TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
-    // @Autowired
-    // private RoundRepository roundRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoundService roundService;
 
@@ -152,16 +151,6 @@ public class TournamentServiceImplementation implements TournamentService {
         Integer size = tournament.getSize();
         Integer noOfRounds = tournament.getNoOfRounds();
         Integer currentRounds = 1;
-        // Tournament isEmailExist = tournamentRepository.findBy(email);
-        // if (isEmailExist != null) {
-        // System.out.println("Email Taken!");
-        // throw new Exception("Email Is Already Used With Another Account");
-        // }
-
-        // if (userRepository.existsByUsername(username)){
-        // System.out.println("Username Taken!");
-        // throw new Exception("Username is already being used with another account");
-        // }
 
        
         if (size % 2 != 0) {
@@ -230,15 +219,15 @@ public class TournamentServiceImplementation implements TournamentService {
        return inactiveTournaments;
     }
     @Override
-    public List<Tournament> getInactiveTournament() {
+    public List<Tournament> getCompletedTournament() {
         List<Tournament> list = getAllTournament();
-        List<Tournament> inactiveTournaments = new ArrayList<>();  
+        List<Tournament> completedTournaments = new ArrayList<>();  
         for (Tournament tournament: list){
             if (tournament.getStatus().equals("completed")){
-                inactiveTournaments.add(tournament);
+                completedTournaments.add(tournament);
             }
         }
-       return inactiveTournaments;
+       return completedTournaments;
     }
 
     @Override

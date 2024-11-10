@@ -711,7 +711,7 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        List<Tournament> result = tournamentService.getInactiveTournament();
+        List<Tournament> result = tournamentService.getCompletedTournament();
 
         assertEquals(1, result.size());
         assertEquals("completed", result.get(0).getStatus());
