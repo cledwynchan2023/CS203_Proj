@@ -12,7 +12,13 @@ import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
 /**
- * Comparator for ScoreboardEntry objects.
+ * ScoreboardComparator is a class that implements the Comparator interface to compare two ScoreboardEntry objects.
+ * The comparison is based on the score of the two players.
+ * If the scores are equal, the comparison is based on the Solkoff tiebreak.
+ * If the Solkoff tiebreak is also equal, the comparison is based on the rating tiebreak.
+ * 
+ * The Solkoff tiebreak uses the sum of the scores of the opponents that the player has played against in the tournament.
+ * The rating tiebreak uses the sum of the Elo ratings of the opponents that the player has played against in the tournament.
  */
 public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
     private List<Round> rounds;

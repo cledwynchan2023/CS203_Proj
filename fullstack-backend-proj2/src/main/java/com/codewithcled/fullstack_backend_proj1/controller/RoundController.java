@@ -13,6 +13,9 @@ import com.codewithcled.fullstack_backend_proj1.DTO.MatchDTOMapper;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.service.RoundService;
 
+/**
+ * REST controller for managing rounds in a tournament.
+ */
 @RestController
 @RequestMapping("/r")
 public class RoundController {
@@ -20,12 +23,26 @@ public class RoundController {
     @Autowired
     RoundService roundService;
 
+    /**
+     * Checks if a round is complete.
+     *
+     * @param id the ID of the round to check
+     * @return a ResponseEntity with a message indicating the result of the check
+     * @throws Exception if an error occurs during the check
+     */
     @GetMapping({"/round/{id}/checkComplete"})
     public ResponseEntity<String> checkRoundComplete(@PathVariable("id") Long id) throws Exception{
         roundService.checkComplete(id);
         return ResponseEntity.ok("Successfully checked roundService.isComplete");
     }
 
+    /**
+     * Retrieves all matches for a specified round.
+     *
+     * @param id the ID of the round
+     * @return a ResponseEntity with a list of MatchDTOs or a 204 No Content status if the list is empty
+     * @throws Exception if an error occurs during retrieval
+     */
     @GetMapping("/round/{id}/matches")
     public ResponseEntity<List<MatchDTO>> getAllMatches(@PathVariable("id") Long id) throws Exception {
         List<Match> matches = roundService.getAllMatches(id);
