@@ -168,30 +168,14 @@ public class TournamentServiceImplementation implements TournamentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        // Remove tournament from user's own list and remove user from tournament
-        removeTournamentFromUserOwnList(currentTournament, user);
+        // Remove user from tournament
         removeUserFromTournament(currentTournament, user);
 
         return tournamentRepository.save(currentTournament);
     }
 
     /**
-     * Helper method to remove a tournament to a user's own list
-     * Checks if the tournament is already in the user's list
-     * @param currentTournament
-     * @param user
-     */
-    private void removeTournamentFromUserOwnList(Tournament currentTournament, User user) throws Exception {
-        if (user.getCurrentTournaments().contains(currentTournament)) {
-            user.removeCurrentTournament(currentTournament);
-            userRepository.save(user);
-        } else {
-            throw new Exception("Tournament is not in the user's list");
-        }
-    }
-
-    /**
-     * Helper method to remove a user to a tournament
+     * Helper method to remove a user from a tournament
      * Checks if the user is already in the tournament
      * @param currentTournament
      * @param user
@@ -200,6 +184,8 @@ public class TournamentServiceImplementation implements TournamentService {
         if (currentTournament.getParticipants().contains(user)) {
             currentTournament.removeParticipant(user);
             currentTournament.setCurrentSize(currentTournament.getCurrentSize() - 1);
+            user.getCurrentTournaments().remove(currentTournament);
+            userRepository.save(user);
         } else {
             throw new Exception("User is not participating in the tournament");
         }
@@ -463,7 +449,6 @@ public class TournamentServiceImplementation implements TournamentService {
         // Remove all participants from the tournament
         List<User> participants = new ArrayList<>(tournament.getParticipants());
         for (User user : participants) {
-            removeTournamentFromUserOwnList(tournament, user);
             removeUserFromTournament(tournament, user);
         }
 

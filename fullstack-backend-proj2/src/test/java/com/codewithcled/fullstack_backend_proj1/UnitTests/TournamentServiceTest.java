@@ -330,7 +330,7 @@ public class TournamentServiceTest {
             tournamentService.removeUserParticipating(uId, tId);
         });
 
-        assertEquals("Tournament is not in the user's list", exception.getMessage());
+        assertEquals("User is not participating in the tournament", exception.getMessage());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uId);
 
