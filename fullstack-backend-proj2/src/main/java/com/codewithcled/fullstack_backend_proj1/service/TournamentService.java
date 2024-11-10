@@ -6,6 +6,9 @@ import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import java.util.List;
 
+/**
+ * Tournament Service Interface
+ */
 public interface TournamentService {
 
     /**
@@ -21,16 +24,16 @@ public interface TournamentService {
     public List<Tournament> getActiveTournament();
 
     /**
-     * Get all completed tournaments
-     * @return List of all completed tournaments
-     */
-    public List<Tournament> getCompletedTournament();
-
-    /**
      * Get all ongoing tournaments
      * @return List of all ongoing tournaments
      */
     public List<Tournament> getOngoingTournament();
+
+    /**
+     * Get all completed tournaments
+     * @return List of all completed tournaments
+     */
+    public List<Tournament> getCompletedTournament();
 
     /**
      * Get all participants of a tournament
@@ -83,24 +86,75 @@ public interface TournamentService {
      */
     public Tournament createTournament(CreateTournamentRequest tournament) throws Exception;
 
+    /**
+     * Get all users not participating in the current tournament
+     * @param id Tournament id
+     * @return List of all users not participating in the current tournament
+     * @throws Exception
+     */
+    public List<User> getUsersNotInCurrentTournament(Long id) throws Exception;
     
-    public List<User> getNonParticipatingCurrentUser(Long id) throws Exception;
-    
-    public List<Tournament> getFilteredTournamentsByName() throws Exception;
+    /**
+     * Get all tournaments sorted by name
+     * @return List of all tournaments sorted by name
+     * @throws Exception
+     */
+    public List<Tournament> getTournamentsSortedByName() throws Exception;
 
-    public List<Tournament> getFilteredTournamentsByDate() throws Exception;
+    /**
+     * Get all tournaments sorted by date
+     * @return List of all tournaments sorted by date
+     * @throws Exception
+     */
+    public List<Tournament> getTournamentsSortedByDate() throws Exception;
 
-    public List<Tournament> getFilteredTournamentsBySize() throws Exception;
+    /**
+     * Get all tournaments sorted by size
+     * @return List of all tournaments sorted by size
+     * @throws Exception
+     */
+    public List<Tournament> getTournamentsSortedBySize() throws Exception;
 
+    /**
+     * Get a list of all tournaments in DTO format
+     * @return List of all tournaments converted to DTO format
+     * @throws Exception
+     */
     public List<TournamentDTO> findAllTournamentsDTO() throws Exception;
 
+    /**
+     * Start a tournament
+     * @param id Tournament id
+     * @return Started tournament
+     * @throws Exception
+     */
     public Tournament startTournament(Long id) throws Exception;
 
+    /**
+     * Check if a tournament is complete
+     * @param id Tournament id
+     * @throws Exception
+     */
     public void checkComplete(Long id) throws Exception;
 
+    /**
+     * Delete a tournament
+     * @param id Tournament id
+     * @throws Exception
+     */
     public void deleteTournament(Long id) throws Exception;
 
+    /**
+     * End a tournament
+     * @param id Tournament id
+     * @throws Exception
+     */
     public void endTournament(Long id) throws Exception;
 
+    /**
+     * Remove all users from a tournament
+     * @param id Tournament id
+     * @throws Exception
+     */
     public void removeAllUsers(Long id) throws Exception;
 }

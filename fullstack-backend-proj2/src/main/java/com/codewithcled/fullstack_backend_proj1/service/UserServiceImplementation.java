@@ -29,6 +29,7 @@ import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementatio
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -206,7 +207,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Override
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
         return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
@@ -227,7 +228,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Override
     public List<Match> getUserPastMatches(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
         return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true, currentUser.getId());  // Return the list of tournaments the user is participating in
     }
 

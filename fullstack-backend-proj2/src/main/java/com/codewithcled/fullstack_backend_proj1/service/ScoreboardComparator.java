@@ -116,7 +116,7 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
         for (Round round : rounds) {
             Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, userId, round, userId);
             if (match == null) {
-                throw new Exception("Match not found");
+                throw new NoSuchElementException("Match not found");
             } else {
                 if (match.getPlayer1() == userId) {
                     solkoff += currentRound.getScoreboard().getPlayerScore(match.getPlayer2());
@@ -162,7 +162,7 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
         for (Round round : rounds) {
             Match match = matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(round, userId, round, userId);
             if (match == null) {
-                throw new Exception("Match not found");
+                throw new NoSuchElementException("Match not found");
             } else {
                 if (match.getPlayer1() == userId) {
                     User opponent = userRepository.findById(match.getPlayer2()).get();

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 /*
@@ -79,7 +80,7 @@ public class TournamentController {
     }
     @GetMapping("/tournaments/name")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByName() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByName();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedByName();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -89,7 +90,7 @@ public class TournamentController {
 
     @GetMapping("/tournaments/date")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByDate() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByDate();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedByDate();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -99,7 +100,7 @@ public class TournamentController {
 
     @GetMapping("/tournaments/capacity")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsBySize() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsBySize();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedBySize();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -118,7 +119,7 @@ public class TournamentController {
     public ResponseEntity<String> addRound(@RequestBody Round round, @PathVariable("id") Long id) throws Exception {
         // Find the tournament by ID
         Tournament currentTournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
 
         // Set the tournament for the round (to maintain the bidirectional relationship)
         round.setTournament(currentTournament);
@@ -174,7 +175,7 @@ public class TournamentController {
     @GetMapping("/users/{id}")
     public ResponseEntity<List<UserDTO>> getUsersWithNoCurrentTournament(@PathVariable("id") Long id) throws Exception {
         try {
-            List<User> users = tournamentService.getNonParticipatingCurrentUser(id);
+            List<User> users = tournamentService.getUsersNotInCurrentTournament(id);
             List<UserDTO> userDTOs = UserMapper.toDTOList(users);
             return new ResponseEntity<>(userDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
@@ -246,7 +247,7 @@ public class TournamentController {
     @GetMapping("/tournament/{id}/start")
     public ResponseEntity<TournamentStartDTO> startTournamentService(@PathVariable("id") Long id) throws Exception{
         Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
         TournamentStartDTO tournamentStartDTO = TournamentStartMapper.toDTO(tournament);
         return ResponseEntity.ok(tournamentStartDTO);
     }
@@ -254,7 +255,7 @@ public class TournamentController {
     @GetMapping("/tournament/{id}/start/rounds")
     public ResponseEntity<List<RoundDTO>> getAllRounds (@PathVariable("id") Long id) throws Exception{
         Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
         List<Round> rounds = tournament.getRounds();
         List<RoundDTO> newRounds = RoundMapper.toDTOList(rounds);
         return ResponseEntity.ok(newRounds);

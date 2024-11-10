@@ -3,6 +3,7 @@ package com.codewithcled.fullstack_backend_proj1.service;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -56,13 +57,13 @@ public class RoundServiceImplementation implements RoundService {
         logger.info("Create first round called");
 
         Tournament tournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new Exception("Tournament not found"));
+            .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
         List<User> participants = tournament.getParticipants();
 
         //Currently only support even number of participants
         //Throw exception for odd number of participants
         if(participants.size() % 2 != 0){
-            throw new Exception("Number of participants must be even");
+            throw new IllegalArgumentException("Number of participants must be even");
         }
 
         //create first round and set round number and tournament
@@ -146,7 +147,7 @@ public class RoundServiceImplementation implements RoundService {
         logger.info("Round check complete called");
 
         Round round = roundRepository.findById(roundId)
-            .orElseThrow(() -> new Exception("Round not found"));
+            .orElseThrow(() -> new NoSuchElementException("Round not found"));
 
         //for debugging purposes
         logger.info("Round scoreboard at checkComplete: " + round.getScoreboard());
@@ -214,7 +215,7 @@ public class RoundServiceImplementation implements RoundService {
     @Override
     public Round createNextRound(Long tournamentId) throws Exception {
         Tournament tournament = tournamentRepository.findById(tournamentId)
-            .orElseThrow(() -> new Exception("Tournament not found"));
+            .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
 
         //create new round and set round number and tournament
         Round newRound = initializeNewRound(tournament);
@@ -263,9 +264,9 @@ public class RoundServiceImplementation implements RoundService {
         List<Match> matches = new ArrayList<>();
         for(int i = 0; i < scoreboardEntries.size(); i += 2){
             User player1 = userRepository.findById(scoreboardEntries.get(i).getPlayerId())
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
             User player2 = userRepository.findById(scoreboardEntries.get(i + 1).getPlayerId())
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
             Match match = matchService.createMatch(player1, player2);
             match.setRound(newRound);
             matches.add(match);
@@ -279,7 +280,7 @@ public class RoundServiceImplementation implements RoundService {
     @Override
     public List<Match> getAllMatches(Long roundId) throws Exception {
         Round round = roundRepository.findById(roundId)
-            .orElseThrow(() -> new Exception("Round not found"));
+            .orElseThrow(() -> new NoSuchElementException("Round not found"));
         return round.getMatchList();
     }
 }
