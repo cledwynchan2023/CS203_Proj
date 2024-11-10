@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /*
  * User Controller
@@ -95,7 +96,7 @@ public class UserController {
     @GetMapping("/{id}/currentTournament")
     public ResponseEntity<List<TournamentStartDTO>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
         try {
-            User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
+            User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
             List<TournamentStartDTO> tournamentDTOs = TournamentStartMapper.toDTOList(user.getCurrentTournaments());
             return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {

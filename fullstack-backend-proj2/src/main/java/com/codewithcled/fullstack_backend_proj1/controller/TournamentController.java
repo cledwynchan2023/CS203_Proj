@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 /*
@@ -118,7 +119,7 @@ public class TournamentController {
     public ResponseEntity<String> addRound(@RequestBody Round round, @PathVariable("id") Long id) throws Exception {
         // Find the tournament by ID
         Tournament currentTournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
 
         // Set the tournament for the round (to maintain the bidirectional relationship)
         round.setTournament(currentTournament);
@@ -246,7 +247,7 @@ public class TournamentController {
     @GetMapping("/tournament/{id}/start")
     public ResponseEntity<TournamentStartDTO> startTournamentService(@PathVariable("id") Long id) throws Exception{
         Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
         TournamentStartDTO tournamentStartDTO = TournamentStartMapper.toDTO(tournament);
         return ResponseEntity.ok(tournamentStartDTO);
     }
@@ -254,7 +255,7 @@ public class TournamentController {
     @GetMapping("/tournament/{id}/start/rounds")
     public ResponseEntity<List<RoundDTO>> getAllRounds (@PathVariable("id") Long id) throws Exception{
         Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new Exception("Tournament not found"));
+                .orElseThrow(() -> new NoSuchElementException("Tournament not found"));
         List<Round> rounds = tournament.getRounds();
         List<RoundDTO> newRounds = RoundMapper.toDTOList(rounds);
         return ResponseEntity.ok(newRounds);

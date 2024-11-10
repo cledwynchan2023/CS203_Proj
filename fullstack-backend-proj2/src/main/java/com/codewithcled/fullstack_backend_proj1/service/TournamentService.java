@@ -6,6 +6,9 @@ import com.codewithcled.fullstack_backend_proj1.DTO.CreateTournamentRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
 import java.util.List;
 
+/**
+ * Tournament Service Interface
+ */
 public interface TournamentService {
 
     /**

@@ -1031,7 +1031,7 @@ public class TournamentServiceTest {
         tournamentService.deleteTournament(tId);
 
         verify(tournamentRepository,times(2)).findById(tId);
-        verify(tournamentRepository,times(2)).save(testTournament);
+        verify(tournamentRepository).save(testTournament);
         verify(tournamentRepository).deleteById(tId);
     }
 
