@@ -606,7 +606,7 @@ public class TournamentServiceTest {
 
         when(userRepository.findAll()).thenReturn(userList);
 
-        List<User> result = tournamentService.getNonParticipatingCurrentUser(tId);
+        List<User> result = tournamentService.getUsersNotInCurrentTournament(tId);
 
         assertEquals(1, result.size());
         assertEquals(tUser2, result.get(0));
@@ -639,7 +639,7 @@ public class TournamentServiceTest {
 
         when(userRepository.findAll()).thenReturn(userList);
 
-        List<User> result = tournamentService.getNonParticipatingCurrentUser(tId);
+        List<User> result = tournamentService.getUsersNotInCurrentTournament(tId);
 
         assertIterableEquals(userList, result);
 
@@ -743,7 +743,7 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        List<Tournament> result = tournamentService.getFilteredTournamentsByName();
+        List<Tournament> result = tournamentService.getTournamentsSortedByName();
 
         assertEquals(3, result.size());
         assertEquals("t1", result.get(0).getTournament_name());
@@ -780,7 +780,7 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        List<Tournament> result = tournamentService.getFilteredTournamentsByDate();
+        List<Tournament> result = tournamentService.getTournamentsSortedByDate();
 
         assertEquals(3, result.size());
         assertEquals("t3", result.get(0).getTournament_name()); // Most recent date
@@ -818,7 +818,7 @@ public class TournamentServiceTest {
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
         Exception exception = assertThrows(Exception.class, () -> {
-            tournamentService.getFilteredTournamentsByDate();
+            tournamentService.getTournamentsSortedByDate();
         });
 
         assertEquals("java.text.ParseException: Unparseable date: \"1252024\"", exception.getMessage());
@@ -854,7 +854,7 @@ public class TournamentServiceTest {
 
         when(tournamentRepository.findAll()).thenReturn(tournamentList);
 
-        List<Tournament> result = tournamentService.getFilteredTournamentsBySize();
+        List<Tournament> result = tournamentService.getTournamentsSortedBySize();
 
         assertEquals(3, result.size());
         assertEquals("t2", result.get(0).getTournament_name());

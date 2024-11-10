@@ -79,7 +79,7 @@ public class TournamentController {
     }
     @GetMapping("/tournaments/name")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByName() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByName();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedByName();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -89,7 +89,7 @@ public class TournamentController {
 
     @GetMapping("/tournaments/date")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsByDate() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsByDate();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedByDate();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -99,7 +99,7 @@ public class TournamentController {
 
     @GetMapping("/tournaments/capacity")
     public ResponseEntity<List<TournamentDTO>> getFilteredTournamentsBySize() throws Exception {
-        List<Tournament> tournaments = tournamentService.getFilteredTournamentsBySize();
+        List<Tournament> tournaments = tournamentService.getTournamentsSortedBySize();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
         }
@@ -174,7 +174,7 @@ public class TournamentController {
     @GetMapping("/users/{id}")
     public ResponseEntity<List<UserDTO>> getUsersWithNoCurrentTournament(@PathVariable("id") Long id) throws Exception {
         try {
-            List<User> users = tournamentService.getNonParticipatingCurrentUser(id);
+            List<User> users = tournamentService.getUsersNotInCurrentTournament(id);
             List<UserDTO> userDTOs = UserMapper.toDTOList(users);
             return new ResponseEntity<>(userDTOs, HttpStatus.OK);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
