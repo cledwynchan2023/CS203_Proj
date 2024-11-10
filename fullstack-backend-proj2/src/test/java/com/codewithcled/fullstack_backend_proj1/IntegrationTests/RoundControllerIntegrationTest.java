@@ -112,7 +112,7 @@ public class RoundControllerIntegrationTest {
     }
 
     @Test
-    void checkRoundComplete_Success() throws Exception {
+    void checkRoundComplete_Success_ReturnSuccessMessage() throws Exception {
         Round testRound = new Round();
         Scoreboard scoreboard=new Scoreboard();
         List<ScoreboardEntry> scoreboardEntrys=new ArrayList<>();
@@ -149,7 +149,7 @@ public class RoundControllerIntegrationTest {
     }
 
     @Test
-    void getAllMatches_Success_FoundMatches_ReturnMatches() throws Exception {
+    void getAllMatches_Success_FoundMatches_ReturnMatchDTOList() throws Exception {
         Round testRound = new Round();
 
         Scoreboard scoreboard=new Scoreboard();
