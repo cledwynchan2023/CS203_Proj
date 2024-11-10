@@ -199,7 +199,7 @@ public class MatchControllerIntegrationTest {
     }
 
     @Test
-    public void getPlayers_Success() throws Exception{
+    public void getPlayers_Success_ReturnPlayerUserNameList() throws Exception{
         Match match = new Match();
         match.setPlayer1(player1.getId());
         match.setPlayer2(player2.getId());
@@ -222,5 +222,7 @@ public class MatchControllerIntegrationTest {
             String[].class);
 
         assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertEquals(player1.getUsername(),result.getBody()[0]);
+        assertEquals(player2.getUsername(),result.getBody()[1]);
     }
 }

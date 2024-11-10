@@ -52,7 +52,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void validateAdminToken_Success() throws Exception {
+    public void validateAdminToken_Success_ReturnTokenResponseValids() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
         LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
@@ -64,7 +64,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void validateAdminToken_Failure() throws Exception {
+    public void validateAdminToken_Failure_ReturnTokenResponseInvalid() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
         LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
@@ -76,7 +76,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void createUserHandler_Success() throws Exception {
+    public void createUserHandler_Success_ReturnAuthResponseSuccess() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup");
 
         SignUpRequest signUpRequest = new SignUpRequest();
@@ -164,7 +164,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void signin_Success() throws Exception{
+    public void signin_Success_ReturnAuthResponse() throws Exception{
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin");
 
         User originalUser = new User();

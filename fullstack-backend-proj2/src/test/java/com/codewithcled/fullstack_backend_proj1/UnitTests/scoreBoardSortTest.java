@@ -79,7 +79,9 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch);
 
-                int result = scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+
+                int result = scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
 
                 assertEquals(1, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
@@ -120,7 +122,8 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch);
 
-                int result = scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
 
                 assertEquals(-1, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
@@ -140,7 +143,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -159,7 +162,8 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch);
 
-                int result = scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
 
                 assertEquals(0, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
@@ -179,7 +183,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -198,7 +202,8 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch);
 
-                int result = scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
 
                 assertEquals(0, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
@@ -218,7 +223,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -234,8 +239,9 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
                                 .thenReturn(null);
 
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 Exception exception = assertThrows(Exception.class, () -> {
-                        scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                        scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
                 });
 
                 assertEquals("Match not found", exception.getMessage());
@@ -257,7 +263,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -275,8 +281,9 @@ public class scoreBoardSortTest {
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(null);
 
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 Exception exception = assertThrows(Exception.class, () -> {
-                        scoreboardComparator.solkoffTiebreak(user1, user2, rounds, testRound);
+                        scoreboardComparator.solkoffTiebreak(user1.getId(), user2.getId());
                 });
 
                 assertEquals("Match not found", exception.getMessage());
@@ -285,7 +292,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloGreater_Return1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloGreater_ReturnNeg1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -328,12 +335,15 @@ public class scoreBoardSortTest {
                                 .thenReturn(testMatch1);
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch2);
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
+                when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
                 when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
                 when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
 
-                int result = scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(1, result);
+                assertEquals(-1, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
                 verify(userRepository).findById(uId3);
@@ -341,7 +351,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloLesser_ReturnNeg1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloLesser_Return1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -384,12 +394,15 @@ public class scoreBoardSortTest {
                                 .thenReturn(testMatch1);
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch2);
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
+                when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
                 when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
                 when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
 
-                int result = scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(-1, result);
+                assertEquals(1, result);
 
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
@@ -398,7 +411,7 @@ public class scoreBoardSortTest {
         }
 
         @Test
-        void ratingTiebreak_Success_Player1OppEloLesser_WorksWhenSwappingOpponents_ReturnNeg1() throws Exception {
+        void ratingTiebreak_Success_Player1OppEloLesser_WorksWhenSwappingOpponents_Return1() throws Exception {
                 Long uId1 = (long) 1;
                 Long uId2 = (long) 2;
                 Long uId3 = (long) 3;
@@ -441,12 +454,15 @@ public class scoreBoardSortTest {
                                 .thenReturn(testMatch1);
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(testMatch2);
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
+                when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
                 when(userRepository.findById(uId3)).thenReturn(Optional.of(opp1));
                 when(userRepository.findById(uId4)).thenReturn(Optional.of(opp2));
 
-                int result = scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
-                assertEquals(-1, result);
+                assertEquals(1, result);
 
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
@@ -473,7 +489,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -493,13 +509,14 @@ public class scoreBoardSortTest {
                 when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
                 when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
 
-                int result = scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                int result = scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
 
                 assertEquals(0, result);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
-                verify(userRepository).findById(uId1);
-                verify(userRepository).findById(uId2);
+                verify(userRepository,times(2)).findById(uId1);
+                verify(userRepository,times(2)).findById(uId2);
         }
 
         @Test
@@ -521,7 +538,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -536,17 +553,20 @@ public class scoreBoardSortTest {
 
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1))
                                 .thenReturn(null);
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
+                when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
 
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 Exception exception = assertThrows(Exception.class, () -> {
-                        scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                        scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
                 });
 
                 assertEquals("Match not found", exception.getMessage());
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository, never()).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound,
                                 uId2);
-                verify(userRepository, never()).findById(uId1);
-                verify(userRepository, never()).findById(uId2);
+                verify(userRepository).findById(uId1);
+                verify(userRepository).findById(uId2);
         }
 
         @Test
@@ -568,7 +588,7 @@ public class scoreBoardSortTest {
 
                 Scoreboard scoreboard = new Scoreboard();
                 List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
-                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0); 
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
                 ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
                 scoreboardEntrys.add(entry1);
                 scoreboardEntrys.add(entry2);
@@ -585,17 +605,19 @@ public class scoreBoardSortTest {
                                 .thenReturn(testMatch);
                 when(matchRepository.findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2))
                                 .thenReturn(null);
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
                 when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
 
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
                 Exception exception = assertThrows(Exception.class, () -> {
-                        scoreboardComparator.ratingTiebreak(user1, user2, rounds, testRound);
+                        scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
                 });
 
                 assertEquals("Match not found", exception.getMessage());
 
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId1, testRound, uId1);
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
-                verify(userRepository, never()).findById(uId1);
-                verify(userRepository).findById(uId2);
+                verify(userRepository).findById(uId1);
+                verify(userRepository,times(2)).findById(uId2);
         }
 }
