@@ -379,7 +379,7 @@ public class TournamentServiceImplementation implements TournamentService {
         // Now delete the tournament
         tournamentRepository.deleteById(id);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                throw e;
             }
         
         }
