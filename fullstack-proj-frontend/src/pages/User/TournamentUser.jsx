@@ -149,7 +149,7 @@ const TournamentUser = () => {
     // const loadPastTournaments= async()=>{
     //     const result = await axios.get("http://localhost:8080/auth/tournaments");
     //     const filteredPastTournament = result.data
-    //             .filter(tournament => tournament.status === 'inactive');
+    //             .filter(tournament => tournament.status === 'completed');
     //         setPastTournament(filteredPastTournament);
     // };
     const handleRowClick = (id) => {

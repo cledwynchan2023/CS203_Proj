@@ -702,7 +702,7 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void InActiveTournament_Success_ReturnListOfCompletedTournaments() {
+    void CompletedTournament_Success_ReturnListOfCompletedTournaments() {
         Tournament testTournament = new Tournament();
         testTournament.setStatus("active");
         Tournament testTournament2 = new Tournament();

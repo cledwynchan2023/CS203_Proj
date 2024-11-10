@@ -142,7 +142,7 @@ export default function TournamentAdminEdit() {
                     name="status"
                 >
                     <option value="active">Active</option>
-                    <option value="inactive">Not Active</option>
+                    <option value="completed">Not Active</option>
                 </select>
                 <label htmlFor="Status">Status</label>
             </div>

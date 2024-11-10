@@ -159,7 +159,7 @@ export default function TournamentAdminCreate() {
                 >
                     <option value="active">Active</option>
                     <option value="ongoing">Ongoing</option>
-                    <option value="completed">Inactive</option>
+                    <option value="completed">Completed</option>
                 </select>
                 <label htmlFor="Status">Status</label>
             </div>

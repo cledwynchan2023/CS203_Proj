@@ -58,9 +58,9 @@ public class TournamentController {
         List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(tournaments);
         return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
     }
-    //get inactive tournaments
-    @GetMapping("/tournaments/inactive")
-    public ResponseEntity<List<TournamentDTO>> getInactiveTournaments() {
+    //get completed tournaments
+    @GetMapping("/tournaments/completed")
+    public ResponseEntity<List<TournamentDTO>> getCompletedTournaments() {
         List<Tournament> tournaments = tournamentService.getCompletedTournament();
         if (tournaments.isEmpty()) {
             return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty

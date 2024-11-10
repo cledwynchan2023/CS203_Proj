@@ -69,7 +69,7 @@ export default function TournamentPage() {
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments/active");
-        const result1 = await axios.get("http://localhost:8080/t/tournaments/inactive");
+        const result1 = await axios.get("http://localhost:8080/t/tournaments/completed");
         const result2 = await axios.get("http://localhost:8080/t/tournaments/ongoing");
         const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
         console.log("triggered");

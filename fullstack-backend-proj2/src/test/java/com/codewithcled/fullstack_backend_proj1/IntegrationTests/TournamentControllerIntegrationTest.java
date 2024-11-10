@@ -187,7 +187,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getInactiveTournaments_Success_ReturnCompletedTournaments() throws Exception {
+    public void getCompletedTournaments_Success_ReturnCompletedTournaments() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -215,7 +215,7 @@ public class TournamentControllerIntegrationTest {
         tournament3.setDate("10/20/1203");
         tournamentRepository.save(tournament3);
 
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/inactive");
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/completed");
 
         ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
@@ -229,8 +229,8 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getInactiveTournaments_Success_NoTournaments_ReturnEmptyList() throws Exception {
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/inactive");
+    public void getCompletedTournaments_Success_NoTournaments_ReturnEmptyList() throws Exception {
+        URI url = new URI(baseUrl + port + urlPrefix + "/tournaments/completed");
 
         ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
                 HttpMethod.GET,
