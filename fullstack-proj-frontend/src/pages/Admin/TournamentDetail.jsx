@@ -387,10 +387,14 @@ export default function TournamentDetail() {
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
-        
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+		flexWrap: 'wrap',
+        height:"100vh",
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{padding:"10px", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+    <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+        <section className="hero is-flex-direction-row fade-in" style={{padding:"10px", width:"100%"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
@@ -531,7 +535,7 @@ export default function TournamentDetail() {
               </div>
             </div>
             )}
-        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", overflow:"scroll", marginBottom:"20px"}}>
 
                 <div className="tabs is-left" style={{ height:"70px"}}>
                 <ul>
@@ -546,7 +550,7 @@ export default function TournamentDetail() {
                     </li>
                 </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%"}}>
                 {renderTabContent()}
                 </div>
           </section>
