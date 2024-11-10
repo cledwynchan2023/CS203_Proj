@@ -27,7 +27,7 @@ import java.util.List;
  * Authorisation includes:
  * - Get all Tournaments
  * - Get Tournament by ID
- * - Get tounrament participants
+ * - Get tournament participants
  */
 @RestController
 @RequestMapping("/t")
