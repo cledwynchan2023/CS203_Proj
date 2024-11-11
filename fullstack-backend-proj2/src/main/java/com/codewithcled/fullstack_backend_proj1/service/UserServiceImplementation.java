@@ -46,6 +46,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Autowired
     private MatchRepository matchRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -60,35 +63,35 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 user.getPassword(),
                 authorities);
     }
-    // Method to get all users
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<User> getAllUser() {
         return userRepository.findAll();
     }
-    // Method to get user by id
-    @Override
-    public User findUserProfileByJwt(String jwt) {
-        // Implement logic to find user by JWT or remove if not needed
-        return null;
-    }
-    // Method to get user by email
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-    // Method to get user by id
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findUserById(String userId) {
         // Implement logic to find user by ID or remove if not needed
         return null;
     }
-    // Method to update user
-    @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
-    }
     
-    // Method to update user
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<UserDTO> findAllUsersDTO() {
@@ -97,12 +100,20 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return UserMapper.toDTOList(users);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User loadByUsername(String username) {
         return userRepository.findByEmail(username);
     }
 
-    // Helper method to generate a new user object from the given user details
+    /**
+     * Creates a new user with the provided details.
+     * 
+     * @param user the sign-up request containing user details.
+     * @return the created user.
+     */
     public User generateUser(SignUpRequest user) {
         User createdUser = new User();
         createdUser.setUsername(user.getUsername());
@@ -115,7 +126,13 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setElo(user.getElo());
         return createdUser;
     }
-    // Helper method to check if the email is in the correct format
+
+    /**
+     * Checks if provided email is valid.
+     * 
+     * @param email the email to validate.
+     * @return true if the email is valid, false otherwise.
+     */
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(emailRegex);
@@ -123,6 +140,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return matcher.matches();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AuthResponse createUser(SignUpRequest user) throws Exception {
         validateUserDetails(user);
@@ -133,7 +153,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return buildAuthResponse(token, "Register Success", true);
     }
 
-    // Helper method to validate the user details
+    /**
+     * Validates the user details provided in the sign-up request.
+     * 
+     * @param user the sign-up request containing user details.
+     * @throws Exception if the email format is invalid, the email is already used, or the username is already used.
+     */
     private void validateUserDetails(SignUpRequest user) throws Exception {
         String email = user.getEmail();
         String username = user.getUsername();
@@ -150,17 +175,37 @@ public class UserServiceImplementation implements UserService,UserDetailsService
             throw new Exception("Username is already used with another account");
         }
     }
-    // Helper method to authenticate the user
+
+    /**
+     * Authenticates a user with the provided email and password.
+     * 
+     * @param email the email of the user.
+     * @param password the password of the user.
+     */
     private void authenticateUser(String email, String password) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-    // Helper method to generate a new token for the user
+    
+    /**
+     * Generates a JWT token for the authenticated user.
+     * 
+     * @param user the user for whom the token is generated.
+     * @return the generated JWT token.
+     */
     private String generateToken(User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return JwtProvider.generateToken(authentication, user.getId());
     }
-    // Helper method to build the authentication response
+
+    /**
+     * Builds an authentication response with the provided token, message, and status.
+     * 
+     * @param token the JWT token.
+     * @param message the message to be displayed.
+     * @param status the status of the authentication.
+     * @return the authentication response.
+     */
     private AuthResponse buildAuthResponse(String token, String message, boolean status) {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(token);
@@ -169,7 +214,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return authResponse;
     }
     
-    // Helper method to build the authentication response
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AuthResponse signInUser(SignInRequest loginRequest) {
         Authentication authentication = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
@@ -179,7 +226,16 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
         return buildAuthResponse(token, "Login success", true, user.getRole());
     }
-    // Helper method to build the authentication response
+
+    /**
+     * Builds an authentication response with the provided token, message, status, and role.
+     * 
+     * @param token the JWT token.
+     * @param message the message to be displayed.
+     * @param status the status of the authentication.
+     * @param role the role of the user.
+     * @return the authentication response.
+     */
     private AuthResponse buildAuthResponse(String token, String message, boolean status, String role) {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(token);
@@ -188,7 +244,10 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         authResponse.setRole(role);
         return authResponse;
     }
-    // Helper method to build the authentication response
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<User> updateUser(Long id, SignUpRequest newUser) {
         
@@ -203,7 +262,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 });
     }
 
-   
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
@@ -211,6 +272,13 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
+    /**
+     * Authenticates a user with the provided username and password.
+     * 
+     * @param username the username of the user.
+     * @param password the password of the user.
+     * @return the authentication object.
+     */
     private Authentication authenticate(String username, String password) {
         UserDetails userDetails = loadUserByUsername(username);
         if(userDetails == null) {
@@ -225,6 +293,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Match> getUserPastMatches(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
@@ -232,6 +303,9 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true, currentUser.getId());  // Return the list of tournaments the user is participating in
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser) {
         return userRepository.findById(id)
@@ -242,7 +316,4 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                     return userRepository.save(user);  // Save and return updated user
                 });
     }
-
-    
-
 }
