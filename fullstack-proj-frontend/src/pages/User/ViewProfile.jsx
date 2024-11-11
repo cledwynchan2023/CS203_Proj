@@ -141,8 +141,8 @@ const getEloChangesFromEachTournament = () => {
       case 'Stats':
         return <>
         <section className="section animate__animated animate__fadeInUpBig" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0", gap:"0"}}>
-            <div style={{width:"100%", display:"flex", marginBottom:"100px", flexWrap:'wrap'}}>
-            <div style={{width:"50%",minWidth:"400px", display:"flex", gap:"5%", justifyContent:"space-between", flexWrap:"wrap", marginBottom:"40px"}}>
+            <div style={{width:"100%", display:"flex", marginBottom:"100px", flexWrap:'wrap', justifyContent:"center", minWidth:""}}>
+            <div style={{width:"50%",minWidth:"400px", display:"flex", gap:"5%", justifyContent:"center", flexWrap:"wrap", marginBottom:"40px"}}>
                 <div style={{width:"45%"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}> Matches Played:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}> {getTotalMatchesPlayed()} Matches</p>
@@ -162,8 +162,8 @@ const getEloChangesFromEachTournament = () => {
 
                 
             </div>
-           <div style={{width:"50%", display:"flex", flexWrap:"wrap"}}>
-            <div style={{width:"50%", minWidth:"350px"}}>
+           <div style={{width:"50%", display:"flex", flexWrap:"wrap", minWidth:"400px", overflow:"hidden"}}>
+            <div style={{width:"50%", minWidth:"400px", overflow:"hidden"}}>
            <PieChart
                 series={[
                     {

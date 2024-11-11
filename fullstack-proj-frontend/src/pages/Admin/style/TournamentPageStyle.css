@@ -54,3 +54,17 @@
 body{
   background-color: black;
 }
+
+::-webkit-scrollbar {
+  width: 5px; /* Adjust the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track background transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(109, 0, 181, 0.7); /* Customize the scrollbar thumb color */
+  border-radius: 50px; /* Optional: Add rounded corners to the scrollbar thumb */
+  border: 3px solid transparent; /* Optional: Add a border to the scrollbar thumb */
+}

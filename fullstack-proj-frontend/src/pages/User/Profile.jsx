@@ -3,16 +3,8 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
-import comp1 from '/src/assets/comp1.png';
-import chessplaying1 from '/src/assets/chessplaying.webp';
 import "./style/TournamentDetailStyle.css";
 import { CgProfile } from "react-icons/cg";
-import { BiGroup } from "react-icons/bi";
-import { TiTick } from "react-icons/ti";
-import compPic from "/src/assets/comp.webp";
-import compPic2 from "/src/assets/comp2.webp";
-import compPic3 from "/src/assets/comp3.webp";
-import { ImCross } from "react-icons/im";
 import {Atom} from "react-loading-indicators"
 import {PieChart} from "@mui/x-charts"
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -22,8 +14,6 @@ export default function Profile() {
     const [isLoading, setIsLoading] = useState(false);
     const[sortedUsers, setSortedUsers]=useState([]);
     const[user,setUser]=useState([]);
-    const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
-    const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
@@ -43,7 +33,7 @@ export default function Profile() {
 
     const onSubmit= async (e)=>{
         e.preventDefault();
-        
+       console.log(editedUser);
         const userData = {
             username,
             password,
@@ -53,6 +43,7 @@ export default function Profile() {
         };
        
         try {
+            const token = localStorage.getItem('token');
             const response = await axios.put(`http://localhost:8080/u/${userId}`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -139,9 +130,9 @@ const getEloChangesFromEachTournament = () => {
       case 'Stats':
         return <>
         <section className="section animate__animated animate__fadeInUpBig" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%", margin:"0", gap:"0"}}>
-            <div style={{width:"100%", display:"flex", marginBottom:"100px", flexWrap:'wrap'}}>
-            <div style={{width:"50%",minWidth:"400px", display:"flex", gap:"5%", justifyContent:"space-between", flexWrap:"wrap", marginBottom:"40px"}}>
-                <div style={{width:"45%"}}>
+        <div style={{width:"100%", display:"flex", marginBottom:"100px", flexWrap:'wrap', justifyContent:"center", minWidth:""}}>
+        <div style={{width:"50%",minWidth:"400px", display:"flex", gap:"5%", justifyContent:"center", flexWrap:"wrap", marginBottom:"40px"}}>
+                <div style={{width:"45%", marginBottom:"20px"}}>
                 <p className="title is-family-sans-serif" style={{textAlign:"left", fontWeight:"bold"}}> Matches Played:</p>
                 <p className="subtitle is-family-sans-serif" style={{textAlign:"left",marginTop:"10px"}}> {getTotalMatchesPlayed()} Matches</p>
                 </div>
@@ -160,8 +151,8 @@ const getEloChangesFromEachTournament = () => {
 
                 
             </div>
-           <div style={{width:"50%", display:"flex", flexWrap:"wrap"}}>
-            <div style={{width:"50%", minWidth:"350px"}}>
+            <div style={{width:"50%", display:"flex", flexWrap:"wrap", minWidth:"400px", overflow:"hidden", justifyContent:"center"}}>
+            <div style={{width:"50%", minWidth:"400px", overflow:"hidden"}}>
            <PieChart
                 series={[
                     {
@@ -579,9 +570,9 @@ const getEloChangesFromEachTournament = () => {
             
         </section>
         {isEditModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card">
+              <div class="modal is-active">
+              <div class="modal-background fade-in"></div>
+              <div class="modal-card animate__animated animate__fadeInUpBig">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Edit Profile</p>
                   <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>

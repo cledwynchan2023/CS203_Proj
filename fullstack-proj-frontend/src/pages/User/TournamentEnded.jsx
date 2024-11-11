@@ -506,9 +506,9 @@ export default function TournamentEnded() {
             
             
         </section>
-        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%"}}>
 
-                <div className="tabs is-left" style={{ height:"70px"}}>
+                <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
                 <ul>
                 <li className={activeTab === 'Details' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Details')}>Details</a>

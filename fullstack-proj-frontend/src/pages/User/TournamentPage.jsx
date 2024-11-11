@@ -106,11 +106,11 @@ export default function TournamentPage() {
                             <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
                         </div>
                     ) : (
-                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
-                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
+                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
                 {tournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px", height:"20%" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -172,11 +172,11 @@ export default function TournamentPage() {
                             <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
                         </div>
                     ) : (
-                <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                 
-                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap",justifyContent:"left", gap:"5%"}}>
+                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", display:"flex", flexWrap:"wrap",justifyContent:"center", gap:"5%", height:"100%"}}>
                 {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px", height:"20%" }}>
+                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto"}}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -237,11 +237,11 @@ export default function TournamentPage() {
                             <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
                         </div>
                     ) : (
-                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                     
-                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
+                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
                     {ongoingTournaments.map((ongoingTournaments) => (
-                        <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "300px" }}>
+                        <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", marginBottom:"20px"}}>
                         <div className="card-image">
                             <figure className="image is-16by9">
                             <img
@@ -302,11 +302,11 @@ export default function TournamentPage() {
                                     <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
                                 </div>
                             ) : (
-                            <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                            <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                         
-                        <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
+                        <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%", height:"100%"}}>
                         {joinedTournaments.filter(tournament => tournament.status !== 'completed').map((tournament) => (
-                            <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"20%", width: "30%", minWidth: "300px" }}>
+                            <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"auto", width: "30%", minWidth: "350px" }}>
                             <div className="card-image">
                                 <figure className="image is-16by9">
                                 <img
@@ -368,11 +368,11 @@ export default function TournamentPage() {
                                         <p style={{fontSize:"20px"}}>No tournaments completed! Join a tournament now!</p>
                                     </div>
                                 ) : (
-                                <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"80%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                                <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                             
-                            <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%"}}>
+                            <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%", height:"100%"}}>
                             {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
-                                <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"20%",width: "30%", minWidth: "300px" }}>
+                                <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"auto",width: "30%", minWidth: "350px" }}>
                                 <div className="card-image">
                                     <figure className="image is-16by9">
                                     <img
@@ -492,17 +492,17 @@ export default function TournamentPage() {
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
-        height:"100%"
+        height:"100vh"
     }}> 
          <div className="content media-content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.7)"}}>
-            <section className=" fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center"}}>
+            <section className=" fade-in" style={{ display:"flex", justifyContent:"start", width:"100%", alignItems:"center", height:"20%", minHeight:"100px"}}>
                 <div style={{width:"100%", paddingTop:"30px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Browse Tournaments</p>
                 </div>
             </section>
             <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"80%", backgroundColor:"rgba(0, 0, 0, 0.2)", paddingBottom:"50px"}}>
             <div style={{width:"100%", height:"20px"}}></div>
-            <div className="tabs is-left" style={{ height:"70px"}}>
+            <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
               <ul>
                 <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                   <a onClick={() => setActiveTab('Overview')}>Available Tournaments</a>
@@ -521,7 +521,7 @@ export default function TournamentPage() {
                 </li>
               </ul>
             </div>
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", minHeight:"400px"}}>
               {renderTabContent()}
             </div>
           </section>
@@ -529,7 +529,7 @@ export default function TournamentPage() {
             
          </div>
     </div>
-    <footer className="footer" style={{textAlign:"center", height:"100px",width:"100%"}}>
+    <footer className="footer" style={{textAlign:"center", height:"90%",width:"100%"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 	</footer>
     </>
