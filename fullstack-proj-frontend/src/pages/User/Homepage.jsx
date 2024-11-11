@@ -8,7 +8,6 @@ import liang from '/src/assets/liang.png';
 import europe from '/src/assets/europe.jpg';
 import "./style/Homepage.css";
 export default function Homepage() {
-    const navigate = useNavigate();
     
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
@@ -36,15 +35,6 @@ export default function Homepage() {
                 return false;
             }
           
-        } catch (error) {
-            return false;
-        }
-    };
-    const isUserToken = (token) => {
-        try {
-            const decodedToken = jwtDecode(token);
-           
-            return decodedToken.authorities === 'ROLE_USER'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
         }
@@ -112,14 +102,14 @@ export default function Homepage() {
                 <div className="section" style={{width:"100%", display:"flex", justifyContent:"center", flexWrap:"wrap", gap:"20px"}}>
                 <a href={`/user/${userId}/tournament`} className="card custom-card" style={{width:"30%", minWidth:"400px", height:"200px"}}>
                    
-                    <div class="card-content">
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Find Tournament</p>
+                    <div className="card-content">
+                        <div className="media">
+                        <div className="media-content">
+                            <p className="title is-4">Find Tournament</p>
                         </div>
                         </div>
 
-                        <div class="content" style={{fontSize:"1.2rem"}}>
+                        <div className="content" style={{fontSize:"1.2rem"}}>
                             Click here to browse available tournaments and join the one that suits your skill level and schedule.
                         <br />
                         </div>
@@ -128,13 +118,13 @@ export default function Homepage() {
               
                     <a href={`/user/${userId}/ranking`} className="card custom-card" style={{width:"30%", minWidth:"400px", height:"200px", padding:"25px"}}>
                    
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Leaderboard</p>
+                        <div className="media">
+                        <div className="media-content">
+                            <p className="title is-4">Leaderboard</p>
                         </div>
                         </div>
 
-                        <div class="content" style={{fontSize:"1.2rem"}}>
+                        <div className="content" style={{fontSize:"1.2rem"}}>
                         Click here to view the leaderboard and see how you stack up against other players.
                         <br />
                         </div>
@@ -142,7 +132,7 @@ export default function Homepage() {
                     </a>
         
                     <a href={`/user/${userId}/profile`} className="card custom-card" style={{width:"30%", minWidth:"400px", height:"200px"}}>
-                    <div class="card-image">
+                    <div className="card-image">
                         {/* <figure class="image is-4by3">
                         <img
                             
@@ -150,14 +140,14 @@ export default function Homepage() {
                         />
                         </figure> */}
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">My Stats</p>
+                    <div className="card-content">
+                        <div className="media">
+                        <div className="media-content">
+                            <p className="title is-4">My Stats</p>
                         </div>
                         </div>
 
-                        <div class="content" style={{fontSize:"1.2rem"}}>
+                        <div className="content" style={{fontSize:"1.2rem"}}>
                         Click here to view your personal stats and track your progress over time.
                         </div>
                     </div>

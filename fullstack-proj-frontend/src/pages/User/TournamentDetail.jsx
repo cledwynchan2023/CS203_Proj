@@ -18,26 +18,16 @@ import SockJS from 'sockjs-client';
 
 
 export default function TournamentDetail() {
-    const [connectionStatus, setConnectionStatus] = useState("Connecting...");
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const[user,setUser]=useState(null);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
-    const [data, setData] = useState(null);
-    const [error, setError] = useState(null);
     const {userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
-    const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [hasJoined, setHasJoined] = useState(false); 
-    const onInputChange=(e)=>{
-        setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
-        
-    }
-
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -51,23 +41,23 @@ export default function TournamentDetail() {
         ): (
             <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", height:"600px"}}>
             <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
-                <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
-                    <div class="card-image">
-                        <figure class="image is-4by3">
+                <div className="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                    <div className="card-image">
+                        <figure className="image is-4by3">
                         <img
                             src={chessplaying1}
                             alt="Placeholder image"
                         />
                         </figure>
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                            <div class="media-content">
-                                <p class="title is-4">Game of Chess</p>
+                    <div className="card-content">
+                        <div className="media">
+                            <div className="media-content">
+                                <p className="title is-4">Game of Chess</p>
                             </div>
                         </div>
 
-                        <div class="content">
+                        <div className="content">
                         Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
                         <br />
                         </div>
@@ -76,7 +66,7 @@ export default function TournamentDetail() {
 
                 <div style={{width:"50%", minWidth:"300px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%", backgroundColor:"", alignContent:"center"}}>
                     <div style={{width:"100%", height:"50px", textAlign:"center"}}>
-                        <p class="title is-4" >Tournament Details</p>
+                        <p className="title is-4" >Tournament Details</p>
                     </div>
                     <div className="card" style={{width:"45%", minWidth:"250px", height:"150px"}} onClick={() => setIsModalOpen(true)} >
                         <div className="card-content" style={{width:"100%", height:"100%"}}>
@@ -232,14 +222,6 @@ export default function TournamentDetail() {
        
     };
 
-    const checkJoinedTournament = () => {
-        for (let i = 0; i < user.length; i++){
-            if (user[i].id == userId){
-                return true;
-            }
-        }
-        return false;
-    }
 
     const checkJoinedTournamentFirst = (users) => {
         for (let i = 0; i < users.length; i++){
@@ -402,7 +384,6 @@ export default function TournamentDetail() {
                 } else {
                     setIsLoading(false);
                     console.log(error);
-                    setError('An error occurred while fetching data.');
                 }
             }
         };
@@ -455,7 +436,7 @@ export default function TournamentDetail() {
             </div>
             <div style={{width:"90%", alignContent:"center"}}>
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
+                <p className="subtitle">ID: {tournament.id}</p>
             </div>
         </div>
             <div style={{display:"flex", alignItems:"center", width:"30%",paddingleft:"10px", gap:"10px", justifyContent:"center", minWidth:"320px"}}>
@@ -515,10 +496,10 @@ export default function TournamentDetail() {
                     </div>
                
                </section>
-               <footer class="modal-card-foot">
-                 <div class="buttons">
+               <footer className="modal-card-foot">
+                 <div className="buttons">
                    
-                   <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                   <button className="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                  </div>
                </footer>
              </div>

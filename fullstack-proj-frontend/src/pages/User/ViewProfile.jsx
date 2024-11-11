@@ -3,16 +3,9 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
-import comp1 from '/src/assets/comp1.png';
-import chessplaying1 from '/src/assets/chessplaying.webp';
+
 import "./style/TournamentDetailStyle.css";
 import { CgProfile } from "react-icons/cg";
-import { BiGroup } from "react-icons/bi";
-import { TiTick } from "react-icons/ti";
-import compPic from "/src/assets/comp.webp";
-import compPic2 from "/src/assets/comp2.webp";
-import compPic3 from "/src/assets/comp3.webp";
-import { ImCross } from "react-icons/im";
 import {Atom} from "react-loading-indicators"
 import {PieChart} from "@mui/x-charts"
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -20,9 +13,8 @@ import { LineChart } from '@mui/x-charts/LineChart';
 export default function ViewProfile() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const[sortedUsers, setSortedUsers]=useState([]);
     const[user,setUser]=useState([]);
-    const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
+   
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
@@ -31,48 +23,12 @@ export default function ViewProfile() {
     const [joinedTournaments, setJoinedTournaments] = useState([]);
     const [startTournaments, setStartTournaments] = useState([]);
     const [activeTab, setActiveTab] = useState('Stats');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedUser,setEditedUser] = useState({username:"", password:"", email:"", role:"ROLE_USER", confirmPassword:"", elo:""});
     const {username, password, email, role, confirmPassword, elo} = editedUser;
     const [ranking, setRanking] = useState([]); 
-    const onInputChange=(e)=>{
-        setEditedUser({...editedUser, [e.target.name]:e.target.value});
-        
-    }
+ 
 
-
-    const onSubmit= async (e)=>{
-        e.preventDefault();
-        
-        const userData = {
-            username,
-            password,
-            email,
-            role,
-            elo
-        };
-       
-        try {
-            const response = await axios.put(`http://localhost:8080/u/${playerId}`, userData, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 200){
-                alert("User Edited Successfully");
-                setIsEditModalOpen(false);
-                loadUser();
-            }
-            
-
-            
-        } catch (error) {
-            console.error("There was an error registering the tournament!", error);
-        }
-        
-    }
+   
 const handleRowClick = (tournament) => {
 
 }
@@ -551,8 +507,8 @@ const getEloChangesFromEachTournament = () => {
             </div>
             <div style={{width:"90%", alignContent:"center"}}>
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{user.username}</p>
-                <p class="subtitle">ID: {user.id}</p>
-                <p class="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
+                <p className="subtitle">ID: {user.id}</p>
+                <p className="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
             </div>
            
             

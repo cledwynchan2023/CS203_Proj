@@ -21,8 +21,6 @@ export default function TournamentPage() {
     const[tournament,setTournament]=useState([]);
     const[pastTournament, setPastTournament]=useState([]);
     const[ongoingTournaments, setOngoingTournaments]=useState([]);
-    const [data, setData] = useState('');
-    const [error, setError] = useState(null);
     const { userId } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isLoading, setIsLoading] = useState(true);
@@ -145,12 +143,7 @@ export default function TournamentPage() {
                                 {tournament.status}
                             </p>
                             </div>
-                            <div>
-                            {/* <button className="button is-link is-rounded" onClick={(event) => {
-                                join(tournament.id);
-                                event.stopPropagation(); // Prevent the click event from bubbling up to the card
-                            }}>Join Tournament</button> */}
-                            </div>
+                            
                         </div>
                     </div>
                     </a>
@@ -212,10 +205,6 @@ export default function TournamentPage() {
                             </p>
                             </div>
                             <div>
-                            {/* <button className="button is-link is-rounded" onClick={(event) => {
-                                join(tournament.id);
-                                event.stopPropagation(); // Prevent the click event from bubbling up to the card
-                            }}>Join Tournament</button> */}
                             </div>
                         </div>
                     </div>
@@ -277,10 +266,6 @@ export default function TournamentPage() {
                                 </p>
                                 </div>
                                 <div>
-                                {/* <button className="button is-link is-rounded" onClick={(event) => {
-                                    join(tournament.id);
-                                    event.stopPropagation(); // Prevent the click event from bubbling up to the card
-                                }}>Join Tournament</button> */}
                                 </div>
                             </div>
                         </div>
@@ -408,10 +393,7 @@ export default function TournamentPage() {
                                         </p>
                                         </div>
                                         <div>
-                                        {/* <button className="button is-link is-rounded" onClick={(event) => {
-                                            join(tournament.id);
-                                            event.stopPropagation(); // Prevent the click event from bubbling up to the card
-                                        }}>Join Tournament</button> */}
+                                
                                         </div>
                                     </div>
                                 </div>
@@ -452,9 +434,7 @@ export default function TournamentPage() {
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1000);
-                } else {
-                    setError('An error occurred while fetching data.');
-                }
+                } 
             }
         };
 

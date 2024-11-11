@@ -9,22 +9,13 @@ import chessplaying1 from '/src/assets/chessplaying.webp';
 export default function TournamentEnded() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
-    const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
-    const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
-    const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
-    const {tournament_name, date, status, size, noOfRounds} = editedTournament;
-    const [isStart, setIsStart] = useState(1);
     const [scoreboard,setScoreboard]=useState(new Map());
     const [userPairings, setUserPairings] = useState([]);    
-    const onInputChange=(e)=>{
-        setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
-        
-    }
     const [tournamentRound, setTournamentRound] = useState(1);  
     const[pairing, setPairing] = useState([]);
     const[round, setRound] = useState([]);  
@@ -105,7 +96,7 @@ export default function TournamentEnded() {
                 <div style={{width:"100%", height:"50px"}}>
                     <p className="title is-2">Round {currentRound}</p>
                 </div>
-                <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
+                <nav className="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
                     <a
                         className={`pagination-previous ${currentRound === 1 ? 'is-disabled' : ''}`}
                         title="Previous Round"
@@ -116,27 +107,27 @@ export default function TournamentEnded() {
                     <a  className={`pagination-previous ${currentRound === tournamentRound ? 'is-disabled' : ''}`}
                         title="Next Round"
                         onClick={() => currentRound >= 1 && handlePageClick(currentRound + 1)}>Next round</a>
-                    <ul class="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
+                    <ul className="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
                         {renderPagination()}
                     </ul>
                 </nav>
                 {user.filter(user => user.id - userId == 0).map( user =>(
-            <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
+            <div className="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
                     <div style={{textAlign:"center"}}> 
-                        <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
+                        <p className="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
                     </div>
-                <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
+                <div className="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
                     
-                    <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                        <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
-                        <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
+                    <div className="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                        <p className="subtitle" style={{fontSize:"1rem"}}>{userPairings.player1}</p>
+                        <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                     </div>
                     <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                        <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
+                        <p className="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                     </div>
-                    <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                        <p class="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
-                        <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
+                    <div className="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                        <p className="subtitle" style={{fontSize:"1rem"}}>{userPairings.player2}</p>
+                        <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
                     </div>
                 </div>
             </div>
@@ -164,19 +155,19 @@ export default function TournamentEnded() {
                     };
                     
                     return (
-                <div class="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
-                    <div class="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
+                <div className="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                    <div className="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
                         <div style={{width:"80%", display:'flex', minWidth:"300px", justifyContent:"center", backgroundColor:""}}>
-                            <div class="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
+                            <div className="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
+                                <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
                             </div>
                             <div style={{width:"30%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                             </div>
-                            <div class="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
+                            <div className="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
+                                <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
                             </div>
                         </div>
                         
@@ -190,23 +181,23 @@ export default function TournamentEnded() {
     case 'Details':
         return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", height:"600px"}}>
         <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
-            <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
-                <div class="card-image">
-                    <figure class="image is-4by3">
+            <div className="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                <div className="card-image">
+                    <figure className="image is-4by3">
                     <img
                         src={chessplaying1}
                         alt="Placeholder image"
                     />
                     </figure>
                 </div>
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Game of Chess</p>
+                <div className="card-content">
+                    <div className="media">
+                        <div className="media-content">
+                            <p className="title is-4">Game of Chess</p>
                         </div>
                     </div>
 
-                    <div class="content">
+                    <div className="content">
                     Goal is to checkmate the opponent’s king. Players control 16 pieces each, including pawns, rooks, knights, bishops, a queen, and a king.
                     <br />
                     </div>
@@ -215,13 +206,13 @@ export default function TournamentEnded() {
 
             <div style={{width:"50%", minWidth:"300px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%", backgroundColor:"", alignContent:"center"}}>
                 <div style={{width:"100%", height:"50px", textAlign:"center"}}>
-                    <p class="title is-4" >Tournament Details</p>
+                    <p className="title is-4" >Tournament Details</p>
                 </div>
-                <div class="card" style={{width:"95%",height:"100px", minWidth:"250px", backgroundColor:"gold"}}>
-                        <div class="card-content">
-                            <div class="content">
-                                <p class="subtitle" style={{fontSize:"1rem"}}>Winner</p>
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{user.length > 0 && scoreboard.size > 0 ? (() => {
+                <div className="card" style={{width:"95%",height:"100px", minWidth:"250px", backgroundColor:"gold"}}>
+                        <div className="card-content">
+                            <div className="content">
+                                <p className="subtitle" style={{fontSize:"1rem"}}>Winner</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{user.length > 0 && scoreboard.size > 0 ? (() => {
                                        const entriesArray = Array.from(scoreboard.entries());
                                        const lastEntry = entriesArray[entriesArray.length - 1];
                                        const [lastKey, lastValue] = lastEntry;
@@ -232,35 +223,35 @@ export default function TournamentEnded() {
                             </div>
                         </div>
                 </div>
-                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
-                    <div class="card-content">
-                        <div class="content">
-                            <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
-                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
+                <div className="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div className="card-content">
+                        <div className="content">
+                            <p className="subtitle" style={{fontSize:"1rem"}}>Format</p>
+                            <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>Swiss</p>
                         </div>
                     </div>
                 </div>
-                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
-                    <div class="card-content">
-                        <div class="content">
-                            <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
-                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                <div className="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div className="card-content">
+                        <div className="content">
+                            <p className="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                            <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
                         </div>
                     </div>
                 </div>
-                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
-                    <div class="card-content">
-                        <div class="content">
-                            <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
-                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
+                <div className="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div className="card-content">
+                        <div className="content">
+                            <p className="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
+                            <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.currentSize}/{tournament.size}</p>
                         </div>
                     </div>
                 </div>
-                <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
-                    <div class="card-content">
-                        <div class="content">
-                            <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
-                            <p class="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
+                <div className="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
+                    <div className="card-content">
+                        <div className="content">
+                            <p className="subtitle" style={{fontSize:"1rem"}}>Status</p>
+                            <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.status}</p>
                         </div>
                     </div>
                 </div>
@@ -349,53 +340,6 @@ export default function TournamentEnded() {
         }
         return null;
     };
-    // const loadTournament= async()=>{
-    //     const token = localStorage.getItem('token');
-    //     const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         }
-    //     });
-
-    //     const resultName = result.data.tournamentName;
-       
-    
-    //     setTournament(result.data);
-
-    //     setTournamentRound(result.data.currentRound);
-    //     setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
-    //     setRound(result.data.rounds[result.data.currentRound-1]);
-    //     setCurrentRound(result.data.currentRound);
-    //     setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
-
-    //     setPairing(result.data.rounds[result.data.currentRound-1].matchList);
-    //     setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
-    //     loadNonParticipatingUsers();
-    //     setUser(result.data.participants);
-
-    //     if (result.data.status == 'completed') {
-    //         alert("Tournament has ended");
-    //         navigate(`/user/${userId}/tournament/${id}/completed`);
-
-    //     }
-        
-        
-    // };
-
-
-
-    const loadNonParticipatingUsers = async () => {
-        const token = localStorage.getItem('token');
-
-        const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        setNonParticipatingUser(response.data);
-    };
-
-
 
     const isTokenExpired = () => {
         const expiryTime = localStorage.getItem('tokenExpiry');
@@ -471,8 +415,6 @@ export default function TournamentEnded() {
         };
 
         fetchData();
-        
-        loadNonParticipatingUsers();
 
 
     }, []);
@@ -500,7 +442,7 @@ export default function TournamentEnded() {
                 </div>
                 <div style={{width:"100%", alignContent:"center"}}>
                     <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                    <p class="subtitle">ID: {tournament.id}</p>
+                    <p className="subtitle">ID: {tournament.id}</p>
                 </div>
             </div>
             

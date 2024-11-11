@@ -13,55 +13,24 @@ import SockJS from 'sockjs-client';
 export default function TournamentStart() {
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
-    const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [isStart, setIsStart] = useState(1);
     const [scoreboard,setScoreboard]=useState(new Map());
     const [userPairings, setUserPairings] = useState([]);    
-    const [connectionStatus, setConnectionStatus] = useState("Connecting...");
-    const onInputChange=(e)=>{
-        setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
-        
-    }
     const [tournamentRound, setTournamentRound] = useState(1);  
     const[pairing, setPairing] = useState([]);
     const[round, setRound] = useState([]);  
     const [currentRound, setCurrentRound] = useState(tournamentRound);
     const [disabledButtons, setDisabledButtons] = useState({});
-    const [noOfMatches, setNoOfMatches] = useState(1);
-    const onSubmit= async (e)=>{
-        e.preventDefault();
-
-        const tournamentData = {
-            tournament_name,
-            date,
-            status,
-            size,
-            noOfRounds
-        };
-
-        try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
-            if (response.status === 200){
-                alert("Tournament Edited Successfully");
-                setIsEditModalOpen(false);
-                loadTournament();
-            }
-            
-        } catch (error) {
-            console.error("There was an error registering the tournament!", error);
-        }
-        
-    }
+    
+   
     const handlePageClick = (round) => {
 
         if (round > tournamentRound){
@@ -102,16 +71,6 @@ export default function TournamentStart() {
         return pages;
     };
 
-    const getIsCompleted = async (currentRound) => {
-        const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return result.data.rounds[currentRound - 1].isCompleted;
-    }
-
 
     const getUsername = (selectedId) => {
         for (let i = 0; i < user.length; i++) {
@@ -144,7 +103,7 @@ export default function TournamentStart() {
                     <div style={{width:"100%", height:"50px"}}>
                         <p className="title is-2">Round {currentRound}</p>
                     </div>
-                    <nav class="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
+                    <nav className="pagination" role="navigation" aria-label="pagination" style={{display:"flex",alignItems:"center", height:"auto", width:"100%", marginTop:"20px"}}>
                         <a
                             className={`pagination-previous ${currentRound === 1 ? 'is-disabled' : ''}`}
                             title="Previous Round"
@@ -155,33 +114,33 @@ export default function TournamentStart() {
                         <a  className={`pagination-previous ${currentRound === tournamentRound ? 'is-disabled' : ''}`}
                             title="Next Round"
                             onClick={() => currentRound >= 1 && handlePageClick(currentRound + 1)}>Next round</a>
-                        <ul class="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
+                        <ul className="pagination-list" style={{height:"auto", marginBottom:"10px", marginLeft:"0"}}>
                             {renderPagination()}
                         </ul>
                     </nav>
                     {user.filter(user => user.id - userId == 0).map( user =>(
-                    <div class="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
+                    <div className="card" style={{width:"100%", minWidth:"400px",height:"300px", marginBottom:"50px", border:"5px solid purple"}}>
                             <div style={{textAlign:"center"}}> 
-                                <p class="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
+                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold", width:"100%", paddingTop:"10px"}}>Your Match</p>
                             </div>
-                        <div class="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
+                        <div className="card-content" style={{display:"flex",alignItems:"center",justifyContent:"center",overflowY:"hidden", overflowX:"scroll", height:"100%", width:"100%",gap:"5%"}}>
                             
-                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + userPairings.player1}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
+                            <div className="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>{"Id: " + userPairings.player1}</p>
+                                <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player1 - userId == 0 ? 'You' : getUsername(userPairings.player1)}</p>
                             </div>
                             <div style={{width:"15%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                <p class="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
+                                <p className="title" style={{fontSize:"2.5rem", fontWeight:"bold",textAlign:"center", whiteSpace:"nowrap"}}>VS</p>
                             </div>
-                            <div class="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
-                                <p class="subtitle" style={{fontSize:"1rem"}}>{"Id "+ userPairings.player2}</p>
-                                <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
+                            <div className="content" style={{margin:"0",width:"25%", textAlign:"center", height:"100px"}}>
+                                <p className="subtitle" style={{fontSize:"1rem"}}>{"Id "+ userPairings.player2}</p>
+                                <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{userPairings.player2 - userId == 0 ? 'You' : getUsername(userPairings.player2)}</p>
                             </div>
                         </div>
                     </div>
                     ))}
                     <div>
-                        <p class="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
+                        <p className="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
                     </div>
                     {pairing.map((pair, index) => {
                         const backgroundColor = index % 2 === 0 ? '#252525' : '#212121'; // Alternate colors
@@ -219,26 +178,26 @@ export default function TournamentStart() {
                         };
                         return (
                             
-                            <div class="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                            <div className="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
                        
-                       <div class="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
+                       <div className="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
                             <div style={{width:"80%", display:'flex', minWidth:"300px", justifyContent:"center", backgroundColor:""}}>
-                                <div class="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
-                                    <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
-                                    <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
+                                <div className="content" style={{width:"35%", textAlign:"center",height:"100%", ...getBorderStyle(1)}}>
+                                    <p className="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player1}</p>
+                                    <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player1)}</p>
                                 </div>
                                 <div style={{width:"30%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                                    <p class="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
+                                    <p className="title" style={{fontSize:"2rem", fontWeight:"bold",textAlign:"center"}}>VS</p>
                                 </div>
-                                <div class="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
-                                    <p class="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
-                                    <p class="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
+                                <div className="content" style={{width:"35%", textAlign:"center", height:"100%", ...getBorderStyle(2)}}>
+                                    <p className="subtitle" style={{fontSize:"1rem"}}>{"Id: " + pair.player2}</p>
+                                    <p className="title" style={{fontSize:"1.8rem", fontWeight:"bold"}}>{getUsername(pair.player2)}</p>
                                 </div>
                                
                             </div>
-                            <div class="content" style={{backgroundColor:"", width:"20%", justifyContent:"center", display:"flex", alignItems:"center", gap:"3%", minWidth:"300px", marginTop:"20px"}}>
+                            <div className="content" style={{backgroundColor:"", width:"20%", justifyContent:"center", display:"flex", alignItems:"center", gap:"3%", minWidth:"300px", marginTop:"20px"}}>
                                 <div style={{height:"100%", margin:"0", width:"200px", textAlign:'center' }}>
-                                    <p class="subtitle">Status: {getStatus(matchResult)}</p>
+                                    <p className="subtitle">Status: {getStatus(matchResult)}</p>
                                 </div>
                             </div>
                         </div>
@@ -498,7 +457,7 @@ export default function TournamentStart() {
                 </div>
                 <div style={{width:"80%", alignContent:"center", display:"flex", flexWrap:"wrap", paddingLeft:"20px", minWidth:"300px"}}>
                     <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                    <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
+                    <p className="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
                 </div>
             </div>
             

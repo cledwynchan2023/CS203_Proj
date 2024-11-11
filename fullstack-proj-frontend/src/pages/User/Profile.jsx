@@ -12,13 +12,11 @@ import { LineChart } from '@mui/x-charts/LineChart';
 export default function Profile() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const[sortedUsers, setSortedUsers]=useState([]);
     const[user,setUser]=useState([]);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const{userId} = useParams()
     const [joinedTournaments, setJoinedTournaments] = useState([]);
-    const [startTournaments, setStartTournaments] = useState([]);
     const [activeTab, setActiveTab] = useState('Stats');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -276,7 +274,6 @@ const getEloChangesFromEachTournament = () => {
             }
         });
         
-        setSortedUsers(response2.data);
         setRanking(findRanking(response2.data));
         
      
@@ -558,8 +555,8 @@ const getEloChangesFromEachTournament = () => {
                 </div>
                 <div style={{width:"80%", alignContent:"center"}}>
                     <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{user.username}</p>
-                    <p class="subtitle">ID: {user.id}</p>
-                    <p class="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
+                    <p className="subtitle">ID: {user.id}</p>
+                    <p className="subtitle" style={{marginTop:"-10px"}}>Elo: {user.elo}, Ranking: {ranking} </p>
                 </div>
             </div>
             <div style={{display:"flex", alignItems:"center", width:"50%",paddingleft:"10px", gap:"10px", justifyContent:"center", minWidth:"320px"}}>
@@ -570,14 +567,14 @@ const getEloChangesFromEachTournament = () => {
             
         </section>
         {isEditModalOpen && (
-              <div class="modal is-active">
-              <div class="modal-background fade-in"></div>
-              <div class="modal-card animate__animated animate__fadeInUpBig">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Edit Profile</p>
-                  <button class="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
+              <div className="modal is-active">
+              <div className="modal-background fade-in"></div>
+              <div className="modal-card animate__animated animate__fadeInUpBig">
+                <header className="modal-card-head">
+                  <p className="modal-card-title">Edit Profile</p>
+                  <button className="delete"  onClick={() => setIsEditModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"400px"}}>
+                <section className="modal-card-body" style={{height:"400px"}}>
                
                     <form onSubmit={(e) => onSubmit(e)}>
                         <div className="form-floating mb-3">
@@ -636,10 +633,10 @@ const getEloChangesFromEachTournament = () => {
                     </form>
             
                 </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
+                <footer className="modal-card-foot">
+                  <div className="buttons">
                     
-                    <button class="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+                    <button className="button" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
               </div>

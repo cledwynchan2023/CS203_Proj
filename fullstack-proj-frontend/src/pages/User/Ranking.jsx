@@ -3,23 +3,14 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
-import comp1 from '/src/assets/comp1.png';
-import chessplaying1 from '/src/assets/chessplaying.webp';
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { BiGroup } from "react-icons/bi";
-import { TiTick } from "react-icons/ti";
-import { IoMdInformationCircleOutline } from "react-icons/io";
-import swissPic from '/src/assets/swiss.png';
 import { CgProfile } from "react-icons/cg";
 
 export default function Ranking() {
     const navigate = useNavigate();
-    const [selectedId, setSelectedId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const[user,setUser]=useState([]);
     const {userId} = useParams()
     const[selectedUser,setSelectedUser]=useState([]);
-    const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('Global');
     const[ranking , setRanking]=useState([]);
     const isTokenExpired = () => {
@@ -90,14 +81,14 @@ export default function Ranking() {
             </table>
         </section>
         {isModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card animate__animated animate__fadeInDown">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">{selectedUser.username}</p>
-                  <button class="delete" onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+              <div className="modal is-active fade-in">
+              <div className="modal-background"></div>
+              <div className="modal-card animate__animated animate__fadeInDown">
+                <header className="modal-card-head">
+                  <p className="modal-card-title">{selectedUser.username}</p>
+                  <button className="delete" onClick={() => setIsModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"250px"}}>
+                <section className="modal-card-body" style={{height:"250px"}}>
                     <div style={{width:"100%"}}>
                         <div style={{display:"flex", alignItems:"center", height:"100%"}}>
                             <CgProfile style={{fontSize:"170px", color:"white"}}/>
@@ -112,10 +103,10 @@ export default function Ranking() {
                     </div>
             
                 </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
+                <footer className="modal-card-foot">
+                  <div className="buttons">
                     
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                    <button className="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
               </div>
@@ -173,9 +164,7 @@ export default function Ranking() {
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
-                } else {
-                    setError('An error occurred while fetching data.');
-                }
+                } 
             }
         };
 
