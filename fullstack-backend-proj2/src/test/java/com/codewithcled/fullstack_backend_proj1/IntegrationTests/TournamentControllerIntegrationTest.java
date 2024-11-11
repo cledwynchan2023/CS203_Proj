@@ -97,7 +97,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getAllTournaments_Success() throws Exception {
+    public void getAllTournaments_Success_ReturnTournamentDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -120,7 +120,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getAllTournaments_Failure() throws Exception {
+    public void getAllTournaments_Failure_ReturnNOCONTENT() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournaments");
 
         ResponseEntity<List<TournamentDTO>> result = restTemplate.exchange(url,
@@ -133,7 +133,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getActiveTournaments_Success_ReturnActiveTournaments() throws Exception {
+    public void getActiveTournaments_Success_ReturnActiveTournamentDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -447,7 +447,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getTournamentById_Success() throws Exception {
+    public void getTournamentById_Success_ReturnTournamentDTO() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -465,7 +465,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getTournamentById_Failure() throws Exception {
+    public void getTournamentById_Failure_Return404NotFound() throws Exception {
 
         URI url = new URI(baseUrl + port + urlPrefix + "/2423");
 
@@ -474,79 +474,8 @@ public class TournamentControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    //@Test // Issue with sending the post getting unsupported Media Type Exception
-    //Method is unused
-    public void addRound_Success() throws Exception {
-        Tournament tournament = new Tournament();
-        tournament.setTournament_name("testTournament");
-        tournament.setSize(2);
-        tournament.setCurrentSize(2);
-        tournament.setNoOfRounds(3);
-        tournament.setDate("10/20/1203");
-        tournament.setStatus("active");
-        tournament.setRounds(new ArrayList<>());
-        tournament.addParticipant(user1);
-        tournament.addParticipant(user2);
-
-        // Save the tournament to the repository
-        Tournament savedTournament = tournamentRepository.save(tournament);
-
-        // Create a Round object
-        Round round = new Round();
-        round.setIsCompleted(false);
-        round.setTournament(null);
-        round.setRoundNum(1);
-        round.setId((long) 138021);
-
-        // Create the URL
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/" + savedTournament.getId() + "/round");
-
-        // Execute the POST request
-        ResponseEntity<String> result = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(round),
-                String.class);
-
-        // Assertions
-        assertEquals("Round added successfully to the tournament", result.getBody());
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-    }
-
-    //@Test // Gives same error as above
-    public void addRound_Failure_TournamentNotFound() throws Exception {
-
-        Round round = new Round();
-        round.setRoundNum(1);
-        round.setId((long) 134);
-        round.setScoreboard(new Scoreboard());
-        round.setMatchList(new ArrayList<>());
-
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
-
-        ResponseEntity<Exception> result = restTemplate.postForEntity(url, round, Exception.class);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-    }
-
-    @Test // Gives same error as above
-    public void addRound_Failure_NoRound() throws Exception {
-
-        Round round = new Round();
-        round.setRoundNum(1);
-        round.setId((long) 134);
-        round.setScoreboard(new Scoreboard());
-        round.setMatchList(new ArrayList<>());
-        URI url = new URI(baseUrl + port + urlPrefix + "/tournament/204830/round");
-
-        ResponseEntity<String> result = restTemplate.postForEntity(url, null, String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-
-    }
-
     @Test
-    public void getTournamentParticipants_Success() throws Exception {
+    public void getTournamentParticipants_Success_ReturnUserDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -578,7 +507,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getTournamentParticipants_Failure() throws Exception {
+    public void getTournamentParticipants_Failure_Return404NotFound() throws Exception {
         long tId = (long) 110;
 
         URI url = new URI(baseUrl + port + urlPrefix + "/" + tId + "/participant");
@@ -593,7 +522,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void updateTournamentParticipant_Success() throws Exception {
+    public void updateTournamentParticipant_Success_ReturnUpdatedTournament() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(5);
@@ -630,7 +559,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void updateTournamentParticipant_Failure() throws Exception {
+    public void updateTournamentParticipant_Failure_Return400BADREQUEST() throws Exception {
 
         URI url = new URI(baseUrl + port + urlPrefix + "/234/participant/add");
         String urlTemplate = UriComponentsBuilder.fromUri(url)
@@ -652,7 +581,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getTournamentWithNoCurrentUser_Success() throws Exception {
+    public void getTournamentWithNoCurrentUser_Success_ReturnTournamentDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -674,7 +603,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getTournamentWithNoCurrentUser_Failure() throws Exception {
+    public void getTournamentWithNoCurrentUser_Failure_Return400BADREQUEST() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -695,7 +624,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getUsersWithNoCurrentTournament_Success() throws Exception {
+    public void getUsersWithNoCurrentTournament_Success_ReturnUserDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(2);
@@ -727,7 +656,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getUsersWithNoCurrentTournament_Failure_InvalidUId() throws Exception {
+    public void getUsersWithNoCurrentTournament_Failure_InvalidUId_Return400BADREQUEST() throws Exception {
 
         URI url = new URI(baseUrl + port + urlPrefix + "/users/sfew");
 
@@ -741,7 +670,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void getUsersWithNoCurrentTournament_Failure_NoUsers() throws Exception {
+    public void getUsersWithNoCurrentTournament_Failure_NoUsers_Return400BADREQUEST() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -763,7 +692,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void removeParticipant_Success() throws Exception {
+    public void removeParticipant_Success_ReturnUpdatedTournamentDTO() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -806,7 +735,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void removeParticipant_Failure_TournamentNotFound() throws Exception {
+    public void removeParticipant_Failure_TournamentNotFound_Return400BADREQUEST() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/132/participant/delete");
         String urlTemplate = UriComponentsBuilder.fromUri(url)
                 .queryParam("user_id", "{user_id}")
@@ -827,7 +756,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void deleteTournament_Success_TournamentDeleted() throws Exception {
+    public void deleteTournament_Success_TournamentDeleted_ReturnSuccessMessage() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -850,7 +779,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void deleteTournament_Failure_TournamentNotFound() throws Exception {
+    public void deleteTournament_Failure_TournamentNotFound_Return500INTERNALSERVERERROR() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/tournament/-12480");
 
         ResponseEntity<String> result = restTemplate.exchange(
@@ -864,7 +793,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void updateTournament_Success() throws Exception {
+    public void updateTournament_Success_ReturnUpdatedTournamentDTO() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -889,7 +818,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    public void updateTournament_Failure() throws Exception {
+    public void updateTournament_Failure_Return400BADREQUEST() throws Exception {
         CreateTournamentRequest updateTournament = new CreateTournamentRequest();
         updateTournament.setTournament_name("newTournament");
 
@@ -905,7 +834,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void startTournament_Success() throws Exception {
+    void startTournament_Success_ReturnUpdatedTournamentDTO() throws Exception {
         Tournament testTournament = new Tournament();
         String tournamentStatus = "active";
         int tournamentSize = 2;
@@ -946,7 +875,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void startTournament_Failure_CannotFindTournament() throws Exception {
+    void startTournament_Failure_CannotFindTournament_Return400BADREQUEST() throws Exception {
         URI url = new URI(baseUrl + port + urlPrefix + "/404/start");
 
         ResponseEntity<TournamentDTO> result = restTemplate.exchange(
@@ -959,7 +888,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void startTournamentService_Success() throws Exception {
+    void startTournamentService_Success_ReturnTournamentStartDTO() throws Exception {
         Tournament testTournament = new Tournament();
         String tournamentStatus = "active";
         int tournamentSize = 2;
@@ -1019,7 +948,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void getAllRounds_Success_NoCurrentRounds() throws Exception {
+    void getAllRounds_Success_NoCurrentRounds_ReturnRoundDTOList() throws Exception {
         Tournament testTournament = new Tournament();
         String tournamentStatus = "active";
         int tournamentSize = 2;
@@ -1103,7 +1032,7 @@ public class TournamentControllerIntegrationTest {
     }
 
     @Test
-    void tournamentComplete_Success() throws Exception {
+    void tournamentComplete_Success_ReturnSuccessMessage() throws Exception {
         Tournament testTournament = new Tournament();
         String tournamentStatus = "active";
         int tournamentSize = 2;

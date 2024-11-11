@@ -57,7 +57,7 @@ public class UserControllerIntegrationTest {
 
     @SuppressWarnings("null")
     @Test
-    public void getAllUsers_Success() throws Exception{
+    public void getAllUsers_Success_ReturnUserDTOList() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -90,7 +90,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserByUsername_Success() throws Exception {
+    public void getUserByUsername_Success_ReturnUserDTO() throws Exception {
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -115,7 +115,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserParticipatingTournaments_Success() throws Exception {
+    public void getUserParticipatingTournaments_Success_ReturnTournamentDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -169,7 +169,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserById_Success() throws Exception{
+    public void getUserById_Success_ReturnUserDTO() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -195,7 +195,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void deleteUser_Success() throws Exception{
+    public void deleteUser_Success_ReturnNOCONTENT() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -214,7 +214,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void deleteUser_Failure() throws Exception{
+    public void deleteUser_Failure_ReturnNOTFOUND() throws Exception{
 
         URI url = new URI(baseUrl + port + urlPrefix + "/1201382");
 
@@ -228,7 +228,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void updateUser_Success() throws Exception{
+    public void updateUser_Success_ReturnUserDTO() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -274,7 +274,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void updateUserWithoutPassword_Success() throws Exception{
+    public void updateUserWithoutPassword_Success_ReturnUpdatedUserDTO() throws Exception{
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setUsername("newUsername");
         editUserRequest.setElo((double)1500);

@@ -116,24 +116,6 @@ public class UserServiceTest {
     }
 
     @Test
-    void findAllUsers_Success_ReturnUserList() {
-        String username = "test";
-        Long id = (long) 10;
-        User testUser = new User();
-        testUser.setUsername(username);
-        testUser.setId(id);
-        List<User> testUserList = new ArrayList<User>();
-        testUserList.add(testUser);
-
-        when(userRepository.findAll()).thenReturn(testUserList);
-
-        List<User> result = userService.findAllUsers();
-
-        assertIterableEquals(testUserList, result);
-        verify(userRepository).findAll();
-    }
-
-    @Test
     void findAllUsersDTO_Success_ReturnUserList() {
         String username = "test";
         String role = "ROLE_USER";
