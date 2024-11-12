@@ -400,10 +400,10 @@ export default function TournamentDetail() {
     const sortUserElo2 = (users) => {
         if (sortButton) {
             setNonParticipatingUser(users.sort((a, b) => b.elo - a.elo));
-            
+            setSortButton(true);
         } else {
             setNonParticipatingUser(users.sort((a, b) => a.elo - b.elo));
-            
+            setSortButton(false);
         }
     }
   return (
