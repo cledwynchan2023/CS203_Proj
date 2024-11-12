@@ -7,6 +7,7 @@ import hikaru from '/src/assets/hikaru.webp';
 import liang from '/src/assets/liang.png';
 import europe from '/src/assets/europe.jpg';
 import "./style/Homepage.css";
+import chinaVindia from '/src/assets/chinaVindia.avif';
 import {Atom} from "react-loading-indicators"
 
 export default function Homepage() {
@@ -188,6 +189,8 @@ export default function Homepage() {
                         </div>
                     </div>
                 </a>
+
+                
                 </div> 
             </section>
             <div style={{paddingLeft:"5%", height:"20%", minHeight:"120px"}}>
@@ -196,7 +199,48 @@ export default function Homepage() {
             <section className="hero" style={{width:"100%", height:"auto",  paddingTop:"5%", paddingLeft:"5%", paddingRight:"5%", paddingBottom:"50px", overflow:"scroll"}}>
 
                 <div style={{width:"100%", display:"flex", justifyContent:"left", gap:"5%", height:"70%"}}>
-                    <a target="_blank" href="https://edition.cnn.com/2024/10/20/sport/hikaru-nakamura-chess-streaming-revolution-spt-intl" className="card custom-card" style={{ width: "50%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
+                    <a target="_blank" href="https://edition.cnn.com/2024/10/20/sport/hikaru-nakamura-chess-streaming-revolution-spt-intl" className="card custom-card" style={{ width: "50%", minWidth: "400px", height:"auto", minHeight:"400px" }}>
+                    <div className="card-image">
+                        <figure className="image is-16by9">
+                        <img
+                            src={chinaVindia} // Replace with your image URL field
+                           
+                        />
+                        </figure>
+                    </div>
+                    <div className="card-content">
+                        <div className="media">
+                        <div className="media-content noScroll">
+                            <p className="title is-4">China-India clash looms in Singapore – for title of world chess champion</p>
+                        </div>
+                        </div>
+
+                        <div className="content" style={{fontWeight:"bold"}}>
+                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                           
+                            <p style={{color:"rgb(106, 90, 205)"}}>
+                                
+                            </p>
+                            </div>
+                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                            
+                            <p style={{}}>
+                              
+                            </p>
+                            </div>
+                            <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
+                            
+                            <p style={{color:"rgb(60, 179, 113)"}}>
+                                
+                            </p>
+                            </div>
+                            <div>
+                            
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                    <a target="_blank" href="https://edition.cnn.com/2024/10/20/sport/hikaru-nakamura-chess-streaming-revolution-spt-intl" className="card custom-card" style={{ width: "50%", minWidth: "400px", height:"auto", minHeight:"400px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -237,7 +281,7 @@ export default function Homepage() {
                         </div>
                     </div>
                     </a>
-                    <a target="_blank" href="https://www.chess.com/news/view/2024-chesscom-seirawan-chess-championship-liang-wins" className="card custom-card" style={{ width: "50%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
+                    <a target="_blank" href="https://www.chess.com/news/view/2024-chesscom-seirawan-chess-championship-liang-wins" className="card custom-card" style={{ width: "50%", minWidth: "400px", height:"auto", minHeight:"400px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
@@ -278,7 +322,7 @@ export default function Homepage() {
                         </div>
                     </div>
                     </a>
-                    <a target="_blank" href="https://www.europechess.org/10-players-with-maximum-score-at-the-european-individual-chess-championship-2024/hscom-seirawan-chess-championship-liang-wins" className="card custom-card" style={{ width: "50%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
+                    <a target="_blank" href="https://www.europechess.org/10-players-with-maximum-score-at-the-european-individual-chess-championship-2024/hscom-seirawan-chess-championship-liang-wins" className="card custom-card" style={{ width: "50%", minWidth: "400px", height:"auto", minHeight:"400px" }}>
                     <div className="card-image">
                         <figure className="image is-16by9">
                         <img
