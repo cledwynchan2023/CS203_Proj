@@ -28,11 +28,8 @@ export default function TournamentDetail() {
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [hasJoined, setHasJoined] = useState(false); 
-    const onInputChange=(e)=>{
-        setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
-        
-    }
-}
+   
+
 
 
   const renderTabContent = () => {
@@ -517,4 +514,4 @@ export default function TournamentDetail() {
 		</footer>
     </>
   )
-
+}
