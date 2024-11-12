@@ -40,7 +40,13 @@ export default function Profile() {
         };
         console.log(userData.username);
         try {
-            const response = await axios.put(`http://localhost:8080/u/${userId}`, userData);
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/${userId}`, userData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
             if (response.status === 200){
                 alert("User Edited Successfully");
                 setIsEditModalOpen(false);
@@ -82,12 +88,18 @@ export default function Profile() {
     };
     const loadUser= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/u/id/${userId}`, {
+        const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/id/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(result.data);
+        const response2 = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/users/sorted`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        setRanking(findRanking(response2.data));
         
      
         setEditedUser({
@@ -105,16 +117,15 @@ export default function Profile() {
 
     const deleteTournament = async (id) => {
         try {
-            if (tournament.currentSize > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
-            }
-            const response = await axios.delete(`http://localhost:8080/t/tournament/${id}`);
-            // Refresh the tournament list after deletion
-            if (response.status === 200){
-                alert("Tournament Deleted Successfully");
-                loadTournaments();
-                Navigate(`/admin/${userId}/tournament`);
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.status === 204){
+                alert("User Deleted Successfully");
+                navigate('/');
             }
             
         } catch (error) {
@@ -123,7 +134,18 @@ export default function Profile() {
     };
 
    
-   
+
+    const loadTournaments= async()=>{
+        
+        const result3 = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/${userId}/currentTournament`);
+        
+        if (!result3.data.length == 0){
+            setJoinedTournaments(result3.data);
+        } else {
+            setJoinedTournaments([]);
+        }
+        
+    };
 
     const isTokenExpired = () => {
         const expiryTime = localStorage.getItem('tokenExpiry');
@@ -165,7 +187,7 @@ export default function Profile() {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/u/id/${userId}`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/id/${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

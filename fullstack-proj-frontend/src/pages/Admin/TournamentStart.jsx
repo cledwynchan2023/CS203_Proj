@@ -43,7 +43,7 @@ export default function TournamentStart() {
         };
         console.log(tournamentData.tournament_name);
         try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
+            const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, tournamentData);
             if (response.status === 200){
                 alert("Tournament Edited Successfully");
                 setIsEditModalOpen(false);
@@ -96,7 +96,8 @@ export default function TournamentStart() {
 
     const getIsCompleted = async (currentRound) => {
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+
+        const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -107,7 +108,8 @@ export default function TournamentStart() {
     const handleResult = async (matchId,result) => {
         setDisabledButtons((prev) => ({ ...prev, [matchId]: true }));
         const token = localStorage.getItem('token');
-        const response = await axios.put(`http://localhost:8080/m/match/${matchId}/update`, {result}, {
+      
+        const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/m/match/${matchId}/update`, {result}, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -289,7 +291,7 @@ export default function TournamentStart() {
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+        const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -339,8 +341,8 @@ const loadTournamentForDelete= async()=>{
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
-        const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
+
+        const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -425,7 +427,7 @@ const loadTournamentForDelete= async()=>{
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

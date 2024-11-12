@@ -32,6 +32,7 @@ export default function TournamentDetail() {
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
         
     }
+}
 
 
   const renderTabContent = () => {
@@ -199,12 +200,13 @@ export default function TournamentDetail() {
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log(result.data);
+        try {
+            const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
         setTournament(result.data);
         setUser(result.data.participants);
         setHasJoined(checkJoinedTournamentFirst(result.data.participants));
@@ -235,8 +237,7 @@ export default function TournamentDetail() {
     const removePlayer = async () => {
         try {
             const token = localStorage.getItem('token');
-            console.log(id + " " + userId);
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${userId}`,
+            const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/delete?user_id=${userId}`,
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -264,7 +265,7 @@ export default function TournamentDetail() {
 
             if (decodedToken.authorities === 'ROLE_USER'){
                 
-                const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${userId}`,
+                const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/add?user_id=${userId}`,
                     {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -319,7 +320,7 @@ export default function TournamentDetail() {
     const loadUsers = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get(`http://localhost:8080/t/${id}`, {
+            const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -342,7 +343,7 @@ export default function TournamentDetail() {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/${id}`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -380,6 +381,30 @@ export default function TournamentDetail() {
         setTimeout(() => {
             fetchData();
         },1000);
+
+        const socket = new SockJS('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received new tournament data");
+                loadTournament();
+            
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            //setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                setConnectionStatus("Disconnected");
+            });
+        };
           
        
 

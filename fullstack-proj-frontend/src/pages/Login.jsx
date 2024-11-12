@@ -22,8 +22,7 @@ function Login() {
 				return; 
 			} 
             setIsLoading(true);
-			const response = await axios.post('http://localhost:8080/auth/signin', { username, password }); 
-	
+			const response = await axios.post('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/signin', { username, password }); 
 			const token = response.data.jwt; 
 			localStorage.setItem('token', token);
 			setIsLoading(false)

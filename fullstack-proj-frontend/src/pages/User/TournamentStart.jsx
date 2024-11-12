@@ -318,7 +318,7 @@ export default function TournamentStart() {
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+        const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -366,8 +366,8 @@ const loadTournamentForDelete= async()=>{
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
-        const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
+    
+        const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -411,7 +411,7 @@ const loadTournamentForDelete= async()=>{
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -457,6 +457,29 @@ const loadTournamentForDelete= async()=>{
         fetchData();
         
         loadNonParticipatingUsers();
+        const socket = new SockJS('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+       
+            setConnectionStatus("Connected");
+            stompClient.subscribe('/topic/matchUpdates', () => {
+                // Reload tournament data on match update
+                console.log("Received match update");
+                loadTournament();
+            });
+        },(error) => {
+           
+            setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                setConnectionStatus("Disconnected");
+            });
+        };
         
         //loadUsers();
 

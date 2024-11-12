@@ -36,7 +36,7 @@ export default function Register() {
 
     const validateAdminToken = async (token) => {
         try {
-          const response = await axios.post('http://localhost:8080/auth/validate-admin-token', { token });
+          const response = await axios.post('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/validate-admin-token', { token });
           console.log(response.data.valid);
           return response.data.valid;
         } catch (error) {
@@ -91,7 +91,7 @@ export default function Register() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/signup", userData);
+            const response = await axios.post("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/signup", userData);
     
             if (response.status === 201){
                 alert("User registered successfully!");

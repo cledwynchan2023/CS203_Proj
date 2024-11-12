@@ -74,7 +74,7 @@ export default function TournamentAdminCreate() {
 
         try {
           const token = localStorage.getItem('token');
-          const response = await axios.post("http://localhost:8080/admin/tournament", tournamentData, {
+          const response = await axios.post("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/admin/tournament", tournamentData, {
               headers: {
                   'Authorization': `Bearer ${token}`
               }

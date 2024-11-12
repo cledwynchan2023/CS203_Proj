@@ -23,9 +23,9 @@ export default function TournamentDetail() {
     const [isStart, setIsStart] = useState(0);
     const onInputChange=(e)=>{
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
-        
+    
     }
-
+}
     const convertToCreateTournamentRequest = (editedTournament) => {
         
         return {
@@ -50,7 +50,7 @@ export default function TournamentDetail() {
         };
         console.log(tournamentData.tournament_name);
         try {
-            const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
+            const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, tournamentData);
             if (response.status === 200){
                 alert("Tournament Edited Successfully");
                 setIsEditModalOpen(false);
@@ -204,7 +204,7 @@ export default function TournamentDetail() {
     };
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get(`http://localhost:8080/t/${id}`, {
+        const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -230,8 +230,7 @@ export default function TournamentDetail() {
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
-        const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
+        const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -239,7 +238,21 @@ export default function TournamentDetail() {
         console.log(response.data);
         setNonParticipatingUser(response.data);
     };
-
+   
+    const deleteTournament= async(tournament_id)=>{
+        const confirmation = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmation) return;
+        const token = localStorage.getItem('token');
+        const result = await axios.delete(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/admin/tournament/${tournament_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (result.status == 200){
+            alert("Tournament deleted successfully");
+            navigate(`/admin/${userId}/tournament`);
+        }
+    
     const deleteTournament = async (id) => {
         try {
             if (tournament.currentSize > 0) {
@@ -262,7 +275,7 @@ export default function TournamentDetail() {
     const removePlayer = async (user_id) => {
         try {
             const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${user_id}`,
+            const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/delete?user_id=${user_id}`,
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -283,7 +296,7 @@ export default function TournamentDetail() {
         try {
             console.log(user_id);
             const token = localStorage.getItem('token');
-            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${user_id}`,
+            const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/add?user_id=${user_id}`,
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -334,7 +347,7 @@ export default function TournamentDetail() {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/${id}`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -370,7 +383,7 @@ export default function TournamentDetail() {
 
     const startTournament = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.put(`http://localhost:8080/t/${id}/start`, {
+        const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/start`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

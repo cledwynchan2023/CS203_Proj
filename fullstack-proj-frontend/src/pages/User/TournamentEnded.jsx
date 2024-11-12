@@ -488,7 +488,7 @@ const loadTournamentForDelete= async()=>{
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/t/tournament/${id}/start`, {
+                const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournament/${id}/start`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

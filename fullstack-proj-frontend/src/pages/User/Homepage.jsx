@@ -64,7 +64,7 @@ export default function Homepage() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

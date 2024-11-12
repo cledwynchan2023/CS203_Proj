@@ -63,10 +63,11 @@ export default function TournamentPage() {
   };
 
     const loadTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/t/tournaments/active");
-        const result1 = await axios.get("http://localhost:8080/t/tournaments/inactive");
-        const result2 = await axios.get("http://localhost:8080/t/tournaments/ongoing");
-    
+        const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/active");
+        const result1 = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/completed");
+        const result2 = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/ongoing");
+        const result3 = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/${userId}/currentTournament`);
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -298,7 +299,7 @@ export default function TournamentPage() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -324,6 +325,29 @@ export default function TournamentPage() {
             fetchData();
             loadTournaments();
         }, 2000);
+        const socket = new SockJS('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+      
+            //setConnectionStatus("Connected");
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received new tournament data");
+                loadTournaments();
+            });
+        },(error) => {
+ 
+            //setConnectionStatus("Connection failed");
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+                console.log("WebSocket connection closed");
+                // setConnectionStatus("Disconnected");
+            });
+        };
         
 
     }, []);

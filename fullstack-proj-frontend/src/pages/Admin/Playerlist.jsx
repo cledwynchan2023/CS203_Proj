@@ -55,7 +55,7 @@ export default function Playerlist() {
     const deleteUser = async (user_id) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.delete(`http://localhost:8080/u/${user_id}`, {
+            const response = await axios.delete(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/${user_id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -127,7 +127,7 @@ export default function Playerlist() {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post("http://localhost:8080/auth/signup", userData, {
+            const response = await axios.post("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/signup", userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -166,7 +166,7 @@ export default function Playerlist() {
         };
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.put(`http://localhost:8080/u/user/${selectedId}`, userData, {
+            const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/user/${selectedId}`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -220,7 +220,7 @@ export default function Playerlist() {
 
     const loadUsers= async()=>{
         const token = localStorage.getItem('token');
-        const result = await axios.get('http://localhost:8080/u/users', {
+        const result = await axios.get('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/users', {
             headers: {
                 Authorization: `Bearer ${token}`
             }

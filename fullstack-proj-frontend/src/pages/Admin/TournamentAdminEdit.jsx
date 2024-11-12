@@ -69,7 +69,7 @@ export default function TournamentAdminEdit() {
         };
 
         try {
-            const response = await axios.put(`http://localhost:8080/auth/tournament/${id}`, tournamentData);
+            const response = await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/tournament/${id}`, tournamentData);
             if (response.status === 200){
                 alert("Tournament Edited Successfully");
                 navigate(`/admin/${userId}/tournament`);
@@ -82,7 +82,7 @@ export default function TournamentAdminEdit() {
     }
 
     const loadTournaments = async () => {
-        const result= await axios.get(`http://localhost:8080/auth/tournament/${id}`);
+        const result= await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/auth/tournament/${id}`);
         setTournament(result.data);
     }
     useEffect(() => {

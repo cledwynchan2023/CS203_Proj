@@ -158,7 +158,7 @@ export default function Ranking() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/u/users', {
+                const response = await axios.get('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -185,7 +185,7 @@ export default function Ranking() {
     const loadUsers= async()=>{
         const token = localStorage.getItem('token');
         try {
-            const result = await axios.get("http://localhost:8080/u/users", {
+            const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/users", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -74,7 +74,7 @@ export default function TournamentLandingPage() {
             }
 
             try {
-                const response = await axios.get('http://localhost:8080/t/tournaments', {
+                const response = await axios.get('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -104,6 +104,27 @@ export default function TournamentLandingPage() {
             fetchData();
             //loadTournaments();
         }, 2000);
+
+        const socket = new SockJS('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received tournament update");
+                loadTournaments();
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+
+            });
+        };
         
 
     }, []);
@@ -115,8 +136,8 @@ export default function TournamentLandingPage() {
     const loadTournamentsByName= async(content)=>{
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
-        const result = await axios.get("http://localhost:8080/t/tournaments/name");
-        console.log(result.data);
+        const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/name");
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -128,8 +149,8 @@ export default function TournamentLandingPage() {
     const loadTournamentsByDate= async(content)=>{
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
-        const result = await axios.get("http://localhost:8080/t/tournaments/date");
-        console.log(result.data);
+        const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/date");
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -141,8 +162,7 @@ export default function TournamentLandingPage() {
     const loadTournamentsByCapacity= async(content)=>{
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
-        const result = await axios.get("http://localhost:8080/t/tournaments/capacity");
-        console.log(result.data);
+        const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments/capacity");
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -153,8 +173,7 @@ export default function TournamentLandingPage() {
 
 
     const loadTournaments= async()=>{
-        const result = await axios.get("http://localhost:8080/t/tournaments");
-        console.log(result.data);
+        const result = await axios.get("http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/tournaments");
         if (!result.data.length == 0){
             setTournament(result.data);
             setIsLoading(false);
@@ -167,7 +186,7 @@ export default function TournamentLandingPage() {
 
     const deleteTournament= async(tournament_id)=>{
         const token = localStorage.getItem('token');
-        const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
+        const result = await axios.delete(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/admin/tournament/${tournament_id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
