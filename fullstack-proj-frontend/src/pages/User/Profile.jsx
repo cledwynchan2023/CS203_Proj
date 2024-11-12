@@ -224,7 +224,7 @@ const getEloChangesFromEachTournament = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {joinedTournaments.filter(tournament => tournament.status === 'completed').map((tournament) => (
+                        {joinedTournaments.filter(tournament => tournament.status === 'completed').reverse().map((tournament) => (
                         <tr key={tournament.id} onClick={() => handleRowClick(tournament.id, tournament.status)} style={{ backgroundColor: getEloChange(tournament) > 0 ? 'rgba(0,255,0,0.3)' : getEloChange(tournament) < 0 ? 'rgba(255,0,0,0.45)' : 'white' }}>
                             <td>{tournament.id}</td>
                             <td>{tournament.tournamentName}</td>
