@@ -21,6 +21,7 @@ public class EloRatingServiceTest {
     private static final int VALID_ELO = 1000;
     private static final int INVALID_ELO = -1;
     private static final int HIGH_ELO = 2731;
+    private static final int HIGHER_ELO = 5000;
     private static final int LOW_ELO = 515;
     private static final int VERY_LOW_ELO = 5;
     private static final int HIGH_DIFFERENCE_ELO = 2800;
@@ -47,6 +48,18 @@ public class EloRatingServiceTest {
 
         // Then
         assertFalse(result);
+    }
+
+    @Test
+    void getKValue_SuccessForElo5000_Return10() {
+        // Given
+        int elo = HIGHER_ELO;
+
+        // When
+        int result = eloRatingService.getKValue(elo);
+
+        // Then
+        assertEquals(10, result);
     }
 
     @Test

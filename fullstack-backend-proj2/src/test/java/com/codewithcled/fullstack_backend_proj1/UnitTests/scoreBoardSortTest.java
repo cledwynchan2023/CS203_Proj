@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -517,6 +518,142 @@ public class scoreBoardSortTest {
                 verify(matchRepository).findByRoundAndPlayer1OrRoundAndPlayer2(testRound, uId2, testRound, uId2);
                 verify(userRepository,times(2)).findById(uId1);
                 verify(userRepository,times(2)).findById(uId2);
+        }
+
+        @Test
+        void ratingTiebreak_Failure_Player1NotFound_ReturnException() throws Exception {
+                Long uId1 = (long) 1;
+                Long uId2 = (long) 2;
+                Double elo1 = (double) 1000;
+
+                User user1 = new User();
+                user1.setId(uId1);
+                user1.setElo(elo1);
+
+                User user2 = new User();
+                user2.setId(uId2);
+                user2.setElo(elo1);
+
+                List<Round> rounds = new ArrayList<>();
+                Round testRound = new Round();
+
+                Scoreboard scoreboard = new Scoreboard();
+                List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+                ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+                scoreboardEntrys.add(entry1);
+                scoreboardEntrys.add(entry2);
+                scoreboard.setScoreboardEntries(scoreboardEntrys);
+                testRound.setScoreboard(scoreboard);
+
+                Match testMatch = new Match();
+                testMatch.setRound(testRound);
+                testMatch.setPlayer1(uId1);
+                testMatch.setPlayer2(uId2);
+                rounds.add(testRound);
+
+                when(userRepository.findById(uId1)).thenReturn(Optional.empty());
+                when(userRepository.findById(uId2)).thenReturn(Optional.of(user2));
+
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
+                        scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
+                });
+
+                assertEquals("User not found", exception.getMessage());
+                verify(userRepository).findById(uId1);
+                verify(userRepository).findById(uId2);
+        }
+
+        @Test
+        void ratingTiebreak_Failure_Player2NotFound_ReturnException() throws Exception {
+                Long uId1 = (long) 1;
+                Long uId2 = (long) 2;
+                Double elo1 = (double) 1000;
+
+                User user1 = new User();
+                user1.setId(uId1);
+                user1.setElo(elo1);
+
+                User user2 = new User();
+                user2.setId(uId2);
+                user2.setElo(elo1);
+
+                List<Round> rounds = new ArrayList<>();
+                Round testRound = new Round();
+
+                Scoreboard scoreboard = new Scoreboard();
+                List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+                ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+                scoreboardEntrys.add(entry1);
+                scoreboardEntrys.add(entry2);
+                scoreboard.setScoreboardEntries(scoreboardEntrys);
+                testRound.setScoreboard(scoreboard);
+
+                Match testMatch = new Match();
+                testMatch.setRound(testRound);
+                testMatch.setPlayer1(uId1);
+                testMatch.setPlayer2(uId2);
+                rounds.add(testRound);
+
+                when(userRepository.findById(uId1)).thenReturn(Optional.of(user1));
+                when(userRepository.findById(uId2)).thenReturn(Optional.empty());
+
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
+                        scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
+                });
+
+                assertEquals("User not found", exception.getMessage());
+                verify(userRepository).findById(uId1);
+                verify(userRepository).findById(uId2);
+        }
+
+        
+        @Test
+        void ratingTiebreak_Failure_BothPlayersNotFound_ReturnException() throws Exception {
+                Long uId1 = (long) 1;
+                Long uId2 = (long) 2;
+                Double elo1 = (double) 1000;
+
+                User user1 = new User();
+                user1.setId(uId1);
+                user1.setElo(elo1);
+
+                User user2 = new User();
+                user2.setId(uId2);
+                user2.setElo(elo1);
+
+                List<Round> rounds = new ArrayList<>();
+                Round testRound = new Round();
+
+                Scoreboard scoreboard = new Scoreboard();
+                List<ScoreboardEntry> scoreboardEntrys = new ArrayList<>();
+                ScoreboardEntry entry1 = new ScoreboardEntry(uId1, 0.0);
+                ScoreboardEntry entry2 = new ScoreboardEntry(uId2, 0.0);
+                scoreboardEntrys.add(entry1);
+                scoreboardEntrys.add(entry2);
+                scoreboard.setScoreboardEntries(scoreboardEntrys);
+                testRound.setScoreboard(scoreboard);
+
+                Match testMatch = new Match();
+                testMatch.setRound(testRound);
+                testMatch.setPlayer1(uId1);
+                testMatch.setPlayer2(uId2);
+                rounds.add(testRound);
+
+                when(userRepository.findById(uId1)).thenReturn(Optional.empty());
+                when(userRepository.findById(uId2)).thenReturn(Optional.empty());
+
+                scoreboardComparator=new ScoreboardComparator(rounds, testRound, userRepository, matchRepository);
+                NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
+                        scoreboardComparator.ratingTiebreak(user1.getId(), user2.getId());
+                });
+
+                assertEquals("User not found", exception.getMessage());
+                verify(userRepository).findById(uId1);
+                verify(userRepository).findById(uId2);
         }
 
         @Test
