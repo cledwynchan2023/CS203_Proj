@@ -379,7 +379,7 @@ export default function TournamentEnded() {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setData(response.data);
+                
                 setCurrentRound(response.data.currentRound);
                 setRound(response.data.rounds[response.data.currentRound-1]);
                 
@@ -399,11 +399,10 @@ export default function TournamentEnded() {
                 } else if (response.data.status == 'ongoing') {
                     alert("Tournament still ongoing!");
                     navigate(`/user/${userId}/tournament/${id}/start`);
-                } else {
-                    setIsStart(-1);
-                }
+                } 
 
             } catch (error) {
+                console.log(error)
                 if (error.response && error.response.status === 401) {
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage

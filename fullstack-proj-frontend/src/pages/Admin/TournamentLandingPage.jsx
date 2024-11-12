@@ -239,7 +239,7 @@ export default function TournamentLandingPage() {
                 </div>
                 
             </div>
-            <div style={{height:"80%", overflowX:"scroll"}}>
+            <div style={{height:"100%", overflowX:"scroll"}}>
             
             {isLoading ? (
             <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>

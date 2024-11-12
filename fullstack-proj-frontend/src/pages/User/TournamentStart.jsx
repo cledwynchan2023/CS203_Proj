@@ -22,6 +22,7 @@ export default function TournamentStart() {
     const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
     const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [isStart, setIsStart] = useState(1);
+    const [nonParticipatingUser, setNonParticipatingUser] = useState([]);
     const [scoreboard,setScoreboard]=useState(new Map());
     const [userPairings, setUserPairings] = useState([]);    
     const [tournamentRound, setTournamentRound] = useState(1);  
@@ -248,7 +249,7 @@ export default function TournamentStart() {
                     </tr>
                 </thead>
                 <tbody>
-                {Array.from(scoreboard.entries()).map(([id, score], index) => {
+                {Array.from(scoreboard.entries()).reverse().map(([id, score], index) => {
                     const user = getUser(id); // Assuming you have a users array with user details
                     return (
                 <tr key={id}>
@@ -300,10 +301,10 @@ export default function TournamentStart() {
         setTournament(result.data);
 
         setTournamentRound(result.data.currentRound);
-        setScoreboard(new Map(response.data.rounds[response.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
+        setScoreboard(new Map(result.data.rounds[result.data.currentRound - 1].scoreboard.scoreboardEntries.map(entry => [entry.playerId, entry.score])));
         setRound(result.data.rounds[result.data.currentRound-1]);
         setCurrentRound(result.data.currentRound);
-        setScoreboard(new Map(Object.entries(result.data.rounds[result.data.currentRound - 1].scoreboard)));
+       
        
         setPairing(result.data.rounds[result.data.currentRound-1].matchList);
         setUserPairings(findUserPairingFirst(result.data.rounds[result.data.currentRound-1].matchList));
@@ -411,7 +412,7 @@ export default function TournamentStart() {
 
         stompClient.connect({}, () => {
        
-            setConnectionStatus("Connected");
+            
             stompClient.subscribe('/topic/matchUpdates', () => {
                 // Reload tournament data on match update
                 console.log("Received match update");
@@ -419,14 +420,14 @@ export default function TournamentStart() {
             });
         },(error) => {
            
-            setConnectionStatus("Connection failed");
+           
         });
 
         // Disconnect WebSocket on component unmount
         return () => {
             if (stompClient) stompClient.disconnect(() => {
                 console.log("WebSocket connection closed");
-                setConnectionStatus("Disconnected");
+               
             });
         };
         

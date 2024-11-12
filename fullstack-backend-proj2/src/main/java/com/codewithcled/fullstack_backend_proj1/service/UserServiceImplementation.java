@@ -120,10 +120,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(user.getEmail());
         createdUser.setRole(user.getRole());
         createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole().equals("ROLE_USER")){
+        if ("ROLE_USER".equals(user.getRole())){
             createdUser.setElo(100.0);
+        } else {
+            createdUser.setElo(0.0);
         }
-        createdUser.setElo(user.getElo());
+       
         return createdUser;
     }
 

@@ -246,7 +246,7 @@ export default function TournamentDetail() {
                 Authorization: `Bearer ${token}`
             }
         });
-        sortUserElo(response.data);
+        sortUserElo2(response.data);
     };
    
     const deleteTournament= async(tournament_id)=>{
@@ -390,6 +390,15 @@ export default function TournamentDetail() {
 
     const sortUserElo = (users) => {
         if (!sortButton) {
+            setNonParticipatingUser(users.sort((a, b) => b.elo - a.elo));
+            setSortButton(true);
+        } else {
+            setNonParticipatingUser(users.sort((a, b) => a.elo - b.elo));
+            setSortButton(false);
+        }
+    }
+    const sortUserElo2 = (users) => {
+        if (sortButton) {
             setNonParticipatingUser(users.sort((a, b) => b.elo - a.elo));
             setSortButton(true);
         } else {

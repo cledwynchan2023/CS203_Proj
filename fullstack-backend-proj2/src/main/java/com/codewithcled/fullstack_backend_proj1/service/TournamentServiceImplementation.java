@@ -126,8 +126,11 @@ public class TournamentServiceImplementation implements TournamentService {
         }
 
         // Record tournament in user's own list and add user to tournament
-        addTournamentToUserOwnList(currentTournament, user);
-        addUserToTournament(currentTournament, user);
+        if (!user.getCurrentTournaments().contains(currentTournament) && currentTournament.getCurrentSize() < currentTournament.getSize()) {
+            user.addCurrentTournament(currentTournament);
+            userRepository.save(user);
+            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+        }
         
         return tournamentRepository.save(currentTournament);
     }
@@ -139,9 +142,10 @@ public class TournamentServiceImplementation implements TournamentService {
      * @param user
      */
     private void addTournamentToUserOwnList(Tournament currentTournament, User user) {
-        if (!user.getCurrentTournaments().contains(currentTournament)) {
+        if (!user.getCurrentTournaments().contains(currentTournament) && currentTournament.getCurrentSize() < currentTournament.getSize()) {
             user.addCurrentTournament(currentTournament);
             userRepository.save(user);
+            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
         }
     }
 
