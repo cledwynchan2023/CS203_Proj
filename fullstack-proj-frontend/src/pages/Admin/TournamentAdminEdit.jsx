@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../admin/Register.css';
+import '../Admin/Register.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
