@@ -27,8 +27,8 @@ jobs:
 
     # Install frontend dependencies and build the React app
     - name: Install dependencies and build frontend
-      run: |
-        cd fullstack-frontend;
+      run:
+        cd fullstack-proj-frontend;
         npm install;
         npm run build;
     - name: Set up JDK 17
