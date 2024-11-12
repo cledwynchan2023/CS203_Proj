@@ -6,6 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@mui/x-charts": "^7.22.0",
     "express": "^4.21.1",
     "ws": "^8.18.0"
   }

@@ -23,16 +23,14 @@ function Login() {
 			} 
             setIsLoading(true);
 			const response = await axios.post('http://localhost:8080/auth/signin', { username, password }); 
-	
 			const token = response.data.jwt; 
 			localStorage.setItem('token', token);
 			setIsLoading(false)
 			setIsExiting(true);
 			setTimeout(() => {
-			const expiryTime = new Date().getTime() + 900 * 1000; //expiry time to 15 mins for testing
+			const expiryTime = new Date().getTime() + 9000 * 1000; //expiry time to 15 mins for testing
 			localStorage.setItem('tokenExpiry', expiryTime);
 			const decodedToken = jwtDecode(token); 
-			console.log('Decoded Token:', decodedToken); 
 			const userId = decodedToken.userId;
 			localStorage.setItem('userId', userId); // Store userId in localStorage
 			
@@ -40,13 +38,11 @@ function Login() {
 			console.log(userRole + " HELLO");
 			
 			if (userRole == "ROLE_ADMIN"){
-				
 					navigate(`/admin/${userId}/tournament`);
-				
 				
 			} else if (userRole=="ROLE_USER"){
 				
-					navigate(`/user/${userId}/tournament`);
+					navigate(`/user/${userId}/home`);
 			}
 			}, 1000);
 			
@@ -64,35 +60,31 @@ function Login() {
                 marginTop:"0",
 				
             }}>  
-			<div className="content is-family-sans-serif fade-in" style={{width:"100%", height:"100%", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", width:"100%", backgroundColor:"rgba(0,0,0,0.3)"}}>
+			<div className="content is-family-sans-serif fade-in" style={{width:"100%", height:"100%", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", backgroundColor:"rgba(0,0,0,0.3)", overflowX:"hidden"}}>
 				<div className="is-medium animate__animated animate__fadeInDown" style={{ width:"100%", paddingTop:"20px", display:"flex", justifyContent:"center", alignItems:"center"}}>
 					<img src={logo} style={{width:"100px", height:"100px", backgroundColor: "transparent", marginRight:"20px"}}></img>
-					<p className="text-center " style={{fontSize:"50px", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>Chess.io</p>
+					<p className="text-center " style={{fontSize:"2.5rem", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>Chess.io</p>
 				</div>
-			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%", minWidth:"500px"}}> 
-				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px", height:"100%", minWidth:"500px"}}> 
+			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%", minWidth:"500px", display:"flex", justifyContent:"center"}}> 
+				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px", height:"100%", minWidth:"400px"}}> 
 					<p className="text" style={{fontSize:"20px", fontWeight:"bold", marginBottom:"0"}}>Login</p> 
-					<div style={{width:"100%", padding:"30px", height:"50%"}}>
-						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
-						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"40%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-
-					</div>
-					
-					
+					<div style={{width:"100%",  height:"35%",minHeight:"150px", marginBottom:"50px", marginTop:"10px"}}>
+						<input className='input custom-input' style={{backgroundColor:"rgba(0,0,0,0.7)", height:"35%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none", paddingLeft: "15px"}} placeholder='Email address' id='email' value={username} type='email' onChange={(e) => setUsername(e.target.value)} /> 
+						<input className="input custom-input" style={{backgroundColor:"rgba(0,0,0,0.7)", height:"35%", width:"55%",minWidth:"350px", borderRadius:"40px", marginBottom:"30px", border:"none"}} placeholder='Password' id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+					</div>		
 					{isLoading ? (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40%' }}>
 							<div>
 								<Atom size={24} color="white" />
 								<p style={{width:"100%"}}>Login in....</p>
 							</div>
-
                         </div>
                     ) : (
-                        <button className="button is-link" style={{ height:'15%',width: '50%',minWidth:"350px", borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
+                        <button className="button is-link" style={{ height:'12%',width: '50%',minWidth:"350px", borderRadius:"30px" }} onClick={handleLogin}>Sign in</button>
                     )}
 					<div className="text-center" style={{ marginTop: "20px", fontSize: "17px" }}>
 					{error && <p className="text-danger" style={{ fontSize:"1rem"}}>{error}</p>}
-                            <p style={{color:"white"}}>Not a member? <a href="/register" style={{ textDecoration: "underline" }}>Register</a></p>
+                            <p style={{color:"white"}}>Not a member? <a href="/register" style={{ textDecoration: "underline", fontWeight:"bold" }}>Register</a></p>
                         </div>
 				</div> 
 			</div> 
@@ -100,7 +92,7 @@ function Login() {
 			
 		</div> 
 		
-		<footer className="footer" style={{textAlign:"center"}}>
+		<footer className="footer" style={{textAlign:"center", backgroundColor:""}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
 		</>

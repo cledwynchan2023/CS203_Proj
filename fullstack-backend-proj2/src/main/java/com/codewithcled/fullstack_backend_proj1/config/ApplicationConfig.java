@@ -1,6 +1,7 @@
 package com.codewithcled.fullstack_backend_proj1.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +22,28 @@ import java.util.Collections;
 @Configuration
 public class ApplicationConfig {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(
                         authorize -> authorize
@@ -31,7 +51,8 @@ public class ApplicationConfig {
                             .requestMatchers("/update/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") 
+                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers("/m/**").hasAnyRole("USER", "ADMIN") 
                                 // .requestMatchers("/api/**").authenticated()
                                 
                                 .anyRequest().permitAll())
@@ -65,6 +86,11 @@ public class ApplicationConfig {
 
     }
 
+
+
+
+
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -72,6 +98,11 @@ public class ApplicationConfig {
 
     @Value("${rest.base.url}")
     private String baseUrl;
+
+
+
+
+
 
     @Bean
     public RestTemplate restTemplate() {
@@ -81,4 +112,3 @@ public class ApplicationConfig {
     }
 
 }
-

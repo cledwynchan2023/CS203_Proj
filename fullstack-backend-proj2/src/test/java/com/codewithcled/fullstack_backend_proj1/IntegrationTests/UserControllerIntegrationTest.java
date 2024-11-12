@@ -57,7 +57,7 @@ public class UserControllerIntegrationTest {
 
     @SuppressWarnings("null")
     @Test
-    public void getAllUsers_Success() throws Exception{
+    public void getAllUsers_Success_ReturnUserDTOList() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -90,7 +90,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserByUsername_Success() throws Exception {
+    public void getUserByUsername_Success_ReturnUserDTO() throws Exception {
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -115,7 +115,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserParticipatingTournaments_Success() throws Exception {
+    public void getUserParticipatingTournaments_Success_ReturnTournamentDTOList() throws Exception {
         Tournament tournament = new Tournament();
         tournament.setTournament_name("testTournament");
         tournament.setSize(0);
@@ -169,7 +169,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void getUserById_Success() throws Exception{
+    public void getUserById_Success_ReturnUserDTO() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -195,7 +195,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void deleteUser_Success() throws Exception{
+    public void deleteUser_Success_ReturnNOCONTENT() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -214,7 +214,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void deleteUser_Failure() throws Exception{
+    public void deleteUser_Failure_ReturnNOTFOUND() throws Exception{
 
         URI url = new URI(baseUrl + port + urlPrefix + "/1201382");
 
@@ -228,7 +228,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void updateUser_Success() throws Exception{
+    public void updateUser_Success_ReturnUserDTO() throws Exception{
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ROLE_USER");
@@ -274,7 +274,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void updateUserWithoutPassword_Success() throws Exception{
+    public void updateUserWithoutPassword_Success_ReturnUpdatedUserDTO() throws Exception{
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setUsername("newUsername");
         editUserRequest.setElo((double)1500);
@@ -317,5 +317,52 @@ public class UserControllerIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND,result.getStatusCode());
     }
 
-    
+    @Test
+    void getSortedUsers_Success_ReturnOKAndSortedUserDTOList() throws Exception{
+        User testUser1=new User();
+        testUser1.setUsername("user1");
+        testUser1.setRole("ROLE_USER");
+        testUser1.setElo((double)1200);
+        userRepository.save(testUser1);
+
+        User testUser2=new User();
+        testUser2.setUsername("user2");
+        testUser2.setRole("ROLE_USER");
+        testUser2.setElo((double)1500);
+        userRepository.save(testUser2);
+
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/sorted");
+
+        ResponseEntity<List<UserDTO>> result=restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<UserDTO>>() {
+            });
+
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertNotNull(result.getBody());
+        List<UserDTO> dtoList=result.getBody();
+        assertEquals(2,dtoList.size());
+        assertEquals(1500,dtoList.get(0).getElo());
+        assertEquals(1200,dtoList.get(1).getElo());
+    }
+
+    @Test
+    void getSortedUsers_Failure_Return204NOCONTENT() throws Exception{
+        URI url = new URI(baseUrl + port + urlPrefix + "/users/sorted");
+
+        ResponseEntity<List<UserDTO>> result=restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<UserDTO>>() {
+            });
+
+        assertEquals(HttpStatus.NO_CONTENT,result.getStatusCode());
+
+    }
+
+
+
 }

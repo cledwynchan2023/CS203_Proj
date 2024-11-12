@@ -1,27 +1,5 @@
-.background-container {
-    position: relative;
-    width: 100vh;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('../assets/image.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  
-  .background-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
-    z-index: 1;
-  }
-  
+
+
   .content {
     position: relative;
     z-index: 2;
@@ -75,4 +53,18 @@
 }
 body{
   background-color: black;
+}
+
+::-webkit-scrollbar {
+  width: 5px; /* Adjust the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track background transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(109, 0, 181, 0.7); /* Customize the scrollbar thumb color */
+  border-radius: 50px; /* Optional: Add rounded corners to the scrollbar thumb */
+  border: 3px solid transparent; /* Optional: Add a border to the scrollbar thumb */
 }

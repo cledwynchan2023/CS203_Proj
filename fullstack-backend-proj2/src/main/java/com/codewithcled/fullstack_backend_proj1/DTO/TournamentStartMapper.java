@@ -37,9 +37,9 @@ public class TournamentStartMapper {
         return dto;
     }
 
-    public static List<TournamentDTO> toDTOList(List<Tournament> tournaments) {
+    public static List<TournamentStartDTO> toDTOList(List<Tournament> tournaments) {
         return tournaments.stream()
-                .map(TournamentMapper::toDTO)
+                .map(TournamentStartMapper::toDTO)
                 .collect(Collectors.toList());
     }
 }

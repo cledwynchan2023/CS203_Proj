@@ -7,6 +7,7 @@ import comp1 from '/src/assets/comp1.png';
 import chessplaying1 from '/src/assets/chessplaying.webp';
 import "./style/TournamentDetailStyle.css";
 export default function TournamentDetail() {
+    const [sortButton, setSortButton] = useState(false);
     const navigate = useNavigate();
     const[user,setUser]=useState([]);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
@@ -40,7 +41,6 @@ export default function TournamentDetail() {
     
     const onSubmit= async (e)=>{
         e.preventDefault();
-        console.log(editedTournament);
         const tournamentData = {
             tournament_name,
             date,
@@ -48,7 +48,6 @@ export default function TournamentDetail() {
             size,
             noOfRounds
         };
-        console.log(tournamentData.tournament_name);
         try {
             const response = await axios.put(`http://localhost:8080/t/${id}`, tournamentData);
             if (response.status === 200){
@@ -62,12 +61,15 @@ export default function TournamentDetail() {
         }
         
     }
+    const handleRowClick = (id) => {
+        navigate(`/user/${userId}/profile/${id}`);
+    }
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Overview':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", overflowY:"scroll", height:"600px", marginBottom:"50px"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", height:"600px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
                 <div class="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
                     <div class="card-image">
                         <figure class="image is-4by3">
@@ -79,9 +81,9 @@ export default function TournamentDetail() {
                     </div>
                     <div class="card-content">
                         <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Game of Chess</p>
-                        </div>
+                            <div class="media-content">
+                                <p class="title is-4">Game of Chess</p>
+                            </div>
                         </div>
 
                         <div class="content">
@@ -90,8 +92,12 @@ export default function TournamentDetail() {
                         </div>
                     </div>
                 </div>
-                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+
+                <div style={{width:"50%", minWidth:"300px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%", backgroundColor:"", alignContent:"center"}}>
+                    <div style={{width:"100%", height:"50px", textAlign:"center"}}>
+                        <p class="title is-4" >Tournament Details</p>
+                    </div>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Format</p>
@@ -99,7 +105,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Date</p>
@@ -107,7 +113,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Capacity</p>
@@ -115,7 +121,7 @@ export default function TournamentDetail() {
                             </div>
                         </div>
                     </div>
-                    <div class="card" style={{width:"45%",height:"100px", minWidth:"250px"}}>
+                    <div class="card" style={{width:"45%",height:"150px", minWidth:"250px"}}>
                         <div class="card-content">
                             <div class="content">
                                 <p class="subtitle" style={{fontSize:"1rem"}}>Status</p>
@@ -128,12 +134,18 @@ export default function TournamentDetail() {
             </div>
         </section>;
       case 'Players':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center", margin:"0", padding:"0"}}>
             
-                <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
-                <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px"}}>
-                    <button className="button is-link" style={{width:"80px", height:"30px"}} onClick={() => setIsModalOpen(true)}>Add</button>
-                </div>
+                <div className="card" style={{width:"90%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+                    <div style={{width:"100%",  display:"flex", marginBottom:"20px"}}>
+                        <div style={{width:"50%", paddingLeft:"20px"}}>
+                            <p className="subtitle is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>Players: {user.length}/{tournament.size}</p>
+                        </div>
+                        <div style={{display:"flex", justifyContent:"flex-end", paddingRight:"20px", width:"50%"}}>
+                            <button className="button is-link" style={{width:"80px", height:"30px"}} onClick={() => setIsModalOpen(true)}>Add</button>
+                        </div>
+                    </div>
+                    
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -161,9 +173,9 @@ export default function TournamentDetail() {
                
             </section>;
       case 'Scoreboard':
-        return <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className=" is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+        <div className="card" style={{width:"90%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
         
 
             <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
@@ -178,7 +190,7 @@ export default function TournamentDetail() {
                 <tbody>
                     {   
                         user.map((user, index) =>
-                            <tr>
+                            <tr onClick={() => handleRowClick(user.id)}>
                                 <td>{index + 1}</td>
                                 <td>{user.username}</td>
                                 <td>{user.elo}</td>
@@ -209,7 +221,6 @@ export default function TournamentDetail() {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(result.data);
         
         const resultName = result.data.tournamentName;
        
@@ -230,32 +241,28 @@ export default function TournamentDetail() {
 
     const loadNonParticipatingUsers = async () => {
         const token = localStorage.getItem('token');
-        console.log("id is" +id);
         const response = await axios.get(`http://localhost:8080/t/users/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(response.data);
-        setNonParticipatingUser(response.data);
+        sortUserElo(response.data);
     };
-
-    const deleteTournament = async (id) => {
-        try {
-            if (tournament.currentSize > 0) {
-                setError('Cannot delete a tournament with participants.');
-                return;
+   
+    const deleteTournament= async(tournament_id)=>{
+        const confirmation = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmation) return;
+        const token = localStorage.getItem('token');
+        const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-            const response = await axios.delete(`http://localhost:8080/t/tournament/${id}`);
-            // Refresh the tournament list after deletion
-            if (response.status === 200){
-                alert("Tournament Deleted Successfully");
-                loadTournament();
-                navigate(`/admin/${userId}/tournament`);
-            }
+        });
+        if (result.status == 200){
             
-        } catch (error) {
-            setError('An error occurred while deleting the tournament.');
+            alert("Tournament deleted successfully");
+            navigate(`/admin/${userId}/tournament`);
+
         }
     };
 
@@ -281,7 +288,6 @@ export default function TournamentDetail() {
     };
     const addPlayer = async (user_id) => {
         try {
-            console.log(user_id);
             const token = localStorage.getItem('token');
             const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${user_id}`,
                 {
@@ -313,8 +319,6 @@ export default function TournamentDetail() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
             return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -325,7 +329,6 @@ export default function TournamentDetail() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
@@ -341,7 +344,7 @@ export default function TournamentDetail() {
                 });
                 setData(response.data);
                 setTournament(response.data);
-                
+                console.log(response.data);
                 
                 if (response.data.status == 'active') {
                     setIsStart(0);
@@ -385,35 +388,53 @@ export default function TournamentDetail() {
         return <div>{error}</div>;
     }
 
+    const sortUserElo = (users) => {
+        if (!sortButton) {
+            setNonParticipatingUser(users.sort((a, b) => b.elo - a.elo));
+            setSortButton(true);
+        } else {
+            setNonParticipatingUser(users.sort((a, b) => a.elo - b.elo));
+            setSortButton(false);
+        }
+    }
   return (
     <>
     <div className="background-container" style={{ 
         backgroundImage: `url(${backgroundImage})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+		flexWrap: 'wrap',
+        height:"100vh",
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
-            <div style={{width:"200px"}}>
-                <img src={comp1} width={150}></img>
+    <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.8)", overflow:"scroll"}}>
+        
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"200px"}}>
+            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"50%", minWidth:"400px"}}>
+                <div style={{width:"100px"}}>
+                    <img src={comp1} width={150}></img>
+                </div>
+                <div style={{width:"80%", alignContent:"center", display:"flex", flexWrap:"wrap", paddingLeft:"20px", minWidth:"300px"}}>
+                    <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
+                    <p class="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
+                </div>
             </div>
-            <div style={{width:"80%", alignContent:"center"}}>
-                <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
-            </div>
-            <div style={{display:"flex",alignItems:"center", backgroundColor:"black", width:"20%"}}>
-                <button className="button is-primary" onClick={startTournament} style={{width:"55%", height:"40px",marginRight:"5%", fontWeight:"bold"}} disabled={isStart === -1}>
+            
+            <div style={{display:"flex", alignItems:"center", width:"50%",paddingleft:"10px", gap:"10px", justifyContent:"center", minWidth:"320px"}}>
+                <button className="button is-primary" onClick={startTournament} style={{minWidth:"100px",width:"30%", height:"40px", fontWeight:"bold"}} disabled={isStart === -1}>
                     {isStart === 0 ? 'Start' : isStart === 1 ? 'End' : 'Start'}
                 </button>
-                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{width:"45%", height:"40px",marginRight:"5%", fontWeight:"bold"}}>Edit</button>
-                <button className="button is-danger" style={{width:"55%", height:"40px", fontWeight:"bold"}}>Delete</button>
+                <button className="button is-link" onClick={() => setIsEditModalOpen(true)} style={{minWidth:"100px",width:"30%", height:"40px", fontWeight:"bold"}}>Edit</button>
+                <button className="button is-danger" onClick={() => deleteTournament(id)} style={{width:"30%", height:"40px", fontWeight:"bold",minWidth:"100px"}}>Delete</button>
             </div>
             
         </section>
         {isModalOpen && (
               <div className="modal is-active fade-in">
               <div className="modal-background"></div>
-              <div className="modal-card animate__animated animate__fadeInUpBig">
-                <header class="modal-card-head">
-                  <p className="modal-card-title">Add Player</p>
+              <div className="modal-card animate__animated animate__fadeInUpBig" style={{padding:"10px", marginTop:"100px"}}>
+              <header class="modal-card-head" style={{height:"20%"}}>
+                  <p className="modal-card-title" style={{paddingTop:"5%"}}>Add Player</p>
                   <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
                 </header>
                 <section className="modal-card-body" style={{height:"400px"}}>
@@ -438,6 +459,7 @@ export default function TournamentDetail() {
                   <div class="buttons">
                     <button class="button is-success" onClick={() => {setIsModalOpen(false); loadTournament()}}>Save changes</button>
                     <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                    <button class="button" onClick={() => sortUserElo(nonParticpatingUser)}>Sort Elo</button>
                   </div>
                 </footer>
               </div>
@@ -489,7 +511,7 @@ export default function TournamentDetail() {
                                 name="status"
                             >
                                 <option value="active">Active</option>
-                                <option value="completer">Not Active</option>
+                                <option value="completed">Completed</option>
                                 <option value="ongoing">Ongoing</option>
                             </select>
                             <label htmlFor="Status">Status</label>
@@ -532,28 +554,28 @@ export default function TournamentDetail() {
               </div>
             </div>
             )}
-        <section className="hero fade-in" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", overflow:"scroll", marginBottom:"20px", minHeight:"600px"}}>
 
-                <div className="tabs is-left" style={{ height:"70px"}}>
-                <ul>
-                    <li className={activeTab === 'Overview' ? 'is-active' : ''}>
-                    <a onClick={() => setActiveTab('Overview')}>Overview</a>
-                    </li>
-                    <li className={activeTab === 'Players' ? 'is-active' : ''}>
-                    <a onClick={() => setActiveTab('Players')}>Players</a>
-                    </li>
-                    <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
-                    <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
-                    </li>
-                </ul>
+                <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
+                    <ul>
+                        <li className={activeTab === 'Overview' ? 'is-active' : ''}>
+                        <a onClick={() => setActiveTab('Overview')}>Overview</a>
+                        </li>
+                        <li className={activeTab === 'Players' ? 'is-active' : ''}>
+                        <a onClick={() => setActiveTab('Players')}>Players</a>
+                        </li>
+                        <li className={activeTab === 'Scoreboard' ? 'is-active' : ''}>
+                        <a onClick={() => setActiveTab('Scoreboard')}>Scoreboard</a>
+                        </li>
+                    </ul>
                 </div>
-                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"100%"}}>
+                <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", display:"flex", justifyContent:"center", width:"100%"}}>
                 {renderTabContent()}
                 </div>
           </section>
     </div>
     </div>
-    <footer className="footer" style={{textAlign:"center",marginTop:"100px",height:"100px"}}>
+    <footer className="footer" style={{textAlign:"center",height:"100px"}}>
 		<p>&copy; 2024 CS203. All rights reserved.</p>
 		</footer>
     </>

@@ -7,7 +7,6 @@ import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import com.codewithcled.fullstack_backend_proj1.config.JwtProvider;
 import com.codewithcled.fullstack_backend_proj1.model.Tournament;
-// import com.codewithcled.fullstack_backend_proj1.repository.TournamentRepository;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,57 +21,40 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.service.UserServiceImplementation;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImplementation implements UserService,UserDetailsService {
-
+ 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // @Autowired
-    // private TournamentRepository tournamentRepository;
-
     @Autowired
     private MatchRepository matchRepository;
 
-    // public UserServiceImplementation(UserRepository userRepository) {
-    //     this.userRepository=userRepository;
-    // }
-
-    // @Override
-    // public List<UserDTO> getUserChanges() {
-    //    List<User> changes = userRepository.findChangesSince(lastChangeTimestamp);
-    //     lastChangeTimestamp = LocalDateTime.now(); // Update the timestamp
-    //     return changes.stream()
-    //             .map(user -> new UserDTO(user.getId(), user.getUsername(),user.getEmail(),  user.getRole(),user.getElo()))
-    //             .collect(Collectors.toList());
-    // }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
-        System.out.println(user);
-
         if(user==null) {
             throw new UsernameNotFoundException("User not found with this email"+username);
-
         }
-
         System.out.println("Loaded user: " + user.getEmail() + ", Role: " + user.getRole());
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole()));
@@ -82,33 +64,34 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 authorities);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<User> getAllUser() {
         return userRepository.findAll();
     }
 
-    @Override
-    public User findUserProfileByJwt(String jwt) {
-        // Implement logic to find user by JWT or remove if not needed
-        return null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findUserById(String userId) {
         // Implement logic to find user by ID or remove if not needed
         return null;
     }
-
-    @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
-    }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<UserDTO> findAllUsersDTO() {
@@ -117,76 +100,154 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         return UserMapper.toDTOList(users);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User loadByUsername(String username) {
         return userRepository.findByEmail(username);
     }
 
+    /**
+     * Creates a new user with the provided details.
+     * 
+     * @param user the sign-up request containing user details.
+     * @return the created user.
+     */
+    public User generateUser(SignUpRequest user) {
+        User createdUser = new User();
+        createdUser.setUsername(user.getUsername());
+        createdUser.setEmail(user.getEmail());
+        createdUser.setRole(user.getRole());
+        createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole().equals("ROLE_USER")){
+            createdUser.setElo(100.0);
+        }
+        createdUser.setElo(user.getElo());
+        return createdUser;
+    }
+
+    /**
+     * Checks if provided email is valid.
+     * 
+     * @param email the email to validate.
+     * @return true if the email is valid, false otherwise.
+     */
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AuthResponse createUser(SignUpRequest user) throws Exception {
-        //good practice to check if email is already taken
-        String username= user.getUsername();
-        String password = user.getPassword();
-        String email = user.getEmail();
-        String role = user.getRole();
-        double elo = user.getElo();
-        if (role.equals("ROLE_USER")){
-            elo = 100;
-        }
-        
-
-        User isEmailExist = userRepository.findByEmail(email);
-        if (isEmailExist != null) {
-            System.out.println("Email Taken!");
-            throw new Exception("Email Is Already Used With Another Account");
-        }
-
-        if (userRepository.existsByUsername(username)){
-            System.out.println("Username Taken!");
-            throw new Exception("Username is already being used with another account");
-        }
-
-        User createdUser = new User();
-        createdUser.setUsername(username);
-        createdUser.setEmail(email);
-        createdUser.setRole(role);
-        createdUser.setPassword(passwordEncoder.encode(password));
-        createdUser.setElo(elo);
-        
+        validateUserDetails(user);
+        User createdUser = generateUser(user);
         User savedUser = userRepository.save(createdUser);
-        userRepository.save(savedUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(email,password);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = JwtProvider.generateToken(authentication ,savedUser.getId());
+        authenticateUser(user.getEmail(), user.getPassword());
+        String token = generateToken(savedUser);
+        return buildAuthResponse(token, "Register Success", true);
+    }
 
+    /**
+     * Validates the user details provided in the sign-up request.
+     * 
+     * @param user the sign-up request containing user details.
+     * @throws Exception if the email format is invalid, the email is already used, or the username is already used.
+     */
+    private void validateUserDetails(SignUpRequest user) throws Exception {
+        String email = user.getEmail();
+        String username = user.getUsername();
+
+        if (!isValidEmail(email)) {
+            throw new Exception("Invalid email format");
+        }
+
+        if (userRepository.findByEmail(email) != null) {
+            throw new Exception("Email is already used with another account");
+        }
+
+        if (userRepository.existsByUsername(username)) {
+            throw new Exception("Username is already used with another account");
+        }
+    }
+
+    /**
+     * Authenticates a user with the provided email and password.
+     * 
+     * @param email the email of the user.
+     * @param password the password of the user.
+     */
+    private void authenticateUser(String email, String password) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+    
+    /**
+     * Generates a JWT token for the authenticated user.
+     * 
+     * @param user the user for whom the token is generated.
+     * @return the generated JWT token.
+     */
+    private String generateToken(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return JwtProvider.generateToken(authentication, user.getId());
+    }
+
+    /**
+     * Builds an authentication response with the provided token, message, and status.
+     * 
+     * @param token the JWT token.
+     * @param message the message to be displayed.
+     * @param status the status of the authentication.
+     * @return the authentication response.
+     */
+    private AuthResponse buildAuthResponse(String token, String message, boolean status) {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(token);
-        authResponse.setMessage("Register Success");
-        authResponse.setStatus(true);
-
+        authResponse.setMessage(message);
+        authResponse.setStatus(status);
         return authResponse;
-        }
-
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AuthResponse signInUser(SignInRequest loginRequest) {
-
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
-
-        Authentication authentication = authenticate(username,password);
+        Authentication authentication = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userRepository.findByEmail(username);
-        String token = JwtProvider.generateToken(authentication, user.getId()); 
-        AuthResponse authResponse = new AuthResponse();
+        User user = userRepository.findByEmail(loginRequest.getUsername());
+        String token = generateToken(user);
 
-        authResponse.setMessage("Login success");
-       
-        authResponse.setRole(user.getRole());
+        return buildAuthResponse(token, "Login success", true, user.getRole());
+    }
+
+    /**
+     * Builds an authentication response with the provided token, message, status, and role.
+     * 
+     * @param token the JWT token.
+     * @param message the message to be displayed.
+     * @param status the status of the authentication.
+     * @param role the role of the user.
+     * @return the authentication response.
+     */
+    private AuthResponse buildAuthResponse(String token, String message, boolean status, String role) {
+        AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(token);
-        authResponse.setStatus(true);
+        authResponse.setMessage(message);
+        authResponse.setStatus(status);
+        authResponse.setRole(role);
         return authResponse;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<User> updateUser(Long id, SignUpRequest newUser) {
         
@@ -201,48 +262,50 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                 });
     }
 
-   
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
-
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
         return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
     }
 
+    /**
+     * Authenticates a user with the provided username and password.
+     * 
+     * @param username the username of the user.
+     * @param password the password of the user.
+     * @return the authentication object.
+     */
     private Authentication authenticate(String username, String password) {
-
-        System.out.println(username+"---++----"+password);
-
         UserDetails userDetails = loadUserByUsername(username);
-
-        System.out.println("Sign in in user details"+ userDetails);
-
-
         if(userDetails == null) {
             System.out.println("Sign in details - null" + userDetails);
-
             throw new BadCredentialsException("Invalid username and password");
         }
         if(!passwordEncoder.matches(password,userDetails.getPassword())) {
             System.out.println("Sign in userDetails - password mismatch"+userDetails);
-
             throw new BadCredentialsException("Invalid password");
-
         }
-        System.out.println("HI " + userDetails.getAuthorities());
         return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Match> getUserPastMatches(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
-
-        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser, true, currentUser);  // Return the list of tournaments the user is participating in
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true, currentUser.getId());  // Return the list of tournaments the user is participating in
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser) {
         return userRepository.findById(id)
@@ -253,9 +316,4 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                     return userRepository.save(user);  // Save and return updated user
                 });
     }
-
-    
-
 }
-
-

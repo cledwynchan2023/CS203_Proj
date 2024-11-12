@@ -1,3 +1,6 @@
+import 'fullstack-proj-frontend/src/Global.js';
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -38,8 +41,6 @@ export default function TournamentLandingPage() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
             return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -65,8 +66,7 @@ export default function TournamentLandingPage() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
+
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
                 window.location.href = '/'; // Redirect to login if token is missing or expired
@@ -104,6 +104,26 @@ export default function TournamentLandingPage() {
             fetchData();
             //loadTournaments();
         }, 2000);
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/tournamentCreate', () => {
+                // Reload tournament data on match update
+                console.log("Received tournament update");
+                loadTournaments();
+            });
+        },(error) => {
+            console.error("WebSocket connection error", error);
+            
+        });
+
+        // Disconnect WebSocket on component unmount
+        return () => {
+            if (stompClient) stompClient.disconnect(() => {
+
+            });
+        };
         
 
     }, []);
@@ -116,7 +136,7 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/name");
-        console.log(result.data);
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -129,7 +149,7 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/date");
-        console.log(result.data);
+
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -142,7 +162,6 @@ export default function TournamentLandingPage() {
         setSelectedDropdownContent(content);
         setIsDropdownActive(false);
         const result = await axios.get("http://localhost:8080/t/tournaments/capacity");
-        console.log(result.data);
         if (!result.data.length == 0){
             setTournament(result.data);
         }
@@ -154,7 +173,6 @@ export default function TournamentLandingPage() {
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments");
-        console.log(result.data);
         if (!result.data.length == 0){
             setTournament(result.data);
             setIsLoading(false);
@@ -166,6 +184,8 @@ export default function TournamentLandingPage() {
     };
 
     const deleteTournament= async(tournament_id)=>{
+        const confirmation = window.confirm("Are you sure you want to delete this tournament?");
+        if (!confirmation) return;
         const token = localStorage.getItem('token');
         const result = await axios.delete(`http://localhost:8080/admin/tournament/${tournament_id}`, {
             headers: {
@@ -186,43 +206,41 @@ export default function TournamentLandingPage() {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
 		flexWrap: 'wrap',
-        marginTop:"80px",
-        height:"100%",
+        height:"100vh",
+
     }}> 
-    <div className="content container fade-in" style={{height:"auto",paddingTop:"100px", paddingBottom:"50px",margin:"0"}}>
-        {/* <section className="hero">
+    <div className="content fade-in" style={{height:"100%",width:"100%", backgroundColor:"rgba(0, 0, 0, 0.5)"}}>
+       
+        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", height:"100%", width:"100%", overflow:"scroll"}}>
             <div className="hero-body">
-                <p className="title">Tournament</p>
-            </div>
-        </section> */}
-        <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", backgroundColor:"rgba(0, 0, 0, 0.5)", borderRadius:"35px", height:"auto", overflowX:"scroll"}}>
-            <div className="hero-body" style={{marginBottom:"5%"}}>
-                <p className="title is-size-2 is-family-sans-serif">Tournament</p>
-                <div style={{display:"flex", width:"100%"}}>
-                    <div style={{width:"80%"}}>
-                        <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`}>Create Tournament</Link>
+                <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Tournament</p>
+                <div style={{display:"flex", width:"100%", flexWrap:"wrap", gap:"20px", marginBottom:"20px"}}>
+                    <div style={{width:"40%", minWidth:"180px"}}>
+                        <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`} style={{maxWidth:"200px"}}>Create Tournament</Link>
                     </div>
-                    <div style={{display:"flex", width:"20%"}}>
+                    <div style={{display:"flex", width:"50%", justifyContent:"right", minWidth:"200px"}}>
                         <p>Filter by:</p>
-                    <div style={{marginLeft:"20px", backgroundColor:"black"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
-                        <div className="dropdown-trigger">
-                            <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={toggleDropdown}>
-                                <span>{selectedDropdownContent}</span>
-                            </button>
-                        </div>
-                        <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{height:"100%", backgroundColor:"black"}}>
-                            <div className="dropdown-content">
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByName("Name")}}> Name</span>
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByDate("Date")}}> Date</span>
-                                <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByCapacity("Capacity")}}> Capacity</span>
+                        <div style={{marginLeft:"20px"}} className={`dropdown ${isDropdownActive ? 'is-active' : ''}`}>
+                            <div className="dropdown-trigger" >
+                                <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={toggleDropdown}>
+                                    <span>{selectedDropdownContent}</span>
+                                </button>
                             </div>
-                        </div>
+                            <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{height:"100%", backgroundColor:"black"}}>
+                                <div className="dropdown-content">
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByName("Name")}}> Name</span>
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByDate("Date")}}> Date</span>
+                                    <span style={{fontSize:"1.3rem"}} href="#" class="dropdown-item" onClick={()=>{loadTournamentsByCapacity("Capacity")}}> Capacity</span>
+                                </div>
+                            </div>
                         </div>
                         
                     </div>
                 </div>
                 
             </div>
+            <div style={{height:"80%", overflowX:"scroll"}}>
+            
             {isLoading ? (
             <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
                 <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
@@ -233,6 +251,7 @@ export default function TournamentLandingPage() {
                             <p style={{fontSize:"20px"}}>No tournaments available. Create one!</p>
                         </div>
                     ) : (
+
             <table className="table is-hoverable custom-table animate__animated animate__fadeIn" >
                 <thead>
                     <tr style={{height:"50px", paddingBottom:"5px"}}>
@@ -261,7 +280,8 @@ export default function TournamentLandingPage() {
                     )}
                 </tbody>
             </table>
-            ))}
+            ))
+}</div>
         </section>
     </div>
     
