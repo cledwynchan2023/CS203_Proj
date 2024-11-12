@@ -53,6 +53,10 @@ export default function Ranking() {
         navigate(`/user/${userId}/profile/${userid}`);
     }
 
+    const handleComingSoon = () =>{
+        alert("Coming Soon");
+    }
+
     const renderTabContent = () => {
         switch (activeTab) {
             case 'Global':
@@ -211,7 +215,7 @@ export default function Ranking() {
                   <a onClick={() => setActiveTab('Global')}>Global</a>
                 </li>
                 <li className={activeTab === 'Region' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Region')}>Region</a>
+                  <a onClick={() => handleComingSoon}>Region</a>
                 </li>
               </ul>
             </div>

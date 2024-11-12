@@ -7,8 +7,10 @@ import hikaru from '/src/assets/hikaru.webp';
 import liang from '/src/assets/liang.png';
 import europe from '/src/assets/europe.jpg';
 import "./style/Homepage.css";
+import {Atom} from "react-loading-indicators"
+
 export default function Homepage() {
-    
+    const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
     const [data, setData] = useState('');
     const [error, setError] = useState(null);
     const { userId } = useParams();
@@ -75,10 +77,44 @@ export default function Homepage() {
         };
 
         fetchData();
+        const timer = setTimeout(() => {
+            setShowWelcomeMessage(false);
+        }, 2000);
+        return () => clearTimeout(timer); 
         //loadPastTournaments();
  
 
     }, []);
+    if (showWelcomeMessage) {
+        return (
+            <>
+                <div className="background-container" style={{ 
+                   backgroundImage: `url(${backgroundImage})`, 
+                   backgroundSize: 'cover', 
+                   backgroundPosition: 'center',
+                   backgroundRepeat: 'no-repeat',
+                   flexWrap: 'wrap',
+                   height:"100vh",
+                }}> 
+                <div className="content fade-in" style={{width:"100%", height:"100%", backgroundColor: 'rgba(0, 0, 0, 0.7)'}}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%',width:"100%", textAlign:"center", flexWrap:"wrap" }}>
+                    <div className="animate__animated animate__fadeInUpBig" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%',width:"100%", textAlign:"center", flexWrap:"wrap" }}>
+                        <p className="title is-family-sans-serif is-2" style={{ width:"100%", color: 'white', fontWeight:"normal" }}>Welcome back, warrior</p>
+                    </div>
+                    <div className="fade-in"> 
+                        <Atom className="fade-in" color="#ffffff" size={100}></Atom>
+                        <p className="subtitle">Loading..</p>
+                    </div>
+
+                       
+                    </div>
+                </div>
+
+                </div>
+            </>
+            
+        );
+    }
     
   return (
     <>
@@ -88,7 +124,7 @@ export default function Homepage() {
     }}> 
          <div className="content" style={{width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.7)", paddingTop:"50px", overflowY:"scroll",}}>
             <section className="hero fade-in" style={{display:"flex", justifyContent:"start", width:"100%", alignItems:"center", height:"auto"}}>
-                <div style={{width:"70%", textAlign:"center"}}>
+                <div style={{width:"80%", textAlign:"center"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Master Your Moves, Conquer the Board – Join the Ultimate Chess Challenge!</p>
                     <p className="subtitles" style={{width:"100%", fontSize:"20px"}}>
                     Welcome to the premier destination for chess enthusiasts of all skill levels! Whether you’re a grandmaster or a beginner, our platform offers exciting tournaments that challenge your strategic thinking and push your skills to new heights. 
@@ -105,7 +141,7 @@ export default function Homepage() {
                     <div className="card-content">
                         <div className="media">
                         <div className="media-content">
-                            <p className="title is-4">Find Tournament</p>
+                            <p className="title is-4 ">Find Tournament</p>
                         </div>
                         </div>
 

@@ -432,7 +432,7 @@ export default function TournamentStart() {
         height:"100vh",
     }}> 
     <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.7)", overflow:"scroll"}}>
-        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"100px", marginLeft:"20px", marginRight:"20px"}}>
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"100px", paddingLeft:"20px", paddingRight:"20px"}}>
             <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"100%", minWidth:"400px"}}>
                 <div style={{width:"100px"}}>
                     <img src={comp1} width={150}></img>

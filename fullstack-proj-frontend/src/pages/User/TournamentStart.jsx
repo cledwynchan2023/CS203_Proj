@@ -140,7 +140,7 @@ export default function TournamentStart() {
                     </div>
                     ))}
                     <div>
-                        <p className="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px"}}>All Matches' Results</p>
+                        <p className="title" style={{fontSize:"1.5rem", fontWeight:"bold", width:"100%", paddingLeft:"10px", marginBottom:"20px"}}>All Matches' Results</p>
                     </div>
                     {pairing.map((pair, index) => {
                         const backgroundColor = index % 2 === 0 ? '#252525' : '#212121'; // Alternate colors
@@ -178,7 +178,7 @@ export default function TournamentStart() {
                         };
                         return (
                             
-                            <div className="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor: backgroundColor}}>
+                            <div className="card" style={{width:"100%", minWidth:"300px",height:"auto", display:"flex", alignItems:"center", marginBottom:"-10px", backgroundColor:""}}>
                        
                        <div className="card-content" style={{display:"flex", justifyContent:"center", overflowX:"scroll", height:"100%", width:"100%", flexWrap:"wrap", backgroundColor:""}}>
                             <div style={{width:"80%", display:'flex', minWidth:"300px", justifyContent:"center", backgroundColor:""}}>
@@ -450,12 +450,12 @@ export default function TournamentStart() {
        height:"100vh",
     }}> 
     <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.7)", overflow:"scroll"}}>
-        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"100px", marginLeft:"20px", marginRight:"20px"}}>
-            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"100%", minWidth:"400px"}}>   
+        <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"100px", paddingLeft:"20px", paddingRight:"20px"}}>
+            <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"100%", minWidth:"400px",}}>   
                 <div style={{width:"100px"}}>
                     <img src={comp1} width={150}></img>
                 </div>
-                <div style={{width:"80%", alignContent:"center", display:"flex", flexWrap:"wrap", paddingLeft:"20px", minWidth:"300px"}}>
+                <div style={{width:"80%", alignContent:"center", display:"flex", flexWrap:"wrap", paddingLeft:"20px", minWidth:"300px",}}>
                     <p className="title is-family-sans-serif" style={{width:"100%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
                     <p className="subtitle" style={{width:"100%"}}>ID: {tournament.id}</p>
                 </div>
@@ -463,9 +463,9 @@ export default function TournamentStart() {
             
             
         </section>
-        <section className="hero fade-in" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", marginBottom:"20px", minHeight:"600px"}}>
+        <section className="hero fade-in" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", marginBottom:"20px", minHeight:"600px",}}>
 
-            <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
+            <div className="tabs is-left" style={{ height:"10%", minHeight:"70px", }}>
                 <ul>
                     <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                     <a onClick={() => setActiveTab('Overview')}>Overview</a>
