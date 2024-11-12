@@ -154,7 +154,7 @@ export default function Homepage() {
                 </a>
                 </div> 
             </section>
-            <div style={{paddingLeft:"5%", height:"50px"}}>
+            <div style={{paddingLeft:"5%", height:"20%", minHeight:"120px"}}>
                 <p className="title is-1" style={{fontWeight:"bold"}}>Chess Latest News </p>
             </div>
             <section className="hero" style={{width:"100%", height:"auto",  paddingTop:"5%", paddingLeft:"5%", paddingRight:"5%", paddingBottom:"50px", overflow:"scroll"}}>
