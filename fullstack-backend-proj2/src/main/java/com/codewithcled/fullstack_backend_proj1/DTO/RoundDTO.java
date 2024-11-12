@@ -1,12 +1,13 @@
 package com.codewithcled.fullstack_backend_proj1.DTO;
 
 import java.util.List;
-import java.util.Map;
+
+import com.codewithcled.fullstack_backend_proj1.model.Scoreboard;
 
 public class RoundDTO {
     private Long id;
     private Integer roundNum;
-    private Map<Long, Double> scoreboard;
+    private Scoreboard scoreboard;
     private List<MatchDTO> matchList;
     private Boolean isCompleted = false;
 
@@ -29,10 +30,10 @@ public class RoundDTO {
     public void setRoundNum(Integer roundNum) {
         this.roundNum = roundNum;
     }
-    public Map<Long, Double> getScoreboard() {
+    public Scoreboard getScoreboard() {
         return scoreboard;
     }
-    public void setScoreboard(Map<Long, Double> scoreboard) {
+    public void setScoreboard(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
     public List<MatchDTO> getMatchList() {

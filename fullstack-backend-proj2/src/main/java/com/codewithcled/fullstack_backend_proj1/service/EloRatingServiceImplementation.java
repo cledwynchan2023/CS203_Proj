@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 public class EloRatingServiceImplementation implements EloRatingService {
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean isValidElo(int elo){
-        if (elo<=0){
+        if (elo<0){
             return false;
         }
 
@@ -18,6 +21,9 @@ public class EloRatingServiceImplementation implements EloRatingService {
     }
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public double WinProbabilityOnElo(int eloA, int eloB) {
         // Takes in two Elo ratings, calculates the probability of Elo B winning over
         // EloA
@@ -25,6 +31,9 @@ public class EloRatingServiceImplementation implements EloRatingService {
     }
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public double WinValue(int outcome) {
         // Integer Outcome, 1 for EloA win, 0 for EloB win, 0.5 if draw
 
@@ -41,6 +50,9 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
     // Returns new Elo score of user A
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public double EloCalculation(int eloA, int eloB, int outcome) {
 
         if(!isValidElo(eloA) || !isValidElo(eloB)){
@@ -57,24 +69,43 @@ public class EloRatingServiceImplementation implements EloRatingService {
 
         // Probability of player A winning over player B
         double p1Win = WinProbabilityOnElo(eloA, eloB);
-        return Math.round(eloA + eloChange(k, winValue, p1Win));
+        double result=eloA + eloChange(k, winValue, p1Win);
+        
+        if (result<0){
+            return 0.0;
+        }
+
+        return Math.round(result);
     }
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public double eloChange(int k,double winValue, double winProbability){
         return k * (winValue-winProbability);
     }
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public int getKValue(int eloScore) {
-        if (eloScore >= 2400) {
+        double rawKValue = 40 - 40 * Math.log10(eloScore/500.0);
+        int kValue = (int) Math.round(rawKValue);
+        if (kValue < 10) {
             return 10;
-        } else {
-            return 20;
         }
+        if (kValue > 40) {
+            return 40;
+        }
+        return kValue;
     }
 
     @Override
+    /**
+     * {@inheritDoc}
+     */
     public List<Double> eloRatingForBoth(int elo1,int elo2,int outcome){
         double newEloA=EloCalculation(elo1, elo2, outcome);
         double newEloB=EloCalculation(elo2, elo1, outcome*-1);

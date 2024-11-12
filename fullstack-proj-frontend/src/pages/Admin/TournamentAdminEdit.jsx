@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../admin/Register.css';
+import '../Admin/Register.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
@@ -35,8 +35,7 @@ export default function TournamentAdminEdit() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
+
             return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -88,7 +87,7 @@ export default function TournamentAdminEdit() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+          
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
@@ -142,7 +141,7 @@ export default function TournamentAdminEdit() {
                     name="status"
                 >
                     <option value="active">Active</option>
-                    <option value="inactive">Not Active</option>
+                    <option value="completed">Completed</option>
                 </select>
                 <label htmlFor="Status">Status</label>
             </div>

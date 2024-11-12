@@ -1,3 +1,4 @@
+import 'fullstack-proj-frontend/src/Global.js';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -12,6 +13,9 @@ import { TiTick } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import swissPic from '/src/assets/swiss.png';
 import {Atom} from "react-loading-indicators"
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 
 export default function TournamentDetail() {
     const navigate = useNavigate();
@@ -19,14 +23,10 @@ export default function TournamentDetail() {
     const[user,setUser]=useState(null);
     const[nonParticpatingUser,setNonParticipatingUser]=useState([]);
     const[tournament,setTournament]=useState([]);
-    const [data, setData] = useState(null);
-    const [error, setError] = useState(null);
     const {userId} = useParams()
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editedTournament,setEditedTournament] = useState({tournament_name:"", date:"", status:"active", size:"", noOfRounds:0});
-    const {tournament_name, date, status, size, noOfRounds} = editedTournament;
     const [hasJoined, setHasJoined] = useState(false); 
     const onInputChange=(e)=>{
         setEditedTournament({...editedTournament, [e.target.name]:e.target.value});
@@ -44,22 +44,23 @@ export default function TournamentDetail() {
                 <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
             </div>
             
-        ): (<section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{height:"80%",width:"100%", overflowY:"scroll"}}>
-            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap"}}>
-                <div class="card" style={{height:"700px", width:"30%", minWidth:"350px",marginright:"10px"}}>
-                    <div class="card-image">
-                        <figure class="image is-4by3">
+        ): (
+            <section className="section is-flex is-family-sans-serif animate__animated animate__fadeInUpBig" style={{width:"100%", height:"600px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", flexWrap:"wrap", gap:"5%"}}>
+                <div className="card" style={{width:"30%", minWidth:"300px",marginright:"10px"}}>
+                    <div className="card-image">
+                        <figure className="image is-4by3">
                         <img
                             src={chessplaying1}
                             alt="Placeholder image"
                         />
                         </figure>
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">Game of Chess</p>
-                        </div>
+                    <div className="card-content">
+                        <div className="media">
+                            <div className="media-content">
+                                <p className="title is-4">Game of Chess</p>
+                            </div>
                         </div>
 
                         <div className="content">
@@ -68,8 +69,12 @@ export default function TournamentDetail() {
                         </div>
                     </div>
                 </div>
-                <div style={{height:"400px",width:"50%", minWidth:"400px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%"}}>
-                    <div className="card" style={{width:"45%", minWidth:"350px", height:"200px"}} onClick={() => setIsModalOpen(true)} >
+
+                <div style={{width:"50%", minWidth:"300px",display:"flex",justifyContent:"center", flexWrap:"wrap",gap:"5%", backgroundColor:"", alignContent:"center"}}>
+                    <div style={{width:"100%", height:"50px", textAlign:"center"}}>
+                        <p className="title is-4" >Tournament Details</p>
+                    </div>
+                    <div className="card" style={{width:"45%", minWidth:"250px", height:"150px"}} onClick={() => setIsModalOpen(true)} >
                         <div className="card-content" style={{width:"100%", height:"100%"}}>
                     
                             <div style={{ display: "flex", alignItems: "center", width:"100%",height:"50%"}}> 
@@ -89,20 +94,20 @@ export default function TournamentDetail() {
                             </div>
                    
                     </div>
-                    <div className="card" style={{width:"45%", minWidth:"350px",  height:"200px"}}>
-                        <div className="card-content">
-                        <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
-                                <div style={{marginRight:"5%"}}>
-                                    <IoCalendarNumberOutline size={45}></IoCalendarNumberOutline>
+                    <div className="card" style={{width:"45%", minWidth:"250px",  height:"150px"}}>
+                            <div className="card-content">
+                                <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
+                                    <div style={{marginRight:"5%"}}>
+                                     <IoCalendarNumberOutline size={35}></IoCalendarNumberOutline>
+                                    </div>
+                                    <div>
+                                        <p className="subtitle" style={{fontSize:"1rem"}}>Date</p>
+                                        <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
+                                    </div> 
                                 </div>
-                                <div>
-                                <p className="subtitle" style={{fontSize:"1rem"}}>Date</p>
-                                <p className="title" style={{fontSize:"2rem", fontWeight:"bold"}}>{tournament.date}</p>
-                                </div> 
                             </div>
-                        </div>
-                    </div>
-                    <div className="card" onClick={() => setActiveTab('Players')} style={{width:"45%", minWidth:"350px", height:"150px"}}>
+                     </div>
+                     <div className="card" onClick={() => setActiveTab('Players')} style={{width:"45%", minWidth:"250px", height:"150px"}}>
                         <div className="card-content">
                         <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
                                 <div style={{marginRight:"5%"}}>
@@ -116,7 +121,7 @@ export default function TournamentDetail() {
                         </div>
                            
                     </div>
-                    <div className="card" style={{width:"45%", minWidth:"350px", height:"150px"}}>
+                    <div className="card" style={{width:"45%", minWidth:"250px", height:"150px"}}>
                         <div className="card-content">
                         <div className="content" style={{display:"flex", flexWrap:"wrap", alignItems:"center"}}>
                                 <div style={{marginRight:"5%"}}>
@@ -132,14 +137,15 @@ export default function TournamentDetail() {
                 </div>
                 
             </div>
-            
         </section>
+        
         )}
         </>
+        
       case 'Players':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className=" is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-                <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+                <div className="card" style={{width:"95%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
                     <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                         <thead>
@@ -162,9 +168,9 @@ export default function TournamentDetail() {
                 </div>
             </section>;
       case 'Scoreboard':
-        return <section className="section is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
+        return <section className=" is-flex is-family-sans-serif fade-in" style={{height:"600px",width:"100%", justifyContent:"center"}}>
             
-        <div className="card" style={{width:"80%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
+        <div className="card" style={{width:"90%", display:"flex", justifyContent:"start", paddingTop:"30px",height:"100%",overflowY:"scroll" }}>
 
             <table className="table is-hoverable custom-table" style={{width:"100%",paddingLeft:"10px"}}>
                 <thead>
@@ -210,16 +216,17 @@ export default function TournamentDetail() {
         setTournament(result.data);
         setUser(result.data.participants);
         setHasJoined(checkJoinedTournamentFirst(result.data.participants));
+        checkStatus(result.data.status);
+        } catch (error) {
+           
+                alert("Tournament does not exist or tournament has been removed");
+                navigate(`/user/${userId}/tournament`);
+            
+        }
+       
+       
     };
 
-    const checkJoinedTournament = () => {
-        for (let i = 0; i < user.length; i++){
-            if (user[i].id == userId){
-                return true;
-            }
-        }
-        return false;
-    }
 
     const checkJoinedTournamentFirst = (users) => {
         for (let i = 0; i < users.length; i++){
@@ -238,6 +245,7 @@ export default function TournamentDetail() {
         try {
             const token = localStorage.getItem('token');
             const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/delete?user_id=${userId}`,
+
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -298,9 +306,6 @@ export default function TournamentDetail() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.userId);
-            console.log(decodedToken.authorities)
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
                 if (decodedToken.authorities === 'ROLE_ADMIN'){
                     setHasJoined(true);
@@ -330,14 +335,26 @@ export default function TournamentDetail() {
     } catch (error) {}
     };
 
+    const checkStatus = (status) => {
+        if (status == 'active') {
+            return true;
+        } else if (status == 'ongoing') {
+            alert("Tournament has started");
+            navigate(`/user/${userId}/tournament/${id}/start`);
+        } else {
+            alert("Tournament has ended");
+            navigate(`/user/${userId}/tournament/${id}/ended`);
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+ 
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
-                console.log(isAdminToken(token));
+
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
@@ -348,7 +365,7 @@ export default function TournamentDetail() {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                console.log(response.data.status);
+
                 if (response.data.status == 'active') {
                     setData(response.data);
                     setIsLoading(false);
@@ -366,14 +383,13 @@ export default function TournamentDetail() {
                 
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    console.log("Invalid TOken")
+              
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
                 } else {
                     setIsLoading(false);
                     console.log(error);
-                    setError('An error occurred while fetching data.');
                 }
             }
         };
@@ -418,25 +434,27 @@ export default function TournamentDetail() {
         backgroundImage: `url(${backgroundImage})`,
         height: "100vh",
     }}> 
-    <div className="content" style={{width:"100%", height:"100%", overflowY:"scroll"}}>
-        <section className="hero is-flex-direction-row fade-in" style={{paddingLeft:"5%", paddingRight:"5%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.7)"}}>
+    <div className="content" style={{width:"100%", height:"100%",  backgroundColor:"rgba(0, 0, 0, 0.8)", overflow:"scroll"}}>
+    <section className=" fade-in" style={{width:"100%", display:"flex", flexWrap:"wrap", padding:"10px", height:"20%", minHeight:"200px", marginBottom:"20px"}}>
+        <div style={{display:"flex", justifyContent:'left', alignItems:"center",width:"70%", minWidth:"400px"}}>
             <div style={{width:"200px"}}>
                 <img src={comp1} width={150}></img>
             </div>
             <div style={{width:"90%", alignContent:"center"}}>
                 <p className="title is-family-sans-serif" style={{width:"80%", fontWeight:"bold"}}>{tournament.tournamentName}</p>
-                <p class="subtitle">ID: {tournament.id}</p>
+                <p className="subtitle">ID: {tournament.id}</p>
             </div>
-            <div style={{alignContent:"center",width:"500px"}}>
-                <button className="button is-link" disabled={hasJoined} onClick={() => addPlayer()} style={{ height:"40px",marginRight:"5%", fontWeight:"bold"}}>{hasJoined ? 'Joined' : 'Join Tournament'}</button>
-                <button className="button is-danger" disabled={!hasJoined} onClick={() => removePlayer()} style={{width:"45%", height:"40px", fontWeight:"bold"}}>Leave</button>
+        </div>
+            <div style={{display:"flex", alignItems:"center", width:"30%",paddingleft:"10px", gap:"10px", justifyContent:"center", minWidth:"320px"}}>
+                <button className="button is-link" disabled={hasJoined} onClick={() => addPlayer()} style={{ height:"40px",marginRight:"5%", fontWeight:"bold", width:"50%"}}>{hasJoined ? 'Joined' : 'Join Tournament'}</button>
+                <button className="button is-danger" disabled={!hasJoined} onClick={() => removePlayer()} style={{width:"35%", height:"40px", fontWeight:"bold"}}>Leave</button>
             </div>
             
         </section>
         
-        <section className="hero" style={{paddingLeft:"2%", paddingRight:"2%", width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"100%"}}>
+        <section className="hero fade-in" style={{width:"100%", backgroundColor:"rgba(0, 0, 0, 0.8)", height:"80%", overflow:"scroll", marginBottom:"20px", minHeight:"600px"}}>
             <div style={{width:"100%", height:"20px"}}></div>
-            <div className="tabs is-left" style={{ height:"70px"}}>
+            <div className="tabs is-left" style={{ height:"10%", minHeight:"70px"}}>
               <ul>
                 <li className={activeTab === 'Overview' ? 'is-active' : ''}>
                   <a onClick={() => setActiveTab('Overview')}>Overview</a>
@@ -449,7 +467,7 @@ export default function TournamentDetail() {
                 </li>
               </ul>
             </div>
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0.3)", height:"90%", display:"flex", justifyContent:"center", width:"100%"}}>
               {renderTabContent()}
             </div>
           </section>
@@ -457,7 +475,7 @@ export default function TournamentDetail() {
     {isModalOpen && (
              <div className="modal is-active fade-in">
              <div className="modal-background"></div>
-             <div className="modal-card animate__animated animate__fadeInUpBig" style={{height:"700px"}}>
+             <div className="modal-card animate__animated animate__fadeInUpBig"  style={{padding:"10px", marginTop:"100px"}}>
                <header className="modal-card-head">
                  <p className="modal-card-title">Swiss Tournament</p>
                  <button className="delete"  onClick={() => setIsModalOpen(false)} aria-label="close"></button>
@@ -484,10 +502,10 @@ export default function TournamentDetail() {
                     </div>
                
                </section>
-               <footer class="modal-card-foot">
-                 <div class="buttons">
+               <footer className="modal-card-foot">
+                 <div className="buttons">
                    
-                   <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                   <button className="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                  </div>
                </footer>
              </div>

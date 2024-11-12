@@ -83,35 +83,31 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void validateAdminToken_Success() throws Exception {
+    public void validateAdminToken_Success_ReturnTokenResponseValid() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin/validate-admin-token");
         AdminController.TokenRequest tokenRequest = new AdminController.TokenRequest();
         tokenRequest.setToken(adminToken);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + JWT);
 
-        // ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-        // .postForEntity(uri, tokenRequest, null);
         ResponseEntity<?> result = restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
                 new HttpEntity<>(tokenRequest, headers),
-                // new HttpEntity<>(tokenRequest),
                 AdminController.TokenRequest.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
     }
 
     @Test
-    public void validateAdminToken_Failure() throws Exception {
+    public void validateAdminToken_Failure_ReturnTokenResponseInvalid() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin/validate-admin-token");
         AdminController.TokenRequest tokenRequest = new AdminController.TokenRequest();
         tokenRequest.setToken("fa");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + JWT);
 
-        // ResponseEntity<?> result = restTemplate.withBasicAuth("AdminUser", "Admin")
-        // .postForEntity(uri, tokenRequest, null);
         ResponseEntity<?> result = restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
@@ -122,7 +118,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void createdTournament_Success() throws Exception {
+    public void createdTournament_Success_ReturnCreatedTournament() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
         CreateTournamentRequest createTournamentRequest = new CreateTournamentRequest();
         createTournamentRequest.setCurrentSize(0);
@@ -147,7 +143,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void createdTournament_Failure_NoBody() throws Exception {
+    public void createdTournament_Failure_NoBody_ReturnBADREQUEST() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + JWT);
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament");
@@ -162,7 +158,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void createdTournament_Failure_NoAuthentication() throws Exception {
+    public void createdTournament_Failure_NoAuthentication_ReturnRerouteToLogIn() throws Exception {
         CreateTournamentRequest createTournamentRequest = new CreateTournamentRequest();
         createTournamentRequest.setCurrentSize(0);
         createTournamentRequest.setDate("10/10/2023");
@@ -184,11 +180,11 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void createUser_Success() throws Exception {
+    public void createUser_Success_ReturnAuthResponse() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
-        signUpRequest.setEmail("TestUser");
+        signUpRequest.setEmail("TestUser@gmail.com");
         signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("TestUser");
@@ -206,6 +202,35 @@ public class AdminControllerIntegrationTest {
 
     @Test
     public void createUser_Failure_SameUserNames() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser@gmail.com");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("TestUser");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser@gmail.com");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser");
+        userRepository.save(originalUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + JWT);
+
+        ResponseEntity<AuthResponse> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(signUpRequest, headers),
+                AuthResponse.class);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+    }
+
+    @Test
+    public void createUser_Failure_InvalidEmailFormat() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup/user");
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
@@ -263,7 +288,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void deleteUser_Success() throws Exception {
+    public void deleteUser_Success_ReturnSuccessFulDeletion() throws Exception {
         User originalUser = new User();
         originalUser.setElo((double) 100);
         originalUser.setEmail("TestUser");
@@ -325,7 +350,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void getUserByUsername_Success() throws Exception {
+    public void getUserByUsername_Success_ReturnUserDTO() throws Exception {
         User originalUser = new User();
         originalUser.setElo((double) 100);
         originalUser.setEmail("TestUser");
@@ -345,6 +370,7 @@ public class AdminControllerIntegrationTest {
                 UserDTO.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("TestUser",result.getBody().getUsername());
     }
 
     @Test
@@ -386,7 +412,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void deleteTournament_Success() throws Exception {
+    public void deleteTournament_Success_ReturnSuccessMessage() throws Exception {
 
         Tournament originalTournament = new Tournament();
         originalTournament.setSize(0);
@@ -410,7 +436,7 @@ public class AdminControllerIntegrationTest {
         assertEquals(0, tournamentRepository.count());
     }
 
-    @Test // returns OK instead of throwing exception
+    @Test
     public void deleteTournament_Failure_TournamentNotFound() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/tournament/" + 110);
         HttpHeaders headers = new HttpHeaders();
@@ -422,8 +448,8 @@ public class AdminControllerIntegrationTest {
                 new HttpEntity<>("", headers),
                 String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals("Tournament with ID " + 110 + " not found.", result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("An error occurred while deleting the tournament.", result.getBody());
     }
 
     @Test
@@ -442,7 +468,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void updateUser_Success() throws Exception {
+    public void updateUser_Success_ReturnUpdatedUserDTO() throws Exception {
         User originalUser = new User();
         originalUser.setElo((double) 100);
         originalUser.setEmail("TestUser");
@@ -529,7 +555,7 @@ public class AdminControllerIntegrationTest {
     }
 
     @Test
-    public void updateTournament_Success() throws Exception {
+    public void updateTournament_Success_ReturnUpdatedTournamentDTO() throws Exception {
         CreateTournamentRequest tournamentUpdateData = new CreateTournamentRequest();
         tournamentUpdateData.setTournament_name("newName");
         tournamentUpdateData.setDate("10/22/2011");

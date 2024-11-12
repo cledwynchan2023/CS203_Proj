@@ -5,8 +5,8 @@ import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 import com.codewithcled.fullstack_backend_proj1.service.UserService;
 import com.codewithcled.fullstack_backend_proj1.DTO.EditUserRequest;
 import com.codewithcled.fullstack_backend_proj1.DTO.SignUpRequest;
-import com.codewithcled.fullstack_backend_proj1.DTO.TournamentDTO;
-import com.codewithcled.fullstack_backend_proj1.DTO.TournamentMapper;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartDTO;
+import com.codewithcled.fullstack_backend_proj1.DTO.TournamentStartMapper;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserDTO;
 import com.codewithcled.fullstack_backend_proj1.DTO.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /*
  * User Controller
@@ -34,10 +35,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
-
-    //@Autowired
-    //private TournamentService tournamentService;
-
 
     @Autowired
     private UserService userService;
@@ -97,10 +94,10 @@ public class UserController {
 
     // Get User Current Participating Tournaments
     @GetMapping("/{id}/currentTournament")
-    public ResponseEntity<List<TournamentDTO>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
+    public ResponseEntity<List<TournamentStartDTO>> getUserParticipatingTournaments(@PathVariable("id") Long id) {
         try {
-            User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
-            List<TournamentDTO> tournamentDTOs = TournamentMapper.toDTOList(user.getCurrentTournaments());
+            User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+            List<TournamentStartDTO> tournamentDTOs = TournamentStartMapper.toDTOList(user.getCurrentTournaments());
             return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
             // Log the exception message for debugging
@@ -126,8 +123,6 @@ public class UserController {
         return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
     }
 
-
-
     //editing profile
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
@@ -149,7 +144,15 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
     }
 
-    
-
+    @GetMapping("/users/sorted")
+    public ResponseEntity<List<UserDTO>> getSortedUsers() {
+        List<User> users = userRepository.findAll();
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+        }
+        users.sort((u1, u2) -> u2.getElo().compareTo(u1.getElo()));
+        List<UserDTO> userDTOs = UserMapper.toDTOList(users);
+        return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
+    }   
 
 }

@@ -12,8 +12,7 @@ export default function Register() {
     const{username, password, email, confirmPassword, role} = user;
     const [isLoading, setIsLoading] = useState(false);
     const onInputChange=(e)=>{
-        setUser({...user, [e.target.name]:e.target.value});
-       
+        setUser({...user, [e.target.name]:e.target.value});   
     }
    
     const isValidEmail = (email) => {
@@ -21,18 +20,6 @@ export default function Register() {
         return emailRegex.test(email);
     };
 
-    const isDomainValid = async (email) => {
-        const domain = email.split('@')[1];
-        if (!domain) return false;
-
-        try {
-            const response = await fetch(`https://dns.google/resolve?name=${domain}&type=MX`);
-            const data = await response.json();
-            return data.Answer && data.Answer.length > 0; // Check if MX records exist
-        } catch {
-            return false;
-        }
-    };
 
     const validateAdminToken = async (token) => {
         try {
@@ -65,13 +52,6 @@ export default function Register() {
               return;
             }
           }
-
-        const domainValid = await isDomainValid(email);
-        if (!domainValid) {
-          setIsLoading(false);
-            alert("Email domain does not exist or cannot receive emails");
-            return;
-        }
 
         if (password !== confirmPassword) {
           setIsLoading(false);
@@ -106,11 +86,8 @@ export default function Register() {
             } else {
               setIsLoading(false);
                 console.error("There was an error registering the user!", error);
-            }
-            
+            }   
         }
-
-        
     }
 
     return (
@@ -187,8 +164,7 @@ export default function Register() {
                 <label className="label has-text-primary-light">Select Role</label>
                 <div className="control is-expanded">
                     <div classname="select is-fullwidth">
-                    <select
-                            
+                    <select         
                             id="floatingRole"
                             //value={role}
                             onChange={(e) => onInputChange(e)}
@@ -206,8 +182,7 @@ export default function Register() {
 								<Atom size={24} color="white" />
 								<p style={{width:"100%"}}>Registering....</p>
 							</div>
-
-                        </div>
+                      </div>
                     ) : (
                       <div>
                           <button type="submit" className="button is-link is-fullwidth">Register</button>
@@ -217,12 +192,8 @@ export default function Register() {
                     )}
             </form>
             <div className="block">
-           
             </div>
-            
-           
           </div>
-         
         </div>
         </div>
         <footer className="footer" style={{textAlign:"center"}}>

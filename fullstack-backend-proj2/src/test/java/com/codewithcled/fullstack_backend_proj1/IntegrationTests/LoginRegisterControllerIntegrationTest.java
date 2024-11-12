@@ -52,7 +52,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void validateAdminToken_Success() throws Exception {
+    public void validateAdminToken_Success_ReturnTokenResponseValids() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
         LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
@@ -64,7 +64,7 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void validateAdminToken_Failure() throws Exception {
+    public void validateAdminToken_Failure_ReturnTokenResponseInvalid() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/validate-admin-token");
 
         LoginRegisterController.TokenRequest tokenRequest = new LoginRegisterController.TokenRequest();
@@ -76,12 +76,12 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void createUserHandler_Success() throws Exception {
+    public void createUserHandler_Success_ReturnAuthResponseSuccess() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup");
 
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
-        signUpRequest.setEmail("TestUser");
+        signUpRequest.setEmail("TestUser@gmail.com");
         signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("TestUser");
@@ -92,19 +92,19 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void createUserHandler_Failure() throws Exception {
+    public void createUserHandler_Failure_SameUserName() throws Exception {
         URI uri = new URI(baseUrl + port + urlPrefix + "/signup");
 
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setElo((double) 100);
-        signUpRequest.setEmail("TestUser");
+        signUpRequest.setEmail("TestUser@gmail.com");
         signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
         signUpRequest.setRole("ROLE_USER");
         signUpRequest.setUsername("TestUser");
 
         User originalUser = new User();
         originalUser.setElo((double) 100);
-        originalUser.setEmail("TestUser");
+        originalUser.setEmail("TestUser2@gmail.com");
         originalUser.setPassword(passwordEncoder.encode("TestUser"));
         originalUser.setRole("ROLE_USER");
         originalUser.setUsername("TestUser");
@@ -116,7 +116,55 @@ public class LoginRegisterControllerIntegrationTest {
     }
 
     @Test
-    public void signin_Success() throws Exception{
+    public void createUserHandler_Failure_SameEmail() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signup");
+
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser@gmail.com");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("TestUser");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser@gmail.com");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser2");
+        userRepository.save(originalUser);
+
+        ResponseEntity<AuthResponse> result = restTemplate.postForEntity(uri, signUpRequest, AuthResponse.class);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+    }
+
+    @Test
+    public void createUserHandler_Failure_InvalidEmail() throws Exception {
+        URI uri = new URI(baseUrl + port + urlPrefix + "/signup");
+
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setElo((double) 100);
+        signUpRequest.setEmail("TestUser");
+        signUpRequest.setPassword(passwordEncoder.encode("TestUser"));
+        signUpRequest.setRole("ROLE_USER");
+        signUpRequest.setUsername("TestUser");
+
+        User originalUser = new User();
+        originalUser.setElo((double) 100);
+        originalUser.setEmail("TestUser2@gmail.com");
+        originalUser.setPassword(passwordEncoder.encode("TestUser"));
+        originalUser.setRole("ROLE_USER");
+        originalUser.setUsername("TestUser2");
+        userRepository.save(originalUser);
+
+        ResponseEntity<AuthResponse> result = restTemplate.postForEntity(uri, signUpRequest, AuthResponse.class);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+    }
+
+    @Test
+    public void signin_Success_ReturnAuthResponse() throws Exception{
         URI uri = new URI(baseUrl + port + urlPrefix + "/signin");
 
         User originalUser = new User();

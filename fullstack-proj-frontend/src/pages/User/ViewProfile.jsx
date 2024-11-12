@@ -234,12 +234,14 @@ const getEloChangesFromEachTournament = () => {
     }
     const loadUser= async()=>{
         const token = localStorage.getItem('token');
+
         const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/id/${playerId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
         const response2 = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/u/users/sorted`, {
+
             headers: {
                 Authorization: `Bearer ${token}`
             }

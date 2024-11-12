@@ -47,8 +47,7 @@ export default function TournamentAdminCreate() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.authorities)
+        
             return decodedToken.authorities === 'ROLE_ADMIN'; // Adjust this based on your token's structure
         } catch (error) {
             return false;
@@ -63,7 +62,7 @@ export default function TournamentAdminCreate() {
             alert("Invalid date! Please enter in the format MM/DD/YYYY");
             return;
         }
-        console.log(status);
+      
         const tournamentData = {
             tournament_name,
             date,
@@ -91,7 +90,7 @@ export default function TournamentAdminCreate() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
+           
             
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
@@ -119,7 +118,7 @@ export default function TournamentAdminCreate() {
           
       }}>
         <div className="content fade-in" style={{width:"100%", height:"100%", backgroundColor:"rgba(0,0,0,0.8)",}}>
-        <div className="container animate__animated animate__fadeInUpBig" style={{ width:"100%", height:"70%", paddingLeft:"20%", paddingRight:"20%", paddingTop:"5%"}}>
+        <div className="container animate__animated animate__fadeInUpBig" style={{ width:"100%", height:"60%", paddingLeft:"15%", paddingRight:"15%", paddingTop:"5%",  justifyContent:"center"}}>
           <p style={{fontSize:"20px"}}>Create Tournament</p>
             <form onSubmit={(e) => onSubmit(e)}>
             <div className="form-floating mb-3">
@@ -131,6 +130,7 @@ export default function TournamentAdminCreate() {
                 value={tournament_name}
                 onChange={(e) =>onInputChange(e)}
                 name="tournament_name"
+                
               ></input>
               <label htmlFor="tournament_name">Tournament Name</label>
             </div>
@@ -158,7 +158,7 @@ export default function TournamentAdminCreate() {
                 >
                     <option value="active">Active</option>
                     <option value="ongoing">Ongoing</option>
-                    <option value="completed">Inactive</option>
+                    <option value="completed">Completed</option>
                 </select>
                 <label htmlFor="Status">Status</label>
             </div>

@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import backgroundImage from '/src/assets/image1.webp';
-import comp1 from '/src/assets/comp1.png';
-import chessplaying1 from '/src/assets/chessplaying.webp';
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { BiGroup } from "react-icons/bi";
-import { TiTick } from "react-icons/ti";
-import { IoMdInformationCircleOutline } from "react-icons/io";
-import swissPic from '/src/assets/swiss.png';
 import { CgProfile } from "react-icons/cg";
 
 export default function Ranking() {
-    const [selectedId, setSelectedId] = useState(null);
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const[user,setUser]=useState([]);
     const {userId} = useParams()
     const[selectedUser,setSelectedUser]=useState([]);
-    const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('Global');
     const[ranking , setRanking]=useState([]);
     const isTokenExpired = () => {
@@ -35,9 +27,7 @@ export default function Ranking() {
     const isAdminToken = (token) => {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken)
-            console.log(decodedToken.userId);
-            console.log(decodedToken.authorities)
+
             if ((decodedToken.authorities === 'ROLE_ADMIN' || decodedToken.authorities === 'ROLE_USER') && decodedToken.userId == userId){
 
                 return true;
@@ -58,11 +48,20 @@ export default function Ranking() {
         setIsModalOpen(true);
     };
 
+    const handleViewProfile = (userid) =>{
+        setIsModalOpen(false);
+        navigate(`/user/${userId}/profile/${userid}`);
+    }
+
+    const handleComingSoon = () =>{
+        alert("Coming Soon");
+    }
+
     const renderTabContent = () => {
         switch (activeTab) {
             case 'Global':
                 return <>
-                <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"90%"}}>
+                <section className=" is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", borderRadius:"35px", height:"auto", overflowX:"scroll", width:"90%"}}>
             
             <table className="table is-hoverable custom-table" >
                 <thead>
@@ -86,31 +85,32 @@ export default function Ranking() {
             </table>
         </section>
         {isModalOpen && (
-              <div class="modal is-active fade-in">
-              <div class="modal-background"></div>
-              <div class="modal-card animate__animated animate__fadeInDown">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">{selectedUser.username}</p>
-                  <button class="delete" onClick={() => setIsModalOpen(false)} aria-label="close"></button>
+              <div className="modal is-active fade-in">
+              <div className="modal-background"></div>
+              <div className="modal-card animate__animated animate__fadeInDown">
+                <header className="modal-card-head">
+                  <p className="modal-card-title">{selectedUser.username}</p>
+                  <button className="delete" onClick={() => setIsModalOpen(false)} aria-label="close"></button>
                 </header>
-                <section class="modal-card-body" style={{height:"250px"}}>
+                <section className="modal-card-body" style={{height:"250px"}}>
                     <div style={{width:"100%"}}>
                         <div style={{display:"flex", alignItems:"center", height:"100%"}}>
                             <CgProfile style={{fontSize:"170px", color:"white"}}/>
                             <div style={{paddingLeft:"20px"}}>
-                                <p className="title" style={{fontWeight:"bold", marginBottom:"20px"}}>{selectedUser.username}</p>
-                                <p className="subtitle">Elo: {selectedUser.elo}</p>
+                                <p className="title" style={{fontWeight:"bold", marginBottom:"10px"}}>{selectedUser.username}</p>
+                                <p className="subtitle" style={{marginBottom:"0"}}>Elo: {selectedUser.elo}</p>
                                 <p className="subtitle">Ranking: {ranking}</p>
+                                <button className="button is-link" onClick={() => handleViewProfile(selectedUser.id)}>View Profile</button>
                             </div>
 
                         </div>
                     </div>
             
                 </section>
-                <footer class="modal-card-foot">
-                  <div class="buttons">
+                <footer className="modal-card-foot">
+                  <div className="buttons">
                     
-                    <button class="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                    <button className="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                   </div>
                 </footer>
               </div>
@@ -148,11 +148,9 @@ export default function Ranking() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            console.log(token +" hello");
-            
+
             if (!token || isTokenExpired()|| !isAdminToken(token)) {
                 clearTokens();
-                console.log(isAdminToken(token));
                 window.location.href = '/'; // Redirect to login if token is missing or expired
                 return;
             }
@@ -166,13 +164,11 @@ export default function Ranking() {
                 setData(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    console.log("Invalid TOken")
+                
                     clearTokens();
                     localStorage.removeItem('token'); // Remove token from localStorage
                     window.location.href = '/'; // Redirect to login if token is invalid
-                } else {
-                    setError('An error occurred while fetching data.');
-                }
+                } 
             }
         };
 
@@ -206,24 +202,24 @@ export default function Ranking() {
         backgroundImage: `url(${backgroundImage})`,
         height:"100vh"
     }}>
-        <div className="content" style={{width:"100%", height:"90%", display:"flex", justifyContent:"center", marginTop:"50px"}}>
+        <div className="content" style={{width:"100%", height:"100%", display:"flex", justifyContent:"center"}}>
 
-            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"70%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", borderRadius:"40px"}}>
+            <section className="hero fade-in" style={{display:"flex",justifyContent:"start",paddingLeft:"2%", paddingRight:"2%", width:"100%",height:"100%", backgroundColor:"rgba(0, 0, 0, 0.6)", paddingBottom:"50px", overflowY:"scroll", }}>
             <div style={{width:"100%", paddingTop:"50px", paddingLeft:"40px"}}>
                     <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Ranking</p>
                 </div>
-            <div style={{width:"100%", height:"20px"}}></div>
+            <div style={{width:"100%"}}></div>
             <div className="tabs is-left" style={{ height:"70px"}}>
               <ul>
                 <li className={activeTab === 'Global' ? 'is-active' : ''}>
                   <a onClick={() => setActiveTab('Global')}>Global</a>
                 </li>
                 <li className={activeTab === 'Region' ? 'is-active' : ''}>
-                  <a onClick={() => setActiveTab('Region')}>Region</a>
+                  <a onClick={() => handleComingSoon}>Region</a>
                 </li>
               </ul>
             </div>
-            <div className="fade-in" style={{backgroundColor: "rgba(0, 0, 0, 0)", display:"flex", justifyContent:"center"}}>
+            <div className="fade-in" style={{backgroundColor: "rgba(0, 0, 0, 0)", display:"flex", justifyContent:"center", width:"100%"}}>
               {renderTabContent()}
             </div>
           </section>
