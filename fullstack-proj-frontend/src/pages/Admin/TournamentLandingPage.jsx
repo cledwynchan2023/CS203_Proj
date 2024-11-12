@@ -214,7 +214,7 @@ export default function TournamentLandingPage() {
         <section className="section is-large animate__animated animate__fadeInUpBig" style={{ paddingTop:"30px", height:"100%", width:"100%", overflow:"scroll"}}>
             <div className="hero-body">
                 <p className="title is-family-sans-serif is-2" style={{width:"100%", fontWeight:"bold", fontStyle:"italic"}}>Tournament</p>
-                <div style={{display:"flex", width:"100%", flexWrap:"wrap", gap:"20px", marginBottom:"20px"}}>
+                <div style={{display:"flex", width:"100%", flexWrap:"wrap", gap:"20px", marginBottom:"40px"}}>
                     <div style={{width:"40%", minWidth:"180px"}}>
                         <Link className="button is-link is-rounded" to={`/admin/${userId}/tournament/create`} style={{maxWidth:"200px"}}>Create Tournament</Link>
                     </div>
@@ -239,7 +239,7 @@ export default function TournamentLandingPage() {
                 </div>
                 
             </div>
-            <div style={{height:"80%", overflowX:"scroll"}}>
+            <div style={{height:"100%", overflowX:"scroll"}}>
             
             {isLoading ? (
             <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
