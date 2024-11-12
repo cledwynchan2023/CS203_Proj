@@ -63,7 +63,7 @@ function Login() {
 			<div className="content is-family-sans-serif fade-in" style={{width:"100%", height:"100%", textAlign:"center", display:"flex", justifyContent:"center", flexWrap:"wrap", backgroundColor:"rgba(0,0,0,0.3)", overflowX:"hidden"}}>
 				<div className="is-medium animate__animated animate__fadeInDown" style={{ width:"100%", paddingTop:"20px", display:"flex", justifyContent:"center", alignItems:"center"}}>
 					<img src={logo} style={{width:"100px", height:"100px", backgroundColor: "transparent", marginRight:"20px"}}></img>
-					<p className="text-center " style={{fontSize:"2.5rem", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>Chess.io</p>
+					<p className="text-center " style={{fontSize:"2.5rem", fontWeight:"bold", color: "rgb(0,0,0,0.9)"}}>ChessComp</p>
 				</div>
 			<div className= {`content animate__animated animate__backInUp  ${isExiting ? 'animate__animated animate__zoomOut' : ''}`} style={{ height: '40%', borderRadius:"30px", padding:"10px", width:"50%", minWidth:"500px", display:"flex", justifyContent:"center"}}> 
 				<div className="content" style={{width:"100%", paddingLeft:"40px", paddingRight:"40px", height:"100%", minWidth:"400px"}}> 

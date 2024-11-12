@@ -35,7 +35,7 @@ const UserNavbar = () => {
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation" style={{paddingLeft:"20px", paddingRight:"20px"}}>
             <div className="navbar-brand">
-                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={href}>Chess.io</a>
+                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={href}>ChessComp</a>
 
                 <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onClick={toggleBurgerMenu}>
                 <span aria-hidden="true"></span>

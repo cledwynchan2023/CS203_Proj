@@ -25,10 +25,10 @@ export default function TournamentPage() {
     const [activeTab, setActiveTab] = useState('Overview');
     const [isLoading, setIsLoading] = useState(true);
     const [joinedTournaments, setJoinedTournaments] = useState([]);
+    const images = [compPic, compPic2, compPic3];
     const clearTokens = () => {
         localStorage.removeItem('token'); // Remove the main token
         localStorage.removeItem('tokenExpiry'); // Remove the token expiry time
-
     };
 
     const isTokenExpired = () => {
@@ -51,13 +51,11 @@ export default function TournamentPage() {
             return false;
         }
     };
-    const images = [compPic, compPic2, compPic3];
 
-
-  const getRandomImage = () => {
-    const randomIndex = Math.floor(Math.random() * images.length);
-    return images[randomIndex];
-  };
+    const getRandomImage = () => {
+        const randomIndex = Math.floor(Math.random() * images.length);
+        return images[randomIndex];
+    };
 
     const loadTournaments= async()=>{
         const result = await axios.get("http://localhost:8080/t/tournaments/active");
@@ -66,7 +64,6 @@ export default function TournamentPage() {
         const result3 = await axios.get(`http://localhost:8080/u/${userId}/currentTournament`);
 
         if (!result.data.length == 0){
-
             setTournament(result.data);
         }
         else{
@@ -94,201 +91,196 @@ export default function TournamentPage() {
         switch (activeTab) {
             case 'Overview':
                 return <>
-              {isLoading ? (
-            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
-             </div>    
-                ) : (
-                    tournament.length === 0 ? (
-                        <div style={{textAlign: "center", marginTop: "20px"}}>
-                            <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
-                        </div>
+                    {isLoading ? (
+                        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+                        </div>    
                     ) : (
-                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
-                
-                <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
-                {tournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
-                    <div className="card-image">
-                        <figure className="image is-16by9">
-                        <img
-                            src={getRandomImage()} // Replace with your image URL field
-                            alt={tournament.name}
-                        />
-                        </figure>
-                    </div>
-                    <div className="card-content">
-                        <div className="media">
-                        <div className="media-content noScroll">
-                            <p className="title is-4">{tournament.tournamentName}</p>
-                        </div>
-                        </div>
+                        tournament.length === 0 ? (
+                            <div style={{textAlign: "center", marginTop: "20px"}}>
+                                <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
+                            </div>
+                    ) : (
+                        <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}> 
+                            <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
+                                {tournament.map((tournament) => (
+                                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto", minHeight:"400px" }}>
+                                        <div className="card-image">
+                                            <figure className="image is-16by9">
+                                            <img
+                                                src={getRandomImage()} // Replace with your image URL field
+                                                alt={tournament.name}
+                                            />
+                                            </figure>
+                                        </div>
+                                        <div className="card-content">
+                                            <div className="media">
+                                                <div className="media-content noScroll">
+                                                    <p className="title is-4">{tournament.tournamentName}</p>
+                                                </div>
+                                            </div>
 
-                        <div className="content" style={{fontWeight:"bold"}}>
-                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                            <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
-                            <p style={{color:"rgb(106, 90, 205)"}}>
-                                {tournament.date}
-                            </p>
+                                            <div className="content" style={{fontWeight:"bold"}}>
+                                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                                    <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
+                                                    <p style={{color:"rgb(106, 90, 205)"}}>
+                                                        {tournament.date}
+                                                    </p>
+                                                </div>
+                                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                                    <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
+                                                    <p style={{}}>
+                                                        {tournament.currentSize}/{tournament.size}
+                                                    </p>
+                                                </div>
+                                                <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
+                                                    <TiTick size={25} style={{marginRight:"10px"}}></TiTick>
+                                                    <p style={{color:"rgb(60, 179, 113)"}}>
+                                                        {tournament.status}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                ))}
                             </div>
-                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                            <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
-                            <p style={{}}>
-                                {tournament.currentSize}/{tournament.size}
-                            </p>
-                            </div>
-                            <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
-                            <TiTick size={25} style={{marginRight:"10px"}}></TiTick>
-                            <p style={{color:"rgb(60, 179, 113)"}}>
-                                {tournament.status}
-                            </p>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    </a>
-                ))}
-                </div>
-                </section>
+                        </section>
                 ))}
                 
                 </>
             case 'Completed':
                 return <>
-                {isLoading ? (
-            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
-             </div>    
-                ) : (
-                    tournament.length === 0 ? (
-                        <div style={{textAlign: "center", marginTop: "20px"}}>
-                            <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
-                        </div>
+                    {isLoading ? (
+                        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+                        </div>    
                     ) : (
-                <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
-                
-                <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", display:"flex", flexWrap:"wrap",justifyContent:"center", gap:"5%", height:"100%"}}>
-                {pastTournament.map((tournament) => (
-                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto"}}>
-                    <div className="card-image">
-                        <figure className="image is-16by9">
-                        <img
-                            src={getRandomImage()} // Replace with your image URL field
-                            alt={tournament.name}
-                        />
-                        </figure>
-                    </div>
-                    <div className="card-content">
-                        <div className="media">
-                        <div className="media-content noScroll">
-                            <p className="title is-4">{tournament.tournamentName}</p>
-                        </div>
-                        </div>
+                        tournament.length === 0 ? (
+                            <div style={{textAlign: "center", marginTop: "20px"}}>
+                                <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
+                            </div>
+                    ) : (
+                        <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
+                            <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", display:"flex", flexWrap:"wrap",justifyContent:"center", gap:"5%", height:"100%"}}>
+                                {pastTournament.map((tournament) => (
+                                    <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", height:"auto"}}>
+                                        <div className="card-image">
+                                            <figure className="image is-16by9">
+                                            <img
+                                                src={getRandomImage()} // Replace with your image URL field
+                                                alt={tournament.name}
+                                            />
+                                            </figure>
+                                        </div>
+                                        <div className="card-content">
+                                            <div className="media">
+                                                <div className="media-content noScroll">
+                                                    <p className="title is-4">{tournament.tournamentName}</p>
+                                                </div>
+                                            </div>
 
-                        <div className="content" style={{fontWeight:"bold"}}>
-                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                            <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
-                            <p style={{color:"rgb(106, 90, 205)"}}>
-                                {tournament.date}
-                            </p>
+                                            <div className="content" style={{fontWeight:"bold"}}>
+                                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                                    <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
+                                                    <p style={{color:"rgb(106, 90, 205)"}}>
+                                                        {tournament.date}
+                                                    </p>
+                                                </div>
+                                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                                    <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
+                                                    <p style={{}}>
+                                                        {tournament.currentSize}/{tournament.size}
+                                                    </p>
+                                                </div>
+                                                <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
+                                                    <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
+                                                    <p style={{color:"rgb(255, 0, 0)"}}>
+                                                        {tournament.status}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                ))}
                             </div>
-                            <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                            <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
-                            <p style={{}}>
-                                {tournament.currentSize}/{tournament.size}
-                            </p>
-                            </div>
-                            <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
-                            <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
-                            <p style={{color:"rgb(255, 0, 0)"}}>
-                                {tournament.status}
-                            </p>
-                            </div>
-                            <div>
-                            </div>
-                        </div>
-                    </div>
-                    </a>
-                ))}
-                </div>
-                </section>
+                        </section>
                     ))}
                 </>
-                case 'Ongoing':
-                    return <>
+            case 'Ongoing':
+                return <>
                     {isLoading ? (
-            <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-                <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
-             </div>    
-                ) : (
-                    ongoingTournaments.length === 0 ? (
+                        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+                        </div>    
+                    ) : (
+                        ongoingTournaments.length === 0 ? (
                         <div style={{textAlign: "center", marginTop: "20px"}}>
                             <p style={{fontSize:"20px"}}>No tournaments available! Come back next time!</p>
                         </div>
                     ) : (
-                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
-                    
-                    <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
-                    {ongoingTournaments.map((ongoingTournaments) => (
-                        <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", marginBottom:"20px"}}>
-                        <div className="card-image">
-                            <figure className="image is-16by9">
-                            <img
-                                src={getRandomImage()} // Replace with your image URL field
-                                alt={ongoingTournaments.name}
-                            />
-                            </figure>
+                    <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}> 
+                        <div className="animate__animated animate__fadeInUpBig" style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"5%", height:"100%"}}>
+                            {ongoingTournaments.map((ongoingTournaments) => (
+                            <a key={ongoingTournaments.id} href={`/user/${userId}/tournament/${ongoingTournaments.id}`} className="card custom-card" style={{ width: "30%", minWidth: "350px", marginBottom:"20px"}}>
+                                <div className="card-image">
+                                    <figure className="image is-16by9">
+                                    <img
+                                        src={getRandomImage()} // Replace with your image URL field
+                                        alt={ongoingTournaments.name}
+                                    />
+                                    </figure>
+                                </div>
+                                <div className="card-content">
+                                    <div className="media">
+                                        <div className="media-content noScroll">
+                                            <p className="title is-4">{ongoingTournaments.tournamentName}</p>
+                                        </div>
+                                    </div>
+            
+                                    <div className="content" style={{fontWeight:"bold"}}>
+                                        <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                            <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
+                                            <p style={{color:"rgb(106, 90, 205)"}}>
+                                                {ongoingTournaments.date}
+                                            </p>
+                                        </div>
+                                        <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
+                                            <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
+                                            <p style={{}}>
+                                                {ongoingTournaments.currentSize}/{ongoingTournaments.size}
+                                            </p>
+                                        </div>
+                                        <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
+                                            <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
+                                            <p style={{color:"rgba(255, 199, 0, 0.8)"}}>
+                                                Ongoing
+                                            </p>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        ))}
                         </div>
-                        <div className="card-content">
-                            <div className="media">
-                            <div className="media-content noScroll">
-                                <p className="title is-4">{ongoingTournaments.tournamentName}</p>
-                            </div>
-                            </div>
-    
-                            <div className="content" style={{fontWeight:"bold"}}>
-                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                                <IoCalendarNumberOutline size={25} style={{marginRight:"10px"}}></IoCalendarNumberOutline>
-                                <p style={{color:"rgb(106, 90, 205)"}}>
-                                    {ongoingTournaments.date}
-                                </p>
-                                </div>
-                                <div style={{marginBottom:"5px", display:"flex", alignItems:"center"}}>
-                                <BiGroup size={25} style={{marginRight:"10px"}}></BiGroup>
-                                <p style={{}}>
-                                    {ongoingTournaments.currentSize}/{ongoingTournaments.size}
-                                </p>
-                                </div>
-                                <div style={{marginBottom:"20px", display:"flex", alignItems:"center"}}>
-                                <ImCross size={25} style={{marginRight:"10px"}}></ImCross>
-                                <p style={{color:"rgba(255, 199, 0, 0.8)"}}>
-                                    Ongoing
-                                </p>
-                                </div>
-                                <div>
-                                </div>
-                            </div>
-                        </div>
-                        </a>
-                    ))}
-                    </div>
                     </section>
                     ))}
                     </>
-                     case 'Joined':
-                        return <>
-                      {isLoading ? (
-                    <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-                        <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
-                     </div>    
-                        ) : (
-                            joinedTournaments.filter(tournament => tournament.status !== 'completed').length === 0 ? (
-                                <div style={{textAlign: "center", marginTop: "20px"}}>
-                                    <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
-                                </div>
-                            ) : (
-                            <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
-                        
+            case 'Joined':
+                return <>
+                    {isLoading ? (
+                        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Atom color="#9e34eb" size={100} style={{marginTop:"20%", marginLeft:"50%"}}></Atom>
+                        </div>    
+                    ) : (
+                        joinedTournaments.filter(tournament => tournament.status !== 'completed').length === 0 ? (
+                            <div style={{textAlign: "center", marginTop: "20px"}}>
+                                <p style={{fontSize:"20px"}}>No tournaments joined! Join a tournament now!</p>
+                            </div>
+                    ) : (
+                        <section className="hero" style={{width:"100%",  paddingTop:"5%", height:"100%", overflowY:"scroll", paddingLeft:"5%", paddingRight:"5%"}}>
                         <div style={{width:"100%", paddingLeft:"20px", display:"flex", flexWrap:"wrap", justifyContent:"left", gap:"5%", height:"100%"}}>
                         {joinedTournaments.filter(tournament => tournament.status !== 'completed').map((tournament) => (
                             <a key={tournament.id} href={`/user/${userId}/tournament/${tournament.id}`} className="card custom-card" style={{height:"auto", width: "30%", minWidth: "350px" }}>

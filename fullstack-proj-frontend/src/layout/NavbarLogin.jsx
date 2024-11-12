@@ -12,7 +12,7 @@ const NavbarLogin = () => {
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation" style={{paddingLeft:"20px", paddingRight:"20px", backgroundColor:"rgba(0,0,0,0.2)"}}>
             <div className="navbar-brand">
-                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={`/admin/${userId}/tournament`}>Chess.io</a>
+                <a className="navbar-item" style={{fontSize:"1.5rem"}} href={`/admin/${userId}/tournament`}>ChessComp</a>
 
                 
             </div>
