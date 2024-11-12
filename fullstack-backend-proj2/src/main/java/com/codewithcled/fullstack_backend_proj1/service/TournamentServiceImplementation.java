@@ -126,8 +126,18 @@ public class TournamentServiceImplementation implements TournamentService {
         }
 
         // Record tournament in user's own list and add user to tournament
-        addTournamentToUserOwnList(currentTournament, user);
-        addUserToTournament(currentTournament, user);
+       
+        //addTournamentToUserOwnList(currentTournament, user);
+        try {
+            if (currentTournament.getCurrentSize() < currentTournament.getSize()) {
+                addTournamentToUserOwnList(currentTournament, user);
+               
+            }
+        } catch (Exception e) {
+
+            throw new Exception("tournament full");
+        }
+       
         
         return tournamentRepository.save(currentTournament);
     }
@@ -150,12 +160,30 @@ public class TournamentServiceImplementation implements TournamentService {
      * Checks if the user is already in the tournament
      * @param currentTournament
      * @param user
-     */
-    private void addUserToTournament(Tournament currentTournament, User user) {
+          * @throws Exception 
+          */
+         private void addUserToTournament(Tournament currentTournament, User user) throws Exception {
+            System.out.println(currentTournament.getParticipants().size() -  currentTournament.getSize());
+            System.out.println(currentTournament.getParticipants().contains(user));
+            for (User u : currentTournament.getParticipants()){
+                System.out.println(u.getId());
+            }
         if (!currentTournament.getParticipants().contains(user)) {
-            currentTournament.addParticipant(user);
-            currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+            System.out.println("165 user");
+            if (currentTournament.getParticipants().size() - currentTournament.getSize() < 0){
+                System.out.println("adding user");
+                currentTournament.addParticipant(user);
+                currentTournament.setCurrentSize(currentTournament.getParticipants().size());
+            }else{
+                System.out.println("error user");
+                throw new Exception("full tournament");
+            
+            }
+        } else {
+            System.out.println("error user");
+            throw new Exception("User is already participating in the tournament");
         }
+
     }
 
     /**
