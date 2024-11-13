@@ -1,0 +1,70 @@
+
+
+  .content {
+    position: relative;
+    z-index: 2;
+    /* Add any additional styles for your content here */
+  }
+  .custom-table tbody tr {
+    height: 80px; /* Adjust the height as needed */
+
+  }
+  .custom-table tbody tr td {
+    display: table-cell;
+    vertical-align: middle; /* Vertically center the content */
+}
+
+
+
+  .custom-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden; 
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 1.4s ease-in-out;
+  }
+  
+  .content {
+    position: relative;
+    z-index: 2;
+    /* Add any additional styles for your content here */
+  }
+
+  /* Hide scrollbar but allow scrolling */
+.section.is-large::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers */
+}
+
+.section.is-large {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+body{
+  background-color: black;
+}
+
+::-webkit-scrollbar {
+  width: 5px; /* Adjust the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track background transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(109, 0, 181, 0.7); /* Customize the scrollbar thumb color */
+  border-radius: 50px; /* Optional: Add rounded corners to the scrollbar thumb */
+  border: 3px solid transparent; /* Optional: Add a border to the scrollbar thumb */
+}

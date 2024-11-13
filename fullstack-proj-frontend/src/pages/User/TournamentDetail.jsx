@@ -28,9 +28,12 @@ export default function TournamentDetail() {
     const [activeTab, setActiveTab] = useState('Overview');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [hasJoined, setHasJoined] = useState(false); 
+<<<<<<< HEAD
    
 
 
+=======
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -204,12 +207,20 @@ export default function TournamentDetail() {
     const loadTournament= async()=>{
         const token = localStorage.getItem('token');
         try {
+<<<<<<< HEAD
             const result = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
+=======
+            const result = await axios.get(`http://localhost:8080/t/${id}`, {
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
         setTournament(result.data);
         setUser(result.data.participants);
         setHasJoined(checkJoinedTournamentFirst(result.data.participants));
@@ -241,8 +252,12 @@ export default function TournamentDetail() {
     const removePlayer = async () => {
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/delete?user_id=${userId}`,
 
+=======
+            const response1= await axios.put(`http://localhost:8080/t/${id}/participant/delete?user_id=${userId}`,
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
                 {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -270,7 +285,11 @@ export default function TournamentDetail() {
 
             if (decodedToken.authorities === 'ROLE_USER'){
                 
+<<<<<<< HEAD
                 const response1= await axios.put(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}/participant/add?user_id=${userId}`,
+=======
+                const response1= await axios.put(`http://localhost:8080/t/${id}/participant/add?user_id=${userId}`,
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
                     {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -322,7 +341,11 @@ export default function TournamentDetail() {
     const loadUsers = async () => {
         const token = localStorage.getItem('token');
         try {
+<<<<<<< HEAD
             const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
+=======
+            const response = await axios.get(`http://localhost:8080/t/${id}`, {
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -357,7 +380,11 @@ export default function TournamentDetail() {
             }
 
             try {
+<<<<<<< HEAD
                 const response = await axios.get(`http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/t/${id}`, {
+=======
+                const response = await axios.get(`http://localhost:8080/t/${id}`, {
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -395,7 +422,11 @@ export default function TournamentDetail() {
             fetchData();
         },1000);
 
+<<<<<<< HEAD
         const socket = new SockJS('http://ec2-18-143-64-214.ap-southeast-1.compute.amazonaws.com/ws');
+=======
+        const socket = new SockJS('http://localhost:8080/ws');
+>>>>>>> parent of b24a09d2 (Merge branch 'main' of https://github.com/cledwynchan2023/CS203_Proj)
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
