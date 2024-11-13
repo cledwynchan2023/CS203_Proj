@@ -28,7 +28,7 @@ function Login() {
 			setIsLoading(false)
 			setIsExiting(true);
 			setTimeout(() => {
-			const expiryTime = new Date().getTime() + 9000 * 1000; //expiry time to 15 mins for testing
+			const expiryTime = new Date().getTime() + 30 * 60 * 1000; //expiry time to 15 mins for testing
 			localStorage.setItem('tokenExpiry', expiryTime);
 			const decodedToken = jwtDecode(token); 
 			const userId = decodedToken.userId;
