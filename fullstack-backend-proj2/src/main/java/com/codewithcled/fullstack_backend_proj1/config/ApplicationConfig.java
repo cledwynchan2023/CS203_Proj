@@ -22,23 +22,6 @@ import java.util.Collections;
 @Configuration
 public class ApplicationConfig {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -74,7 +57,6 @@ public class ApplicationConfig {
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration ccfg = new CorsConfiguration();
                 ccfg.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-                ccfg.setAllowedOrigins(Arrays.asList("https://cs203-frontend.pages.dev"));
                 ccfg.setAllowedMethods(Collections.singletonList("*"));
                 ccfg.setAllowCredentials(true);
                 ccfg.setAllowedHeaders(Collections.singletonList("*"));
