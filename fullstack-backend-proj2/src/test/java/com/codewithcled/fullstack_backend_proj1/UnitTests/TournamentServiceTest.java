@@ -105,10 +105,7 @@ public class TournamentServiceTest {
         testUser.setUsername("TestUser");
         Optional<Tournament> returnTournament = Optional.of(testTournament);
 
-        List<User> finalParticipantList = new ArrayList<User>();
         List<Tournament> finalTournamentList = new ArrayList<Tournament>();
-        finalParticipantList.add(firstUser);
-        finalParticipantList.add(testUser);
         finalTournamentList.add(testTournament);
         Optional<User> returnUser = Optional.of(testUser);
 
@@ -117,9 +114,8 @@ public class TournamentServiceTest {
         when(userRepository.save(testUser)).thenReturn(testUser);
         when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
-        Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
+        tournamentService.updateUserParticipating(uIdT, tId);//relying on the foreign key association to update the tournament side
 
-        assertIterableEquals(finalParticipantList, result.getParticipants());
         assertIterableEquals(finalTournamentList, testUser.getCurrentTournaments());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uIdT);
