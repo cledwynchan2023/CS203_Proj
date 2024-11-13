@@ -9,6 +9,7 @@ User Profiles: Track your progress and view your personal stats.
 Leaderboards: See how you rank against other players.
 WebSocket Integration: Real-time updates and notifications.
 Responsive Design: Optimized for both desktop and mobile devices.
+
 Technologies Used
 Frontend
 React: A JavaScript library for building user interfaces.
@@ -21,31 +22,47 @@ Spring Security: For securing the application.
 JPA: For database interactions.
 
 Getting Started
+
 Prerequisites
+
 Node.js: Ensure you have Node.js installed.
+
 Java: Ensure you have Java installed.
+
 Maven: Ensure you have Maven installed.
+
 Installation
+
 Clone the repository:
 
 git clone https://github.com/cledwynchan2023/CS203_Proj.git
+
 cd CS203_Proj
 
 Install frontend dependencies:
+
 cd fullstack-proj-frontend
+
 npm install
 
 Install backend dependencies:
+
 cd ../fullstack-backend-proj2
+
 ./mvnw install
 
 Running the Application
+
 Start the backend server:
+
 cd fullstack-backend-proj2
+
 ./mvnw spring-boot:run
 
 Start the frontend server:
+
 cd ../fullstack-proj-frontend
+
 npm run dev
 
 Project Structure
