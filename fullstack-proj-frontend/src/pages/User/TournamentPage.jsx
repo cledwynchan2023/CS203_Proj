@@ -73,7 +73,7 @@ export default function TournamentPage() {
     const result3 = await axios.get(
       `http://localhost:8080/u/${userId}/currentTournament`
     );
-
+    
     if (!result.data.length == 0) {
       setTournament(result.data);
     } else {
@@ -649,7 +649,7 @@ export default function TournamentPage() {
                   style={{ marginTop: "20%", marginLeft: "50%" }}
                 ></Atom>
               </div>
-            ) : joinedTournaments.filter(
+            ) : pastTournament.filter(
                 (tournament) => tournament.status === "completed"
               ).length === 0 ? (
               <div
@@ -686,8 +686,7 @@ export default function TournamentPage() {
                     height: "100%",
                   }}
                 >
-                  {joinedTournaments
-                    .filter((tournament) => tournament.status === "completed")
+                  {pastTournament
                     .map((tournament) => (
                       <a
                         key={tournament.id}
