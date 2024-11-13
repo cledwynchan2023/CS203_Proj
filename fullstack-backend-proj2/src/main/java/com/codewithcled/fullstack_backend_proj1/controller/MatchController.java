@@ -43,12 +43,13 @@ public class MatchController {
      * Updates the result of a match.
      *
      * @param result the result request containing the new result
-     * @param id the ID of the match to update
+     * @param id     the ID of the match to update
      * @return a response entity with a success message
      * @throws Exception if an error occurs during the update
      */
     @PutMapping("/match/{id}/update")
-    public ResponseEntity<String> updateMatch(@RequestBody ResultRequest result, @PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<String> updateMatch(@RequestBody ResultRequest result, @PathVariable("id") Long id)
+            throws Exception {
         Integer resultId = result.getResult();
         matchService.updateMatch(id, resultId);
         System.out.println(resultId);

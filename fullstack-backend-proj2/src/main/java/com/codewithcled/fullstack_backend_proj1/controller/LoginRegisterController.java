@@ -16,7 +16,7 @@ import com.codewithcled.fullstack_backend_proj1.DTO.*;
 @RequestMapping("/auth")
 public class LoginRegisterController {
 
-     // Logger for logging information and warnings
+    // Logger for logging information and warnings
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterController.class);
 
     // Injecting the admin token from the application properties
@@ -29,8 +29,10 @@ public class LoginRegisterController {
 
     /**
      * Endpoint to validate the admin token.
+     * 
      * @param tokenRequest The request body containing the token to be validated.
-     * @return ResponseEntity with TokenResponse indicating whether the token is valid or not.
+     * @return ResponseEntity with TokenResponse indicating whether the token is
+     *         valid or not.
      */
     @PostMapping("/validate-admin-token")
     public ResponseEntity<TokenResponse> validateAdminToken(@RequestBody TokenRequest tokenRequest) {
@@ -46,14 +48,17 @@ public class LoginRegisterController {
     // Inner class to represent the response for token validation
     public static class TokenResponse {
         private boolean valid;
+
         // Constructor to initialize the validity of the token
         public TokenResponse(boolean valid) {
             this.valid = valid;
         }
+
         // Getter for the valid field
         public boolean isValid() {
             return valid;
         }
+
         // Setter for the valid field
         public void setValid(boolean valid) {
             this.valid = valid;
@@ -63,10 +68,12 @@ public class LoginRegisterController {
     // Inner class to represent the request for token validation
     public static class TokenRequest {
         private String token;
+
         // Getter for the token field
         public String getToken() {
             return token;
         }
+
         // Setter for the token field
         public void setToken(String token) {
             this.token = token;
@@ -79,19 +86,18 @@ public class LoginRegisterController {
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception {
         try {
             AuthResponse authResponse = userService.createUser(user);
-            return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
+            return new ResponseEntity<>(authResponse, HttpStatus.CREATED); // Return 201 Created on success
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT); // Return 409 Conflict if username/email is taken
         }
     }
 
-    //Login and authentication
+    // Login and authentication
     @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> signin(@RequestBody SignInRequest loginRequest) {
         AuthResponse authResponse = userService.signInUser(loginRequest);
-        return new ResponseEntity<>(authResponse,HttpStatus.OK);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
 }
-

@@ -22,9 +22,9 @@ public class JwtProvider {
 
         String jwt = Jwts.builder()
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime()+86400000))
+                .setExpiration(new Date(new Date().getTime() + 86400000))
                 .claim("email", auth.getName())
-                .claim( "authorities",roles)
+                .claim("authorities", roles)
                 .claim("userId", userId)
                 .signWith(key)
                 .compact();
@@ -35,18 +35,16 @@ public class JwtProvider {
 
     private static String populateAuthorities(Collection<? extends GrantedAuthority> authorities) {
         Set<String> auths = new HashSet<>();
-        for(GrantedAuthority authority: authorities) {
+        for (GrantedAuthority authority : authorities) {
             auths.add(authority.getAuthority());
         }
-        return String.join(",",auths);
+        return String.join(",", auths);
     }
 
-
-    
     public static String getEmailFromJwtToken(String jwt) {
         jwt = jwt.substring(7); // Assuming "Bearer " is removed from the token
         try {
-            Claims claims=Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
 
             String email = String.valueOf(claims.get("email"));
             System.out.println("Email extracted from JWT: " + claims);
@@ -59,4 +57,3 @@ public class JwtProvider {
     }
 
 }
-

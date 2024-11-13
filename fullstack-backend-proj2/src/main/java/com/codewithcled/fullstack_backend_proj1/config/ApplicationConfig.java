@@ -22,39 +22,21 @@ import java.util.Collections;
 @Configuration
 public class ApplicationConfig {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @SuppressWarnings("deprecation")
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(
                         authorize -> authorize
-                            .requestMatchers("/login/**").permitAll()
-                            .requestMatchers("/update/**").permitAll()
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers("/m/**").hasAnyRole("USER", "ADMIN") 
+                                .requestMatchers("/login/**").permitAll()
+                                .requestMatchers("/update/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/m/**").hasAnyRole("USER", "ADMIN")
                                 // .requestMatchers("/api/**").authenticated()
-                                
+
                                 .anyRequest().permitAll())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,8 +45,8 @@ public class ApplicationConfig {
                 )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        //.httpBasic(Customizer.withDefaults())
-        //.formLogin(Customizer.withDefaults());
+        // .httpBasic(Customizer.withDefaults())
+        // .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
@@ -86,11 +68,6 @@ public class ApplicationConfig {
 
     }
 
-
-
-
-
-
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -98,11 +75,6 @@ public class ApplicationConfig {
 
     @Value("${rest.base.url}")
     private String baseUrl;
-
-
-
-
-
 
     @Bean
     public RestTemplate restTemplate() {

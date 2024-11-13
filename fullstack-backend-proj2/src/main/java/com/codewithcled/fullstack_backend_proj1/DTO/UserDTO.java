@@ -50,9 +50,11 @@ public class UserDTO {
     public void setElo(Double elo) {
         this.elo = elo;
     }
+
     public List<TournamentDTO> getCurrentTournaments() {
         return currentTournament;
     }
+
     public void setCurrentTournaments(List<TournamentDTO> currentTournaments) {
         this.currentTournament = currentTournaments;
     }

@@ -15,33 +15,41 @@ public class RoundDTO {
     public Boolean getIsCompleted() {
         return isCompleted;
     }
+
     public void setIsCompleted(Boolean isCompleted) {
         this.isCompleted = isCompleted;
     }
+
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public Integer getRoundNum() {
         return roundNum;
     }
+
     public void setRoundNum(Integer roundNum) {
         this.roundNum = roundNum;
     }
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
+
     public void setScoreboard(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
+
     public List<MatchDTO> getMatchList() {
         return matchList;
     }
+
     public void setMatchList(List<MatchDTO> matchList) {
         this.matchList = matchList;
     }
-
 
 }

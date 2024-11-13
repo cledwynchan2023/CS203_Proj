@@ -21,6 +21,7 @@ public class RoundMapper {
         dto.setMatchList(matchList);
         return dto;
     }
+
     public static List<RoundDTO> toDTOList(List<Round> rounds) {
         return rounds.stream()
                 .map(RoundMapper::toDTO)
