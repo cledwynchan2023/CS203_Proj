@@ -45,7 +45,7 @@ export default function Register() {
         if (role === 'ROLE_ADMIN') {
             const inputToken = window.prompt("Please enter the admin token:");
             const isValid = await validateAdminToken(inputToken);
-            console.log(isValid);
+           
             if (!isValid) {
               setIsLoading(false);
               alert("Invalid admin token");

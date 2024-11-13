@@ -119,7 +119,7 @@ const getEloChangesFromEachTournament = () => {
                 
             </div>
            <div style={{width:"50%", display:"flex", flexWrap:"wrap", minWidth:"400px", overflow:"hidden"}}>
-            <div style={{width:"50%", minWidth:"400px", overflow:"hidden"}}>
+            <div style={{width:"50%", minWidth:"350px", overflow:"hidden"}}>
            <PieChart
                 series={[
                     {
@@ -302,7 +302,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
         
-        return (totalDraw/totalMatches).toFixed(4) * 100;
+        return (totalDraw/totalMatches).toFixed(2) * 100;
     }
 
     const getWinningMatches = (rounds) => {
@@ -367,7 +367,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
      
-        return (totalLose/totalMatches).toFixed(4) * 100;
+        return (totalLose/totalMatches).toFixed(2) * 100;
     }
     const getWinningPercentage = () => {
         const completedTournaments = joinedTournaments.filter(tournament => tournament.status === 'completed');
@@ -379,7 +379,7 @@ const getEloChangesFromEachTournament = () => {
         }
         const totalMatches = getTotalMatches(completedTournaments);
         
-        return (totalWin/totalMatches).toFixed(4) * 100;
+        return (totalWin/totalMatches).toFixed(2) * 100;
         
     }
     const findMatch = (matchList) => {

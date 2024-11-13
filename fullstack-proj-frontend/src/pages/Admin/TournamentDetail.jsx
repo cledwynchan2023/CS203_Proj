@@ -343,6 +343,7 @@ export default function TournamentDetail() {
                     }
                 });
                 setData(response.data);
+                console.log(response.data);
                 setTournament(response.data);
                 console.log(response.data);
                 
