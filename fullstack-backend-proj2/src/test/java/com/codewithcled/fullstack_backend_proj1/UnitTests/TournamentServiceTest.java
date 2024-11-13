@@ -117,9 +117,8 @@ public class TournamentServiceTest {
         when(userRepository.save(testUser)).thenReturn(testUser);
         when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
-        Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
+        tournamentService.updateUserParticipating(uIdT, tId);
 
-        assertIterableEquals(finalParticipantList, result.getParticipants());
         assertIterableEquals(finalTournamentList, testUser.getCurrentTournaments());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uIdT);
@@ -151,9 +150,8 @@ public class TournamentServiceTest {
         when(userRepository.findById(uIdT)).thenReturn(Optional.of(testUser));
         when(tournamentRepository.save(testTournament)).thenReturn(testTournament);
 
-        Tournament result = tournamentService.updateUserParticipating(uIdT, tId);
+        tournamentService.updateUserParticipating(uIdT, tId);
 
-        assertIterableEquals(finalParticipantList, result.getParticipants());
         assertIterableEquals(finalTournamentList, testUser.getCurrentTournaments());
         verify(tournamentRepository).findById(tId);
         verify(userRepository).findById(uIdT);
@@ -1087,5 +1085,24 @@ public class TournamentServiceTest {
         assertEquals("Tournament not found", exception.getMessage());
 
         verify(tournamentRepository).findById(tId);
+    }
+
+    //@Test Unused test
+    void addTournamentToUserOwnList_Success_NotInListAndTournamentHasSpace_ReturnVoid(){
+        Tournament testTournament=new Tournament();
+        testTournament.setParticipants(new ArrayList<>());
+        testTournament.setSize(2);
+        testTournament.setCurrentSize(1);
+        User testUser=new User();
+        testUser.setCurrentTournaments(new ArrayList<>());
+        
+        when(userRepository.save(testUser)).thenReturn(testUser);
+
+        //tournamentService.addTournamentToUserOwnList(testTournament,testUser);
+
+        assertEquals(1,testUser.getCurrentTournaments().size());
+        assertEquals(2,testTournament.getCurrentSize());
+
+        verify(userRepository).save(testUser);
     }
 }

@@ -43,7 +43,7 @@ public class LoginRegisterControllerIntegrationTest {
 
     private String urlPrefix = "/auth";
 
-    private String adminToken = "adminadmin123";
+    private String adminToken = "eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MjgzODY0MjgsImV4cCI6MTcyODQ3MjgyOCwiZW1haWwiOiJhZG1pbmFkbWluQGdtYWlsLmNvbSIsImF1dGhvcml0aWVzIjoiUk9MRV9BRE1JTiIsInVzZXJJZCI6MTYwMn0.Ml3buAoxoVBaX7EAzUvMDd3vW2fO-pJwMehrn5TnXIs3pJ5xKBUGozS2aUa_vjz6";
 
     @AfterEach
     public void tearDown() {
