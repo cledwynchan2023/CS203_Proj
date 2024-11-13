@@ -35,8 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class UserServiceImplementation implements UserService,UserDetailsService {
- 
+public class UserServiceImplementation implements UserService, UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -52,8 +52,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
-        if(user==null) {
-            throw new UsernameNotFoundException("User not found with this email"+username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with this email" + username);
         }
         System.out.println("Loaded user: " + user.getEmail() + ", Role: " + user.getRole());
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -88,7 +88,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         // Implement logic to find user by ID or remove if not needed
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -96,7 +96,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     @Transactional(readOnly = true)
     public List<UserDTO> findAllUsersDTO() {
         List<User> users = userRepository.findByRole("ROLE_USER");
-        Collections.sort(users,(u1,u2) -> u2.getElo().compareTo(u1.getElo()));
+        Collections.sort(users, (u1, u2) -> u2.getElo().compareTo(u1.getElo()));
         return UserMapper.toDTOList(users);
     }
 
@@ -120,12 +120,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         createdUser.setEmail(user.getEmail());
         createdUser.setRole(user.getRole());
         createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        if ("ROLE_USER".equals(user.getRole())){
+        if ("ROLE_USER".equals(user.getRole())) {
             createdUser.setElo(100.0);
         } else {
             createdUser.setElo(0.0);
         }
-       
+
         return createdUser;
     }
 
@@ -159,7 +159,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
      * Validates the user details provided in the sign-up request.
      * 
      * @param user the sign-up request containing user details.
-     * @throws Exception if the email format is invalid, the email is already used, or the username is already used.
+     * @throws Exception if the email format is invalid, the email is already used,
+     *                   or the username is already used.
      */
     private void validateUserDetails(SignUpRequest user) throws Exception {
         String email = user.getEmail();
@@ -181,14 +182,14 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     /**
      * Authenticates a user with the provided email and password.
      * 
-     * @param email the email of the user.
+     * @param email    the email of the user.
      * @param password the password of the user.
      */
     private void authenticateUser(String email, String password) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-    
+
     /**
      * Generates a JWT token for the authenticated user.
      * 
@@ -201,11 +202,12 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     /**
-     * Builds an authentication response with the provided token, message, and status.
+     * Builds an authentication response with the provided token, message, and
+     * status.
      * 
-     * @param token the JWT token.
+     * @param token   the JWT token.
      * @param message the message to be displayed.
-     * @param status the status of the authentication.
+     * @param status  the status of the authentication.
      * @return the authentication response.
      */
     private AuthResponse buildAuthResponse(String token, String message, boolean status) {
@@ -215,7 +217,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
         authResponse.setStatus(status);
         return authResponse;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -230,12 +232,13 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     }
 
     /**
-     * Builds an authentication response with the provided token, message, status, and role.
+     * Builds an authentication response with the provided token, message, status,
+     * and role.
      * 
-     * @param token the JWT token.
+     * @param token   the JWT token.
      * @param message the message to be displayed.
-     * @param status the status of the authentication.
-     * @param role the role of the user.
+     * @param status  the status of the authentication.
+     * @param role    the role of the user.
      * @return the authentication response.
      */
     private AuthResponse buildAuthResponse(String token, String message, boolean status, String role) {
@@ -252,7 +255,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
      */
     @Override
     public Optional<User> updateUser(Long id, SignUpRequest newUser) {
-        
+
         return userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
@@ -260,7 +263,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                     user.setEmail(newUser.getEmail());
                     user.setRole(newUser.getRole());
                     user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-                    return userRepository.save(user);  // Save and return updated user
+                    return userRepository.save(user); // Save and return updated user
                 });
     }
 
@@ -271,7 +274,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     public List<Tournament> getUserParticipatingTournaments(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
-        return currentUser.getCurrentTournaments();  // Return the list of tournaments the user is participating in
+        return currentUser.getCurrentTournaments(); // Return the list of tournaments the user is participating in
     }
 
     /**
@@ -283,15 +286,15 @@ public class UserServiceImplementation implements UserService,UserDetailsService
      */
     private Authentication authenticate(String username, String password) {
         UserDetails userDetails = loadUserByUsername(username);
-        if(userDetails == null) {
+        if (userDetails == null) {
             System.out.println("Sign in details - null" + userDetails);
             throw new BadCredentialsException("Invalid username and password");
         }
-        if(!passwordEncoder.matches(password,userDetails.getPassword())) {
-            System.out.println("Sign in userDetails - password mismatch"+userDetails);
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            System.out.println("Sign in userDetails - password mismatch" + userDetails);
             throw new BadCredentialsException("Invalid password");
         }
-        return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
     }
 
@@ -302,7 +305,8 @@ public class UserServiceImplementation implements UserService,UserDetailsService
     public List<Match> getUserPastMatches(Long userId) throws Exception {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
-        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true, currentUser.getId());  // Return the list of tournaments the user is participating in
+        return matchRepository.findByIsCompleteAndPlayer1OrIsCompleteAndPlayer2(true, currentUser.getId(), true,
+                currentUser.getId()); // Return the list of tournaments the user is participating in
     }
 
     /**
@@ -315,7 +319,7 @@ public class UserServiceImplementation implements UserService,UserDetailsService
                     user.setUsername(newUser.getUsername());
                     user.setElo(newUser.getElo());
                     user.setRole(newUser.getRole());
-                    return userRepository.save(user);  // Save and return updated user
+                    return userRepository.save(user); // Save and return updated user
                 });
     }
 }

@@ -56,7 +56,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TokenResponse(false));
         }
     }
-    
+
     public static class TokenResponse {
         private boolean valid;
 
@@ -85,7 +85,7 @@ public class AdminController {
         }
     }
 
-    //Create Tournament
+    // Create Tournament
     @PostMapping("/tournament")
     public ResponseEntity<TournamentDTO> createTournament(@RequestBody CreateTournamentRequest tournament) {
         Tournament createdTournament;
@@ -96,34 +96,34 @@ public class AdminController {
             return new ResponseEntity<>(tournamentDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // Return 400 Bad Request for errors
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Return 400 Bad Request for errors
         }
     }
 
     // Create User to Database
     @SuppressWarnings("null")
     @PostMapping("/signup/user")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception { 
+    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignUpRequest user) throws Exception {
         try {
             AuthResponse authResponse = userService.createUser(user);
-            return new ResponseEntity<>(authResponse, HttpStatus.CREATED);  // Return 201 Created on success
+            return new ResponseEntity<>(authResponse, HttpStatus.CREATED); // Return 201 Created on success
         } catch (Exception ex) {
             System.out.println("ERORR!");
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);  // Return 409 Conflict if username/email is taken
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT); // Return 409 Conflict if username/email is taken
         }
     }
 
-    //delete user
+    // delete user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser (@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if user not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if user not found
         }
         userRepository.deleteById(id);
-        return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
+        return ResponseEntity.noContent().build(); // Return 204 No Content on successful deletion
     }
 
-    //get user by username
+    // get user by username
     @GetMapping("/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String email) {
         try {
@@ -135,7 +135,7 @@ public class AdminController {
         }
     }
 
-    //delete tournament
+    // delete tournament
     @DeleteMapping("/tournament/{id}")
     public ResponseEntity<String> deleteTournament(@PathVariable("id") Long id) {
         System.out.println("Deleting tournament with ID " + id);
@@ -143,37 +143,41 @@ public class AdminController {
             System.out.println("Deleting tournament with ID " + id);
             tournamentService.deleteTournament(id);
             messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament Deleted");
-            return ResponseEntity.ok("Tournament with ID " + id + " has been deleted.");  // Return 200 OK with success message
-        }  catch (Exception e) {
+            return ResponseEntity.ok("Tournament with ID " + id + " has been deleted."); // Return 200 OK with success
+                                                                                         // message
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the tournament.");  // Return 500 Internal Server Error for other issues
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while deleting the tournament."); // Return 500 Internal Server Error for
+                                                                               // other issues
         }
     }
 
-    //editing players from the playerlist page
+    // editing players from the playerlist page
     @PutMapping("/user/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
         return userService.updateUser(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);
-                    return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
+                    return ResponseEntity.ok(userDTO); // Return 200 OK with the updated UserDTO
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // Return 404 if user not found
     }
 
-    //update Tournament
+    // update Tournament
     @PutMapping("/tournament/{id}")
-    public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament, @PathVariable("id") Long id) {
+    public ResponseEntity<TournamentDTO> updateTournament(@RequestBody CreateTournamentRequest newTournament,
+            @PathVariable("id") Long id) {
         try {
             System.out.println(newTournament.getTournament_name());
             Tournament updatedTournament = tournamentService.updateTournament(id, newTournament);
             TournamentDTO tournamentDTO = TournamentMapper.toDTO(updatedTournament);
             messagingTemplate.convertAndSend("/topic/tournamentCreate", "Tournament edited");
-            return ResponseEntity.ok(tournamentDTO);  // Return 200 OK with the updated TournamentDTO
+            return ResponseEntity.ok(tournamentDTO); // Return 200 OK with the updated TournamentDTO
         } catch (Exception e) {
             // Log the exception message for debugging
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Return 400 Bad Request for errors
         }
     }
-   
+
 }

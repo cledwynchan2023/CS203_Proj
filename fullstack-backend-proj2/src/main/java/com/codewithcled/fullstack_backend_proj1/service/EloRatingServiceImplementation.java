@@ -1,6 +1,5 @@
 package com.codewithcled.fullstack_backend_proj1.service;
 
-
 import java.util.List;
 import java.util.Arrays;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,8 @@ public class EloRatingServiceImplementation implements EloRatingService {
     /**
      * {@inheritDoc}
      */
-    public boolean isValidElo(int elo){
-        if (elo<0){
+    public boolean isValidElo(int elo) {
+        if (elo < 0) {
             return false;
         }
 
@@ -55,23 +54,24 @@ public class EloRatingServiceImplementation implements EloRatingService {
      */
     public double EloCalculation(int eloA, int eloB, int outcome) {
 
-        if(!isValidElo(eloA) || !isValidElo(eloB)){
+        if (!isValidElo(eloA) || !isValidElo(eloB)) {
             throw new IllegalArgumentException("Invalid elo values");
         }
 
         double winValue = WinValue(outcome);
 
         if (winValue == -1) {
-            throw new IllegalArgumentException("Invalid match result only accepts -1 for A wins, 1 for B wins and 0 for draw");
+            throw new IllegalArgumentException(
+                    "Invalid match result only accepts -1 for A wins, 1 for B wins and 0 for draw");
         }
 
-        int k=getKValue(eloA);
+        int k = getKValue(eloA);
 
         // Probability of player A winning over player B
         double p1Win = WinProbabilityOnElo(eloA, eloB);
-        double result=eloA + eloChange(k, winValue, p1Win);
-        
-        if (result<0){
+        double result = eloA + eloChange(k, winValue, p1Win);
+
+        if (result < 0) {
             return 0.0;
         }
 
@@ -82,8 +82,8 @@ public class EloRatingServiceImplementation implements EloRatingService {
     /**
      * {@inheritDoc}
      */
-    public double eloChange(int k,double winValue, double winProbability){
-        return k * (winValue-winProbability);
+    public double eloChange(int k, double winValue, double winProbability) {
+        return k * (winValue - winProbability);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EloRatingServiceImplementation implements EloRatingService {
      * {@inheritDoc}
      */
     public int getKValue(int eloScore) {
-        double rawKValue = 40 - 40 * Math.log10(eloScore/500.0);
+        double rawKValue = 40 - 40 * Math.log10(eloScore / 500.0);
         int kValue = (int) Math.round(rawKValue);
         if (kValue < 10) {
             return 10;
@@ -106,9 +106,9 @@ public class EloRatingServiceImplementation implements EloRatingService {
     /**
      * {@inheritDoc}
      */
-    public List<Double> eloRatingForBoth(int elo1,int elo2,int outcome){
-        double newEloA=EloCalculation(elo1, elo2, outcome);
-        double newEloB=EloCalculation(elo2, elo1, outcome*-1);
-        return Arrays.asList(newEloA,newEloB);
+    public List<Double> eloRatingForBoth(int elo1, int elo2, int outcome) {
+        double newEloA = EloCalculation(elo1, elo2, outcome);
+        double newEloB = EloCalculation(elo2, elo1, outcome * -1);
+        return Arrays.asList(newEloA, newEloB);
     }
 }

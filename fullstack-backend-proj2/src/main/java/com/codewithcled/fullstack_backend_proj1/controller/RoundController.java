@@ -30,8 +30,8 @@ public class RoundController {
      * @return a ResponseEntity with a message indicating the result of the check
      * @throws Exception if an error occurs during the check
      */
-    @GetMapping({"/round/{id}/checkComplete"})
-    public ResponseEntity<String> checkRoundComplete(@PathVariable("id") Long id) throws Exception{
+    @GetMapping({ "/round/{id}/checkComplete" })
+    public ResponseEntity<String> checkRoundComplete(@PathVariable("id") Long id) throws Exception {
         roundService.checkComplete(id);
         return ResponseEntity.ok("Successfully checked roundService.isComplete");
     }
@@ -40,17 +40,18 @@ public class RoundController {
      * Retrieves all matches for a specified round.
      *
      * @param id the ID of the round
-     * @return a ResponseEntity with a list of MatchDTOs or a 204 No Content status if the list is empty
+     * @return a ResponseEntity with a list of MatchDTOs or a 204 No Content status
+     *         if the list is empty
      * @throws Exception if an error occurs during retrieval
      */
     @GetMapping("/round/{id}/matches")
     public ResponseEntity<List<MatchDTO>> getAllMatches(@PathVariable("id") Long id) throws Exception {
         List<Match> matches = roundService.getAllMatches(id);
         if (matches.isEmpty()) {
-            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
         }
         List<MatchDTO> matchDTOs = MatchDTOMapper.toDTOList(matches);
-        return ResponseEntity.ok(matchDTOs);  // Return 200 OK with the list of MatchDTOs
+        return ResponseEntity.ok(matchDTOs); // Return 200 OK with the list of MatchDTOs
     }
 
 }

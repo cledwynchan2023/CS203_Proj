@@ -35,7 +35,7 @@ public class UserMapper {
         dto.setSize(tournament.getSize());
         dto.setCurrentSize(tournament.getCurrentSize());
         dto.setNoOfRounds(tournament.getNoOfRounds());
-       
+
         return dto;
     }
 }

@@ -21,7 +21,7 @@ public interface MatchService {
      * Updates the result of a match.
      *
      * @param matchId the ID of the match to update
-     * @param result the result of the match
+     * @param result  the result of the match
      * @throws Exception if the match cannot be updated
      */
     void updateMatch(Long matchId, int result) throws Exception;

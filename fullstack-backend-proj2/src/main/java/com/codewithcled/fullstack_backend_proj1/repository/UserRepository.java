@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import  com.codewithcled.fullstack_backend_proj1.model.User;
+import com.codewithcled.fullstack_backend_proj1.model.User;
 
 /**
  * User Repository
@@ -14,6 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Check if a user exists by username
+     * 
      * @param username username of the user
      * @return boolean true if user exists, false otherwise
      */
@@ -21,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Check if a user exists by email
+     * 
      * @param email email of the user
      * @return boolean true if user exists, false otherwise
      */
@@ -28,6 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find a user by email
+     * 
      * @param email email of the user
      * @return User the user with the email
      */
@@ -35,6 +38,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find a user by username
+     * 
      * @param username username of the user
      * @return User the user with the username
      */

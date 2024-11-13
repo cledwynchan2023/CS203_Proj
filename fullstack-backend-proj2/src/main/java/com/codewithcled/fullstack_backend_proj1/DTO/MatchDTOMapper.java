@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 
-
 public class MatchDTOMapper {
     public static MatchDTO toDTO(Match match) {
         MatchDTO dto = new MatchDTO();
@@ -20,6 +19,7 @@ public class MatchDTOMapper {
         dto.setEloChange2(match.getEloChange2());
         return dto;
     }
+
     public static List<MatchDTO> toDTOList(List<Match> rounds) {
         return rounds.stream()
                 .map(MatchDTOMapper::toDTO)

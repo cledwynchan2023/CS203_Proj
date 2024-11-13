@@ -52,8 +52,9 @@ public class TournamentServiceImplementation implements TournamentService {
 
     /**
      * Helper method to filter tournaments by status
+     * 
      * @param tournaments list of tournaments
-     * @param status will be either "active", "ongoing" or "completed"
+     * @param status      will be either "active", "ongoing" or "completed"
      * @return list of tournaments with the given status
      */
     private List<Tournament> filterTournamentsByStatus(List<Tournament> tournaments, String status) {
@@ -101,6 +102,7 @@ public class TournamentServiceImplementation implements TournamentService {
 
     /**
      * Helper method to find a tournament by its id
+     * 
      * @param id the id of the tournament
      * @return the tournament with the given id
      * @throws NoSuchElementException if the tournament is not found
@@ -126,23 +128,26 @@ public class TournamentServiceImplementation implements TournamentService {
         }
 
         // Record tournament in user's own list and add user to tournament
-        if (!user.getCurrentTournaments().contains(currentTournament) && currentTournament.getCurrentSize() < currentTournament.getSize()) {
+        if (!user.getCurrentTournaments().contains(currentTournament)
+                && currentTournament.getCurrentSize() < currentTournament.getSize()) {
             user.addCurrentTournament(currentTournament);
             userRepository.save(user);
             currentTournament.setCurrentSize(currentTournament.getParticipants().size());
         }
-        
+
         return tournamentRepository.save(currentTournament);
     }
 
     /**
      * Helper method to add a tournament to a user's own list
      * Checks if the tournament is already in the user's list
+     * 
      * @param currentTournament
      * @param user
      */
     private void addTournamentToUserOwnList(Tournament currentTournament, User user) {
-        if (!user.getCurrentTournaments().contains(currentTournament) && currentTournament.getCurrentSize() < currentTournament.getSize()) {
+        if (!user.getCurrentTournaments().contains(currentTournament)
+                && currentTournament.getCurrentSize() < currentTournament.getSize()) {
             user.addCurrentTournament(currentTournament);
             userRepository.save(user);
             currentTournament.setCurrentSize(currentTournament.getParticipants().size());
@@ -152,6 +157,7 @@ public class TournamentServiceImplementation implements TournamentService {
     /**
      * Helper method to add a user to a tournament
      * Checks if the user is already in the tournament
+     * 
      * @param currentTournament
      * @param user
      */
@@ -181,6 +187,7 @@ public class TournamentServiceImplementation implements TournamentService {
     /**
      * Helper method to remove a user from a tournament
      * Checks if the user is already in the tournament
+     * 
      * @param currentTournament
      * @param user
      */
@@ -283,12 +290,15 @@ public class TournamentServiceImplementation implements TournamentService {
 
     /**
      * Helper method to check if a user is not a participant in a tournament
-     * @param user the user
+     * 
+     * @param user       the user
      * @param tournament the tournament
-     * @return false if the user has no role, is an admin or is already a participant in the tournament, true otherwise
+     * @return false if the user has no role, is an admin or is already a
+     *         participant in the tournament, true otherwise
      */
     private boolean isNonParticipatingUser(User user, Tournament tournament) {
-        if(user.getRole() != null && !user.getRole().equals("ROLE_ADMIN") && !user.getCurrentTournaments().contains(tournament)) {
+        if (user.getRole() != null && !user.getRole().equals("ROLE_ADMIN")
+                && !user.getCurrentTournaments().contains(tournament)) {
             return true;
         }
         return false;
@@ -374,7 +384,7 @@ public class TournamentServiceImplementation implements TournamentService {
 
         // Update the tournament status to ongoing
         currentTournament.setStatus("ongoing");
-        
+
         // debugging purposes
         logger.info("Tournament started");
 
@@ -383,6 +393,7 @@ public class TournamentServiceImplementation implements TournamentService {
 
     /**
      * Helper method to add a round to a tournament
+     * 
      * @param currentTournament
      * @param firstRound
      */

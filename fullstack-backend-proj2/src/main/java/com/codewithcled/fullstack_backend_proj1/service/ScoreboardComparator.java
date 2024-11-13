@@ -12,13 +12,17 @@ import com.codewithcled.fullstack_backend_proj1.repository.MatchRepository;
 import com.codewithcled.fullstack_backend_proj1.repository.UserRepository;
 
 /**
- * ScoreboardComparator is a class that implements the Comparator interface to compare two ScoreboardEntry objects.
+ * ScoreboardComparator is a class that implements the Comparator interface to
+ * compare two ScoreboardEntry objects.
  * The comparison is based on the score of the two players.
  * If the scores are equal, the comparison is based on the Solkoff tiebreak.
- * If the Solkoff tiebreak is also equal, the comparison is based on the rating tiebreak.
+ * If the Solkoff tiebreak is also equal, the comparison is based on the rating
+ * tiebreak.
  * 
- * The Solkoff tiebreak uses the sum of the scores of the opponents that the player has played against in the tournament.
- * The rating tiebreak uses the sum of the Elo ratings of the opponents that the player has played against in the tournament.
+ * The Solkoff tiebreak uses the sum of the scores of the opponents that the
+ * player has played against in the tournament.
+ * The rating tiebreak uses the sum of the Elo ratings of the opponents that the
+ * player has played against in the tournament.
  */
 public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
     private List<Round> rounds;
@@ -29,12 +33,13 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
     /**
      * Constructor for ScoreboardComparator.
      *
-     * @param rounds List of rounds
-     * @param currentRound The current round
-     * @param userRepository Repository for user data
+     * @param rounds          List of rounds
+     * @param currentRound    The current round
+     * @param userRepository  Repository for user data
      * @param matchRepository Repository for match data
      */
-    public ScoreboardComparator(List<Round> rounds, Round currentRound, UserRepository userRepository, MatchRepository matchRepository) {
+    public ScoreboardComparator(List<Round> rounds, Round currentRound, UserRepository userRepository,
+            MatchRepository matchRepository) {
         this.rounds = rounds;
         this.currentRound = currentRound;
         this.userRepository = userRepository;
@@ -46,7 +51,8 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
      *
      * @param e1 The first ScoreboardEntry
      * @param e2 The second ScoreboardEntry
-     * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     * @return A negative integer, zero, or a positive integer as the first argument
+     *         is less than, equal to, or greater than the second
      */
     public int compareScores(ScoreboardEntry e1, ScoreboardEntry e2) {
         if (e1.getScore() > e2.getScore()) {
@@ -63,7 +69,8 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
      *
      * @param e1 The first ScoreboardEntry
      * @param e2 The second ScoreboardEntry
-     * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     * @return A negative integer, zero, or a positive integer as the first argument
+     *         is less than, equal to, or greater than the second
      */
     @Override
     public int compare(ScoreboardEntry e1, ScoreboardEntry e2) {
@@ -73,7 +80,7 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
 
         Long u1id = e1.getPlayerId();
         Long u2id = e2.getPlayerId();
-        
+
         int tiebreakResult = tiebreak(u1id, u2id);
         if (tiebreakResult != 0) {
             return tiebreakResult;
@@ -87,7 +94,8 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
      *
      * @param u1 The first user
      * @param u2 The second user
-     * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     * @return A negative integer, zero, or a positive integer as the first argument
+     *         is less than, equal to, or greater than the second
      */
     public int tiebreak(Long user1id, Long user2id) {
         try {
@@ -133,7 +141,8 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
      *
      * @param u1 The first user
      * @param u2 The second user
-     * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     * @return A negative integer, zero, or a positive integer as the first argument
+     *         is less than, equal to, or greater than the second
      * @throws Exception If an error occurs during calculation
      */
     public int solkoffTiebreak(Long user1id, Long user2id) throws Exception {
@@ -183,7 +192,8 @@ public class ScoreboardComparator implements Comparator<ScoreboardEntry> {
      *
      * @param u1 The first user
      * @param u2 The second user
-     * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
+     * @return A negative integer, zero, or a positive integer as the first argument
+     *         is less than, equal to, or greater than the second
      * @throws Exception If an error occurs during calculation
      */
     public int ratingTiebreak(Long user1id, Long user2id) throws Exception {

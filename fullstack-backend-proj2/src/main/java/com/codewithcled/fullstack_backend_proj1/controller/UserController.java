@@ -73,10 +73,10 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
         }
         List<UserDTO> userDTOs = UserMapper.toDTOList(users);
-        return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
+        return ResponseEntity.ok(userDTOs); // Return 200 OK with the list of UserDTOs
     }
 
     // Get User by Username
@@ -89,7 +89,7 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        
+
     }
 
     // Get User Current Participating Tournaments
@@ -98,10 +98,10 @@ public class UserController {
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
             List<TournamentStartDTO> tournamentDTOs = TournamentStartMapper.toDTOList(user.getCurrentTournaments());
-            return ResponseEntity.ok(tournamentDTOs);  // Return 200 OK with the list of TournamentDTOs
+            return ResponseEntity.ok(tournamentDTOs); // Return 200 OK with the list of TournamentDTOs
         } catch (Exception e) {
             // Log the exception message for debugging
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Return 400 Bad Request for errors
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Return 400 Bad Request for errors
         }
     }
 
@@ -112,47 +112,48 @@ public class UserController {
                 .map(user -> ResponseEntity.ok(UserMapper.toDTO(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
-    
-    //delete user
+
+    // delete user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser (@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if user not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if user not found
         }
         userRepository.deleteById(id);
-        return ResponseEntity.noContent().build();  // Return 204 No Content on successful deletion
+        return ResponseEntity.noContent().build(); // Return 204 No Content on successful deletion
     }
 
-    //editing profile
+    // editing profile
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody SignUpRequest newUser, @PathVariable("id") Long id) {
         return userService.updateUser(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);
-                    return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
+                    return ResponseEntity.ok(userDTO); // Return 200 OK with the updated UserDTO
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // Return 404 if user not found
     }
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<UserDTO> updateUserWithoutPassword (@RequestBody EditUserRequest newUser, @PathVariable("id") Long id) {
+    public ResponseEntity<UserDTO> updateUserWithoutPassword(@RequestBody EditUserRequest newUser,
+            @PathVariable("id") Long id) {
         return userService.updateUserWithoutPassword(id, newUser)
                 .map(updatedUser -> {
                     UserDTO userDTO = UserMapper.toDTO(updatedUser);
-                    return ResponseEntity.ok(userDTO);  // Return 200 OK with the updated UserDTO
+                    return ResponseEntity.ok(userDTO); // Return 200 OK with the updated UserDTO
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // Return 404 if user not found
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // Return 404 if user not found
     }
 
     @GetMapping("/users/sorted")
     public ResponseEntity<List<UserDTO>> getSortedUsers() {
         List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();  // Return 204 No Content if the list is empty
+            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
         }
         users.sort((u1, u2) -> u2.getElo().compareTo(u1.getElo()));
         List<UserDTO> userDTOs = UserMapper.toDTOList(users);
-        return ResponseEntity.ok(userDTOs);  // Return 200 OK with the list of UserDTOs
-    }   
+        return ResponseEntity.ok(userDTOs); // Return 200 OK with the list of UserDTOs
+    }
 
 }

@@ -9,7 +9,6 @@ import com.codewithcled.fullstack_backend_proj1.model.User;
 import com.codewithcled.fullstack_backend_proj1.model.Match;
 import com.codewithcled.fullstack_backend_proj1.response.AuthResponse;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +26,11 @@ public interface UserService {
 
     /**
      * Retrieves a user by their email.
+     * 
      * @param email
      * @return
      */
-    public User findUserByEmail(String email) ;
+    public User findUserByEmail(String email);
 
     /**
      * Retrieves a user by their ID.
@@ -38,7 +38,7 @@ public interface UserService {
      * @param userId the ID of the user to retrieve.
      * @return the user with the specified ID.
      */
-    public User findUserById(String userId) ;
+    public User findUserById(String userId);
 
     /**
      * Retrieves all users and converts them to DTO objects.
@@ -75,18 +75,20 @@ public interface UserService {
     /**
      * Updates a user's details.
      * 
-     * @param id the ID of the user to update.
+     * @param id      the ID of the user to update.
      * @param newUser the new user details.
-     * @return an optional containing the updated user, or empty if the user was not found.
+     * @return an optional containing the updated user, or empty if the user was not
+     *         found.
      */
     public Optional<User> updateUser(Long id, SignUpRequest newUser);
 
     /**
      * Updates a user's details without changing the password.
      * 
-     * @param id the ID of the user to update.
+     * @param id      the ID of the user to update.
      * @param newUser the new user details.
-     * @return an optional containing the updated user, or empty if the user was not found.
+     * @return an optional containing the updated user, or empty if the user was not
+     *         found.
      */
     public Optional<User> updateUserWithoutPassword(Long id, EditUserRequest newUser);
 

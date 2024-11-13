@@ -15,17 +15,18 @@ public class EditUserRequest {
         this.username = username;
     }
 
-
-
     public String getRole() {
         return role;
     }
+
     public void setRole(String role) {
         this.role = role;
     }
+
     public Double getElo() {
         return elo;
     }
+
     public void setElo(Double elo) {
         this.elo = elo;
     }

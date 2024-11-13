@@ -16,10 +16,11 @@ public class TournamentStartDTO {
     private List<RoundDTO> rounds = new ArrayList<>();
 
     // Getters and setters
-   
+
     public Integer getCurrentRound() {
         return currentRound;
     }
+
     public void setCurrentRound(Integer currentRound) {
         this.currentRound = currentRound;
     }
