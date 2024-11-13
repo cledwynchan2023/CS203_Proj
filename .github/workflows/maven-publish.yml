@@ -3,7 +3,7 @@ name: Java CI with Maven and React with NPM vite
 on:
   push:
     branches: 
-      - "main"
+      - "SAFE-BRANCH"
 
 jobs:
   build:
