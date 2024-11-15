@@ -7,6 +7,7 @@ import java.net.URI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -43,7 +44,8 @@ public class LoginRegisterControllerIntegrationTest {
 
     private String urlPrefix = "/auth";
 
-    private String adminToken = "adminadmin123";
+    @Value("${admin.token}")
+    private String adminToken;
 
     @AfterEach
     public void tearDown() {
